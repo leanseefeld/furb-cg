@@ -53,7 +53,7 @@ public class Main implements GLEventListener {
 
 		SRU();
 
-		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		gl.glColor3f(0.0f, 0.0f, 1.0f);
 		gl.glPointSize(3f);
 		gl.glBegin(GL.GL_POINTS);
 		for (int i = 0; i < 360; i += 5) {

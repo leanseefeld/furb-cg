@@ -17,7 +17,7 @@ public class Frame extends JFrame {
 	public Frame() {
 		super("Execício N1");
 		setBounds(300, 250, janelaLargura, janelaAltura + 22);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 
 		GLCapabilities glCaps = new GLCapabilities();
