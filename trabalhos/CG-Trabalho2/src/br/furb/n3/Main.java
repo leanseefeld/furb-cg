@@ -51,15 +51,37 @@ public class Main implements GLEventListener {
 
 		SRU();
 
-		gl.glColor3f(0.0f, 0.0f, 1.0f);
-		gl.glPointSize(3f);
-		gl.glBegin(GL.GL_POINTS);
-		for (int i = 0; i < 360; i += 5) {
-			gl.glVertex2d(RetornaX(i, 100), RetornaY(i, 100));
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		gl.glLineWidth(2f);
+
+		desenhaCirculo(-100,+100);
+		desenhaCirculo(+100,+100);
+		desenhaCirculo(0, -100);
+		
+		gl.glColor3f(0.0f, 1.0f, 1.0f);
+		gl.glLineWidth(1f);
+		desenhaTriangulo();
+		
+		gl.glFlush();
+	}
+	
+	public void desenhaCirculo(int deslocamentoX, int deslocamentoY ){
+		gl.glBegin(GL.GL_LINE_STRIP);
+		for (int i = 0; i <= 360; i += 5) {
+			gl.glVertex2d(RetornaX(i, 100)+deslocamentoX, RetornaY(i, 100)+deslocamentoY);
 		}
 		gl.glEnd();
-
-		gl.glFlush();
+	}
+	
+	public void desenhaTriangulo()
+	{
+		gl.glBegin(GL.GL_LINE_LOOP);
+		{
+			gl.glVertex2d(-100, 100);
+			gl.glVertex2d(100, 100);
+			gl.glVertex2d(0, -100);
+		}
+		gl.glEnd();
 	}
 
 	public double RetornaX(double angulo, double raio) {
@@ -80,4 +102,6 @@ public class Main implements GLEventListener {
 			int arg4) {
 		
 	}
+	
+	
 }
