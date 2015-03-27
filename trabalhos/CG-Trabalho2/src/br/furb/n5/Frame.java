@@ -15,7 +15,7 @@ public class Frame extends JFrame {
 	private int janelaLargura = 400, janelaAltura = 400;
 
 	public Frame() {
-		super("Execício N1");
+		super("Execício N5");
 		setBounds(300, 250, janelaLargura, janelaAltura + 22);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());

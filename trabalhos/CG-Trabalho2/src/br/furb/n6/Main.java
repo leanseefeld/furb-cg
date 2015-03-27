@@ -12,8 +12,6 @@ public class Main implements GLEventListener {
 	private GL gl;
 	private GLU glu;
 	private GLAutoDrawable glDrawable;
-	private double valorX = 200.0, valorY = 200.0;
-	private int antigoX, antigoY = 0;
 
 	public void init(GLAutoDrawable drawable) {
 		System.out.println(" --- init ---");
