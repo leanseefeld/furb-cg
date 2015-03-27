@@ -17,6 +17,7 @@ public class Main implements GLEventListener, KeyListener {
 	private GLU glu;
 	private GLAutoDrawable glDrawable;
 	private static final int DESLOCAMENTO = 10;
+	private int xinicial, xfinal,yinicial, yfinal, angulo; 
 
 	public void init(GLAutoDrawable drawable) {
 		System.out.println(" --- init ---");
@@ -61,16 +62,16 @@ public class Main implements GLEventListener, KeyListener {
 		
 		gl.glBegin(GL.GL_LINES);
 		{
-			gl.glVertex2d(0, 0);
-			gl.glVertex2d(RetornaX(ANGULO, 100), RetornaY(ANGULO, 100));
+			gl.glVertex2d(0+xinicial, 0+yinicial);
+			gl.glVertex2d(RetornaX(ANGULO +angulo, 100)+xfinal, RetornaY(ANGULO+angulo, 100)+yfinal);
 		}
 		gl.glEnd();
 		
 		gl.glPointSize(6f);
 		gl.glBegin(GL.GL_POINTS);
 		{
-			gl.glVertex2d(0, 0);
-			gl.glVertex2d(RetornaX(ANGULO, 100), RetornaY(ANGULO, 100));
+			gl.glVertex2d(0+xinicial, 0+yinicial);
+			gl.glVertex2d(RetornaX(ANGULO+angulo, 100)+xfinal, RetornaY(ANGULO+angulo, 100)+yfinal);
 		}
 		gl.glEnd();
 
@@ -135,6 +136,34 @@ public class Main implements GLEventListener, KeyListener {
 				ortho2D_maxY -= DESLOCAMENTO;
 				break;
 			}
+			
+		case KeyEvent.VK_W:
+			xinicial+=10;
+			xfinal+=10;
+			break;
+			
+		case KeyEvent.VK_Q:
+			xinicial-=10;
+			xfinal-=10;
+			break;
+			
+		case KeyEvent.VK_A:
+			xfinal+=10;
+			yfinal+=10;
+			break;
+			
+		case KeyEvent.VK_S:
+			xfinal-=10;
+			yfinal-=10;
+			break;
+			
+		case KeyEvent.VK_X:
+			angulo+=10;
+			break;
+			
+		case KeyEvent.VK_Z:
+			angulo-=10;
+			break;
 
 		default:
 			reconheceu = false;
