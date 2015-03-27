@@ -13,6 +13,7 @@ public class Frame extends JFrame {
 	private Main renderer = new Main();
 
 	private int janelaLargura = 400, janelaAltura = 400;
+	private GLCanvas canvas;
 
 	public Frame() {
 		super("Execício N2");
@@ -26,10 +27,15 @@ public class Frame extends JFrame {
 		glCaps.setGreenBits(8);
 		glCaps.setAlphaBits(8);
 
-		GLCanvas canvas = new GLCanvas(glCaps);
+		canvas = new GLCanvas(glCaps);
 		add(canvas, BorderLayout.CENTER);
 		canvas.addGLEventListener(renderer);
 		canvas.addKeyListener(renderer);
+	}
+
+	@Override
+	public void setVisible(boolean arg0) {
+		super.setVisible(arg0);
 		canvas.requestFocus();
 	}
 
