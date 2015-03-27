@@ -15,7 +15,7 @@ public class Frame extends JFrame {
 	private int janelaLargura = 400, janelaAltura = 400;
 
 	public Frame() {
-		super("Execício N1");
+		super("Execício N2");
 		setBounds(300, 250, janelaLargura, janelaAltura + 22);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
@@ -29,6 +29,7 @@ public class Frame extends JFrame {
 		GLCanvas canvas = new GLCanvas(glCaps);
 		add(canvas, BorderLayout.CENTER);
 		canvas.addGLEventListener(renderer);
+		canvas.addKeyListener(renderer);
 		canvas.requestFocus();
 	}
 

@@ -1,19 +1,21 @@
 package br.furb.n2;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
-public class Main implements GLEventListener {
+public class Main implements GLEventListener, KeyListener {
 	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f,
 			ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
 	private GL gl;
 	private GLU glu;
 	private GLAutoDrawable glDrawable;
-	private double valorX = 200.0, valorY = 200.0;
-	private int antigoX, antigoY = 0;
+	private static final int DESLOCAMENTO = 10;
 
 	public void init(GLAutoDrawable drawable) {
 		System.out.println(" --- init ---");
@@ -74,12 +76,76 @@ public class Main implements GLEventListener {
 
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-		
+
 	}
 
 	@Override
 	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
 			int arg4) {
-		
+
 	}
+
+	// <<< --- EVENTOS DE TECLADO
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		boolean reconheceu = true;
+		switch (arg0.getKeyCode()) {
+		case KeyEvent.VK_E:
+			ortho2D_minX -= DESLOCAMENTO;
+			ortho2D_maxX -= DESLOCAMENTO;
+			break;
+		case KeyEvent.VK_D:
+			ortho2D_minX += DESLOCAMENTO;
+			ortho2D_maxX += DESLOCAMENTO;
+			break;
+		case KeyEvent.VK_C:
+			ortho2D_minY += DESLOCAMENTO;
+			ortho2D_maxY += DESLOCAMENTO;
+			break;
+		case KeyEvent.VK_B:
+			ortho2D_minY -= DESLOCAMENTO;
+			ortho2D_maxY -= DESLOCAMENTO;
+			break;
+
+		case KeyEvent.VK_O:
+			if (Math.sqrt(Math.pow((ortho2D_maxY - ortho2D_minY), 2)) <= 1600) {
+				ortho2D_minX -= DESLOCAMENTO;
+				ortho2D_maxX += DESLOCAMENTO;
+				ortho2D_minY -= DESLOCAMENTO;
+				ortho2D_maxY += DESLOCAMENTO;
+			}
+			break;
+
+		case KeyEvent.VK_I:
+			if (Math.sqrt(Math.pow((ortho2D_maxY - ortho2D_minY), 2)) >= 400) {
+				ortho2D_minX += DESLOCAMENTO;
+				ortho2D_maxX -= DESLOCAMENTO;
+				ortho2D_minY += DESLOCAMENTO;
+				ortho2D_maxY -= DESLOCAMENTO;
+				break;
+			}
+
+		default:
+			reconheceu = false;
+			break;
+		}
+		if (reconheceu) {
+			glDrawable.display();
+		}
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	// --- EVENTOS DE TECLADO --- >>>
 }
