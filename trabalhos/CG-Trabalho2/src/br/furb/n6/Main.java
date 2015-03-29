@@ -32,7 +32,14 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 		/*    */new Ponto2D(-100, -100), //
 				new Ponto2D(-100, +100), //
 				new Ponto2D(+100, +100), //
-				new Ponto2D(+100, -100)};
+				new Ponto2D(+100, -100), //
+				new Ponto2D(+100, -200), //
+				new Ponto2D(+100, -300), //
+				new Ponto2D(+200, -300), //
+				new Ponto2D(+300, -300), //
+				new Ponto2D(+300, -200), //
+				new Ponto2D(+200, -200), //
+		};
 		pontoSelecionado = pontos[0];
 		numeroPontos = 10;
 		glDrawable = drawable;
@@ -76,18 +83,22 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 		gl.glLineWidth(2f);
 		gl.glBegin(GL.GL_LINE_STRIP);
 		for (double i = 0; i <= 1; i += (1d / numeroPontos)) {
-			
-			//Dessa forma fica limitado ao 4 pontos
-		  /*Ponto2D ponto1 = GetPontoIntermediario(pontos[0], pontos[1], i);
-			Ponto2D ponto2 = GetPontoIntermediario(pontos[1], pontos[2], i);
-			Ponto2D ponto3 = GetPontoIntermediario(pontos[2], pontos[3], i);
-			Ponto2D ponto12 = GetPontoIntermediario(ponto1, ponto2, i);
-			Ponto2D ponto23 = GetPontoIntermediario(ponto2, ponto3, i);
-			Ponto2D ponto13 = GetPontoIntermediario(ponto12, ponto23, i);
-			gl.glVertex2d(ponto13.getX(), ponto13.getY());*/
-			
-			//Dessa forma fica mais flexível alterar a quantidade de pontos para fazer 
-			//as interpolações. Esse metodo aceita quantos pontos forem precisos
+
+			// Dessa forma fica limitado ao 4 pontos
+			/*
+			 * Ponto2D ponto1 = GetPontoIntermediario(pontos[0], pontos[1], i);
+			 * Ponto2D ponto2 = GetPontoIntermediario(pontos[1], pontos[2], i);
+			 * Ponto2D ponto3 = GetPontoIntermediario(pontos[2], pontos[3], i);
+			 * Ponto2D ponto12 = GetPontoIntermediario(ponto1, ponto2, i);
+			 * Ponto2D ponto23 = GetPontoIntermediario(ponto2, ponto3, i);
+			 * Ponto2D ponto13 = GetPontoIntermediario(ponto12, ponto23, i);
+			 * gl.glVertex2d(ponto13.getX(), ponto13.getY());
+			 */
+
+			// Dessa forma fica mais flexível alterar a quantidade de pontos
+			// para fazer
+			// as interpolações. Esse metodo aceita quantos pontos forem
+			// precisos
 			Ponto2D pontoSpline = GetPontoIntermediario(pontos, i);
 			gl.glVertex2d(pontoSpline.getX(), pontoSpline.getY());
 		}
@@ -179,6 +190,21 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 			break;
 		case KeyEvent.VK_5:
 			this.pontoSelecionado = pontos[4];
+			break;
+		case KeyEvent.VK_6:
+			this.pontoSelecionado = pontos[5];
+			break;
+		case KeyEvent.VK_7:
+			this.pontoSelecionado = pontos[6];
+			break;
+		case KeyEvent.VK_8:
+			this.pontoSelecionado = pontos[7];
+			break;
+		case KeyEvent.VK_9:
+			this.pontoSelecionado = pontos[8];
+			break;
+		case KeyEvent.VK_0:
+			this.pontoSelecionado = pontos[9];
 			break;
 		case KeyEvent.VK_ADD:
 			this.numeroPontos += 1;
