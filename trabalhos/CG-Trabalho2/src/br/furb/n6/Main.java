@@ -12,6 +12,8 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
+import br.furb.commons.Ponto2D;
+
 public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 		MouseListener {
 	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f,
@@ -25,6 +27,7 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 	private int antigoX;
 	private int antigoY;
 	private final static double AJUSTE_MOUSE = 1.1d;
+	private static final float DESLOCAMENTO = 10;
 
 	public void init(GLAutoDrawable drawable) {
 		System.out.println(" --- init ---");
@@ -46,7 +49,7 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 		gl = drawable.getGL();
 		glu = new GLU();
 		glDrawable.setGL(new DebugGL(gl));
-		System.out.println("Espa�o de desenho com tamanho: "
+		System.out.println("Espaao de desenho com tamanho: "
 				+ drawable.getWidth() + " x " + drawable.getHeight());
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
@@ -176,6 +179,41 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 	public void keyPressed(KeyEvent arg0) {
 		boolean reconheceu = true;
 		switch (arg0.getKeyCode()) {
+		case KeyEvent.VK_E:
+			ortho2D_minX -= DESLOCAMENTO;
+			ortho2D_maxX -= DESLOCAMENTO;
+			break;
+		case KeyEvent.VK_D:
+			ortho2D_minX += DESLOCAMENTO;
+			ortho2D_maxX += DESLOCAMENTO;
+			break;
+		case KeyEvent.VK_C:
+			ortho2D_minY += DESLOCAMENTO;
+			ortho2D_maxY += DESLOCAMENTO;
+			break;
+		case KeyEvent.VK_B:
+			ortho2D_minY -= DESLOCAMENTO;
+			ortho2D_maxY -= DESLOCAMENTO;
+			break;
+
+		case KeyEvent.VK_O:
+			if (Math.sqrt(Math.pow((ortho2D_maxY - ortho2D_minY), 2)) <= 1600) {
+				ortho2D_minX -= DESLOCAMENTO;
+				ortho2D_maxX += DESLOCAMENTO;
+				ortho2D_minY -= DESLOCAMENTO;
+				ortho2D_maxY += DESLOCAMENTO;
+			}
+			break;
+
+		case KeyEvent.VK_I:
+			if (Math.sqrt(Math.pow((ortho2D_maxY - ortho2D_minY), 2)) >= 400) {
+				ortho2D_minX += DESLOCAMENTO;
+				ortho2D_maxX -= DESLOCAMENTO;
+				ortho2D_minY += DESLOCAMENTO;
+				ortho2D_maxY -= DESLOCAMENTO;
+				break;
+			}
+	
 		case KeyEvent.VK_1:
 			this.pontoSelecionado = pontos[0];
 			break;
@@ -222,7 +260,8 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 			glDrawable.display();
 		}
 	}
-
+	
+	
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 

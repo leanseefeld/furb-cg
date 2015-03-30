@@ -2,6 +2,7 @@ package br.furb.n7;
 
 import java.awt.BorderLayout;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.swing.JFrame;
@@ -30,6 +31,9 @@ public class Frame extends JFrame {
 		canvas = new GLCanvas(glCaps);
 		add(canvas, BorderLayout.CENTER);
 		canvas.addGLEventListener(renderer);
+		canvas.addMouseListener(renderer);
+		canvas.addMouseMotionListener(renderer);
+		canvas.addKeyListener(renderer);
 		canvas.requestFocus();
 	}
 	

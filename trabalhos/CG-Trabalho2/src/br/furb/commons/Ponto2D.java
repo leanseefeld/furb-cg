@@ -1,4 +1,4 @@
-package br.furb.n6;
+package br.furb.commons;
 
 import java.awt.geom.Point2D;
 
