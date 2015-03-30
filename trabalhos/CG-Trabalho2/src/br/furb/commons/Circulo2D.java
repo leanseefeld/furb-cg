@@ -19,6 +19,10 @@ public class Circulo2D {
 		return raio;
 	}
 
+	public double getRaioQuadrado() {
+		return raioQuadrado;
+	}
+	
 	public void setRaio(int raio) {
 		this.raio = raio;
 		this.raioQuadrado = Math.pow(raio, 2);
@@ -26,18 +30,6 @@ public class Circulo2D {
 
 	public Circulo2D(Ponto2D localizacao, int raio) {
 		this.localizacao = localizacao;
-		this.raio = raio;
-		this.raioQuadrado = Math.pow(raio, 2);
-	}
-	
-	public boolean EstaDentroDe(Circulo2D circulo)
-	{
-		double distancia = Math.pow(this.getLocalizacao().getX()
-				- circulo.getLocalizacao().getX(), 2)
-				+ Math.pow(this.getLocalizacao().getY()
-						- circulo.getLocalizacao().getY(), 2);
-		System.out.println("Maior:" + circulo.raioQuadrado + " - " + distancia);
-		return circulo.raioQuadrado > distancia;
-		
+		this.setRaio(raio);
 	}
 }

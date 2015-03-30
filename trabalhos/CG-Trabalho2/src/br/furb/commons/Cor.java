@@ -1,35 +1,35 @@
 package br.furb.commons;
 
 public class Cor {
-	private double Red;
-	private double Greend;
-	private double Blue;
+	private float Red;
+	private float Greend;
+	private float Blue;
 
-	public double getRed() {
+	public float getRed() {
 		return Red;
 	}
 
-	public void setRed(double red) {
+	public void setRed(float red) {
 		Red = red;
 	}
 
-	public double getGreend() {
+	public float getGreend() {
 		return Greend;
 	}
 
-	public void setGreend(double greend) {
+	public void setGreend(float greend) {
 		Greend = greend;
 	}
 
-	public double getBlue() {
+	public float getBlue() {
 		return Blue;
 	}
 
-	public void setBlue(double blue) {
+	public void setBlue(float blue) {
 		Blue = blue;
 	}
 
-	public Cor(double red, double greend, double blue) {
+	public Cor(float red, float greend, float blue) {
 		Red = red;
 		Greend = greend;
 		Blue = blue;

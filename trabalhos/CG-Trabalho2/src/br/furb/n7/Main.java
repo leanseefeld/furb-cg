@@ -12,6 +12,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
+import br.furb.commons.BBox;
 import br.furb.commons.Circulo2D;
 import br.furb.commons.Cor;
 import br.furb.commons.Ponto2D;
@@ -28,15 +29,27 @@ public class Main implements GLEventListener, MouseMotionListener, KeyListener,
 	private static final float DESLOCAMENTO = 10;
 	private Circulo2D circuloMaior;
 	private Circulo2D circuloMenor;
-	private final static Cor COR_DENTRO_BBOX = new Cor(0d, 1d, 1d);
-	private final static Cor COR_FORA_BBOX = new Cor(1d, 0d, 1d);
-	private final static Cor COR_FORA_CIRCULO = new Cor(1d, 1d, 0d);
+	private BBox bbox;
+	private Cor corBBox;
+	private final static Cor COR_BBOX_DENTRO_BBOX = new Cor(0f, 1f, 1f);
+	private final static Cor COR_BBOX_FORA_BBOX = new Cor(1f, 0f, 1f);
+	private final static Cor COR_BBOX_FORA_CIRCULO = new Cor(1f, 1f, 0f);
 
 	public void init(GLAutoDrawable drawable) {
 		System.out.println(" --- init ---");
 
-		circuloMaior = new Circulo2D(new Ponto2D(), 200);
-		circuloMenor = new Circulo2D(new Ponto2D(), 50);
+		circuloMaior = new Circulo2D(new Ponto2D(200, 200), 150);
+		circuloMenor = new Circulo2D(circuloMaior.getLocalizacao().clone(), 50);
+		bbox = new BBox();
+		bbox.setxMin(RetornaX(135, circuloMaior.getRaio())
+				+ this.circuloMaior.getLocalizacao().getX());
+		bbox.setxMax(RetornaX(45, circuloMaior.getRaio())
+				+ this.circuloMaior.getLocalizacao().getX());
+		bbox.setyMax(RetornaY(135, circuloMaior.getRaio())
+				+ this.circuloMaior.getLocalizacao().getY());
+		bbox.setyMin(RetornaY(225, circuloMaior.getRaio())
+				+ this.circuloMaior.getLocalizacao().getY());
+		corBBox = COR_BBOX_DENTRO_BBOX;
 
 		glDrawable = drawable;
 		gl = drawable.getGL();
@@ -75,13 +88,13 @@ public class Main implements GLEventListener, MouseMotionListener, KeyListener,
 		SRU();
 
 		gl.glColor3f(0.0f, 0.0f, 0.0f);
-		gl.glLineWidth(2f);
-		desenhaCirculo(200, circuloMaior.getLocalizacao().getX(), circuloMaior
+		gl.glLineWidth(1f);
+		desenhaCirculo(circuloMaior.getRaio(), circuloMaior.getLocalizacao().getX(), circuloMaior
 				.getLocalizacao().getY());
 
-		gl.glColor3f(1.0f, 0.0f, 1.0f);
-		gl.glLineWidth(2f);
-		desenhaCirculo(50, circuloMenor.getLocalizacao().getX(), circuloMenor
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		gl.glLineWidth(1f);
+		desenhaCirculo(circuloMenor.getRaio(), circuloMenor.getLocalizacao().getX(), circuloMenor
 				.getLocalizacao().getY());
 
 		gl.glColor3f(0f, 0f, 0f);
@@ -90,6 +103,17 @@ public class Main implements GLEventListener, MouseMotionListener, KeyListener,
 		{
 			gl.glVertex2d(circuloMenor.getLocalizacao().getX(), circuloMenor
 					.getLocalizacao().getY());
+		}
+		gl.glEnd();
+
+		gl.glColor3f(corBBox.getRed(), corBBox.getGreend(), corBBox.getBlue());
+		gl.glLineWidth(1f);
+		gl.glBegin(GL.GL_LINE_LOOP);
+		{
+			gl.glVertex2d(bbox.getyMax(), bbox.getxMin());
+			gl.glVertex2d(bbox.getyMax(), bbox.getxMax());
+			gl.glVertex2d(bbox.getyMin(), bbox.getxMax());
+			gl.glVertex2d(bbox.getyMin(), bbox.getxMin());
 		}
 		gl.glEnd();
 
@@ -205,17 +229,37 @@ public class Main implements GLEventListener, MouseMotionListener, KeyListener,
 		double mvtoX = e.getX() - ultimaMovimentacao.getX();
 		double mvtoY = e.getY() - ultimaMovimentacao.getY();
 
-		double novoX = mvtoX + (mvtoX * AJUSTE_MOUSE);
-		double novoY = -(mvtoY + (mvtoY * AJUSTE_MOUSE));
+		double novoX = circuloMenor.getLocalizacao().getX()
+				+ (mvtoX + (mvtoX * AJUSTE_MOUSE));
+		double novoY = circuloMenor.getLocalizacao().getY()
+				- (mvtoY + (mvtoY * AJUSTE_MOUSE));
 
-		if (circuloMenor.EstaDentroDe(circuloMaior)) {
-			circuloMenor.getLocalizacao().MoverX(novoX);
-			circuloMenor.getLocalizacao().MoverY(novoY);
-
-			ultimaMovimentacao.setLocation(e.getX(), e.getY());
+		if (EstaDentroDe(novoX, novoY, bbox)) {
+			circuloMenor.getLocalizacao().setX(novoX);
+			circuloMenor.getLocalizacao().setY(novoY);
+			corBBox = COR_BBOX_DENTRO_BBOX;
+		} else {
+			if (EstaDentroDe(novoX, novoY, circuloMaior)) {
+				circuloMenor.getLocalizacao().setX(novoX);
+				circuloMenor.getLocalizacao().setY(novoY);
+				corBBox = COR_BBOX_FORA_BBOX;
+			} else {
+				corBBox = COR_BBOX_FORA_CIRCULO;
+			}
 		}
-
+		ultimaMovimentacao.setLocation(e.getX(), e.getY());
 		glDrawable.display();
+	}
+
+	public boolean EstaDentroDe(double x, double y, Circulo2D circulo) {
+		double distancia = Math.pow(x - circulo.getLocalizacao().getX(), 2)
+				+ Math.pow(y - circulo.getLocalizacao().getY(), 2);
+		return circulo.getRaioQuadrado() >= distancia;
+	}
+
+	public boolean EstaDentroDe(double x, double y, BBox bbox) {
+		return x > bbox.getxMin() && x < bbox.getxMax() && y > bbox.getxMin()
+				&& y < bbox.getyMax();
 	}
 
 	@Override

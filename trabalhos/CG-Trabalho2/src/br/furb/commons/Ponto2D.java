@@ -48,5 +48,15 @@ public class Ponto2D extends Point2D {
 		this.x = x;
 		this.y = y;
 	}
-
+	
+	@Override
+	public String toString()
+	{
+		return "X: " + this.getX() + " - Y: " + this.getY();
+	}
+	
+	@Override
+	public Ponto2D clone() {
+		return new Ponto2D(this.getX(), this.getY());
+	}
 }
