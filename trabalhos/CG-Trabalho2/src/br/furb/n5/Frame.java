@@ -30,6 +30,7 @@ public class Frame extends JFrame {
 		canvas = new GLCanvas(glCaps);
 		add(canvas, BorderLayout.CENTER);
 		canvas.addGLEventListener(renderer);
+		canvas.addKeyListener(renderer);
 		canvas.requestFocus();
 	}
 	
