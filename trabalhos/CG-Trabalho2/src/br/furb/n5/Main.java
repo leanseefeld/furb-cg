@@ -69,7 +69,7 @@ public class Main implements GLEventListener, KeyListener {
 		gl.glColor3f(0.0f, 0.0f, 0.0f);
 		gl.glPointSize(6.0f);
 		gl.glLineWidth(6.0f);
-		gl.glBegin(definePrimitiva(i));
+		gl.glBegin(primitivas[i]);
 		{
 			// Altera o desenhos dos 4 pontos
 			// de acordo com a primitiva passada
@@ -85,14 +85,6 @@ public class Main implements GLEventListener, KeyListener {
 
 	}
 
-	private int definePrimitiva(int ind) {
-		//if (ind < 1) {
-		//	return GL.GL_POINTS;
-		//} else {
-			return primitivas[index];
-		//}
-	}
-
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 
@@ -101,7 +93,6 @@ public class Main implements GLEventListener, KeyListener {
 	@Override
 	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
 			int arg4) {
-
 	}
 
 	@Override
