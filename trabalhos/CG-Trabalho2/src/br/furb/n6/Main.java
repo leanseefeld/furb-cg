@@ -49,7 +49,7 @@ public class Main implements GLEventListener, KeyListener, MouseMotionListener,
 		gl = drawable.getGL();
 		glu = new GLU();
 		glDrawable.setGL(new DebugGL(gl));
-		System.out.println("Espaao de desenho com tamanho: "
+		System.out.println("Espaço de desenho com tamanho: "
 				+ drawable.getWidth() + " x " + drawable.getHeight());
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
