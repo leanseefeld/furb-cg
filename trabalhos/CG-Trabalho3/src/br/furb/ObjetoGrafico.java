@@ -8,7 +8,7 @@ import javax.media.opengl.GL;
 public class ObjetoGrafico {
 	private List<ObjetoGrafico> objetosGraficos;
 	private ObjetoGrafico objetoPai;
-	private List<Transformacao> transformacao;
+	private Transformacao transformacao;
 	private List<Ponto> pontos;
 	private int cor;
 	private int primitiva;
@@ -16,14 +16,36 @@ public class ObjetoGrafico {
 	private GL gl;
 	private Ponto pontoSelecionado;
 
-	public ObjetoGrafico(GL gl, Ponto ponto) {
+	public ObjetoGrafico(GL gl) {
 		super();
 		this.gl = gl;
 		this.primitiva = GL.GL_LINE_LOOP;
 		this.pontos = new ArrayList<Ponto>();
-		this.pontos.add(ponto.clone());
-		this.pontos.add(ponto);
-		this.pontoSelecionado = ponto;
+	}
+	
+	public void RotacionarX(int graus)
+	{
+		
+	}
+	
+	public void RotacionarY(int graus)
+	{
+		
+	}
+	
+	public void Mover(int x, int y)
+	{
+		
+	}
+	
+	public void Escalonar(int quantidade)
+	{
+		
+	}
+	
+	public ObjetoGrafico SelecionarObjeto()
+	{
+		return null;
 	}
 	
 	public Ponto SelecionarPonto(int x, int y)
