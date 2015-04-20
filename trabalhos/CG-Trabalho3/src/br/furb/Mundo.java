@@ -1,13 +1,22 @@
 package br.furb;
 
-import java.util.List;
+import javax.media.opengl.GL;
 
-public class Mundo {
-	private List<ObjetoGrafico> objetosGraficos;
-
-	public void desenhar() {
-		for (ObjetoGrafico objetoGrafico : objetosGraficos) {
-			objetoGrafico.desenhar();
-		}
+public class Mundo extends ObjetoGrafico {
+	public Mundo(GL gl, int maxX, int minX, int maxY, int minY) {
+		super(gl);
+		super.bbox = new BBox(maxX, minX, maxY, minY);
 	}
+	
+	@Override
+	public void desenhar() {
+		super.desenhar();
+	}
+
+	@Override
+	public boolean malhaSelecionada(Ponto pontoBusca) {
+		//Não possui malha, então retorna true sempre
+		return true;
+	}
+
 }

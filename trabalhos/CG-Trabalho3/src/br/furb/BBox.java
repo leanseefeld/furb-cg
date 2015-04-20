@@ -46,4 +46,15 @@ public class BBox {
 		this.menorY = menorY;
 	}
 
+	public BBox() {
+		super();
+	}
+
+	public boolean estaDentro(Ponto ponto) {
+		if (ponto.X > this.menorX && ponto.X < this.maiorX
+				&& ponto.Y > this.menorY && ponto.Y < this.maiorY) {
+			return true;
+		}
+		return false;
+	}
 }

@@ -1,4 +1,4 @@
-package br.furb.n1;
+package br.furb;
 
 import java.awt.BorderLayout;
 
@@ -10,11 +10,11 @@ import javax.swing.WindowConstants;
 public class Frame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private Main renderer = new Main();
+	private Canvas renderer = new Canvas();
 	private int janelaLargura = 400, janelaAltura = 400;
 
 	public Frame() {
-		super("Execício N1");
+		super("Trabalho 3");
 		setBounds(300, 250, janelaLargura, janelaAltura + 22);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
@@ -28,6 +28,8 @@ public class Frame extends JFrame {
 		GLCanvas canvas = new GLCanvas(glCaps);
 		add(canvas, BorderLayout.CENTER);
 		canvas.addGLEventListener(renderer);
+		canvas.addMouseMotionListener(renderer);
+		canvas.addMouseListener(renderer);
 		canvas.requestFocus();
 	}
 

@@ -15,4 +15,10 @@ public class Ponto {
 	{
 		return new Ponto(this.X, this.Y);
 	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "X: " + this.X + " Y:" + this.Y;
+	}
 }
