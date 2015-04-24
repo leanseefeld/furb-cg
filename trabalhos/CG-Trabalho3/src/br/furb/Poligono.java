@@ -63,15 +63,22 @@ public class Poligono extends ObjetoGrafico {
 	public void desenhar() {
 		gl.glLineWidth(2);
 		gl.glColor3f(cor.R, cor.G, cor.B);
-		gl.glBegin(primitiva);
-		{
-			for (Ponto ponto : pontos) {
-				gl.glVertex2d(ponto.X, ponto.Y);
-			}
-		}
-		gl.glEnd();
 
-		super.desenhar();
+		gl.glPushMatrix();
+		{
+			gl.glMultMatrixd(transformacao.getMatriz(), 0);
+
+			gl.glBegin(primitiva);
+			{
+				for (Ponto ponto : pontos) {
+					gl.glVertex2d(ponto.X, ponto.Y);
+				}
+			}
+			gl.glEnd();
+
+			super.desenhar();
+		}
+		gl.glPopMatrix();
 	}
 
 	@Override
@@ -90,10 +97,10 @@ public class Poligono extends ObjetoGrafico {
 				// Não consigera por enquanto
 			} else {
 				// Verifica se o ponto está entre o Y dos pontos A e B
-				float t = ((float) pontoBusca.Y - (float) pontoA.Y)
-						/ ((float) pontoB.Y - (float) pontoA.Y);
+				float t = ((float) pontoBusca.Y - (float) pontoA.Y) / ((float) pontoB.Y - (float) pontoA.Y);
 				if (t > 0 && t < 1) {
-					//Verifica se o ponto está a direita da intersecção ou a esquerda e considera apenas um dos lados
+					// Verifica se o ponto está a direita da intersecção ou a
+					// esquerda e considera apenas um dos lados
 					float XInterseccao = getPontoIntermediario(pontoA.X, pontoB.X, t);
 					if (XInterseccao > pontoBusca.X)
 						quantidade++;
@@ -105,5 +112,9 @@ public class Poligono extends ObjetoGrafico {
 
 	private float getPontoIntermediario(int a, int b, float peso) {
 		return a + (b - a) * peso;
+	}
+
+	public void setTransformacao(Transformacao transformacao) {
+		this.transformacao = transformacao;
 	}
 }

@@ -9,11 +9,10 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import javax.xml.crypto.dsig.Transform;
 
-public class Canvas implements GLEventListener, MouseMotionListener,
-		MouseListener {
-	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f,
-			ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
+public class Canvas implements GLEventListener, MouseMotionListener, MouseListener {
+	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f, ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
 	private GL gl;
 	private GLU glu;
 	private GLAutoDrawable glDrawable;
@@ -33,7 +32,7 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		SRU();
 
 		mundo.desenhar();
-		
+
 		this.desenhaPonteiro();
 	}
 
@@ -87,21 +86,28 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		po.addPonto(new Ponto(200, 200));
 		po.concluir();
 		objetoSelecionado = po;
+		Transformacao t = new Transformacao();
+		t.setMatriz(
+				new double[]{//
+					1,0,0,15,//
+					0,1,0,0,//
+					0,0,1,0,//
+					0,0,0,1});
+		po.setTransformacao(t);
 	}
-	
-	public void desenhaPonteiro()
-	{
+
+	public void desenhaPonteiro() {
 		gl.glPointSize(5);
 		gl.glColor3f(0f, 0f, 1f);
-		gl.glBegin(GL.GL_POINTS);{
+		gl.glBegin(GL.GL_POINTS);
+		{
 			gl.glVertex2d(mouseReal.X, -mouseReal.Y);
 		}
 		gl.glEnd();
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
-			int arg4) {
+	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
 		// TODO Auto-generated method stub
 
 	}
@@ -150,8 +156,7 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		System.out.println(mouseReal.toString());
 	}
 
-	private void ajustaPonto(Ponto ponto)
-	{
+	private void ajustaPonto(Ponto ponto) {
 		ponto.X = ponto.X * 2 - 400;
 		ponto.Y = ponto.Y * 2 - 400;
 	}

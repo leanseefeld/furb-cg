@@ -74,6 +74,10 @@ public abstract class ObjetoGrafico {
 	public abstract boolean malhaSelecionada(Ponto pontoBusca);
 
 	public final ObjetoGrafico selecionarObjeto(Ponto ponto) {
+		//TODO Não pode ser assim
+		//o filho pode estar fora da BBOX do pai
+		//Ou seja, deve ser verificado em todos os filhos mesmo que o ponto de busca 
+		//não esteja dentro da BBOX do pai
 		if (this.bbox.estaDentro(ponto)) {
 			ObjetoGrafico objetoSelecionado = null;
 			for (ObjetoGrafico objetoGrafico : objetosGraficos) {
