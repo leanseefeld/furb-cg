@@ -6,7 +6,6 @@ import java.util.List;
 import javax.media.opengl.GL;
 
 public class Poligono extends ObjetoGrafico {
-	private Transformacao transformacao;
 	private List<Ponto> pontos;
 	private int primitiva;
 	private Ponto pontoSelecionado;
@@ -61,7 +60,7 @@ public class Poligono extends ObjetoGrafico {
 	}
 
 	public void desenhar() {
-		gl.glLineWidth(2);
+		gl.glLineWidth(3);
 		gl.glColor3f(cor.R, cor.G, cor.B);
 
 		gl.glPushMatrix();
@@ -112,9 +111,5 @@ public class Poligono extends ObjetoGrafico {
 
 	private float getPontoIntermediario(int a, int b, float peso) {
 		return a + (b - a) * peso;
-	}
-
-	public void setTransformacao(Transformacao transformacao) {
-		this.transformacao = transformacao;
 	}
 }

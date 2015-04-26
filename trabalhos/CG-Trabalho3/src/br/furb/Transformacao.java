@@ -14,4 +14,12 @@ public class Transformacao {
 	public void setMatriz(double[] matriz) {
 		this.matriz = matriz;
 	}
+
+	public double getTrasnlacaoX() {
+		return this.matriz[12];
+	}
+
+	public double getTrasnlacaoY() {
+		return this.matriz[13];
+	}
 }

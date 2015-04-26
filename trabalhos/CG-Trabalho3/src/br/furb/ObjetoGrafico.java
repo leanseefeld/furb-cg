@@ -11,12 +11,14 @@ public abstract class ObjetoGrafico {
 	protected GL gl;
 	protected boolean selecionado;
 	protected BBox bbox;
+	protected Transformacao transformacao;
 
 	public ObjetoGrafico(GL gl) {
 		super();
 		this.objetosGraficos = new ArrayList<ObjetoGrafico>();
 		this.gl = gl;
 		this.selecionado = false;
+		this.transformacao = new Transformacao();
 	}
 
 	public void desenhar() {
@@ -74,10 +76,16 @@ public abstract class ObjetoGrafico {
 	public abstract boolean malhaSelecionada(Ponto pontoBusca);
 
 	public final ObjetoGrafico selecionarObjeto(Ponto ponto) {
+		//TODO Verificar se é apenas isso que deve ser feito aplicado sobre o ponto de seleção
+		ponto = ponto.clone();
+		ponto.X -= transformacao.getTrasnlacaoX();
+		ponto.Y += transformacao.getTrasnlacaoY();
+		System.out.println(ponto.X + " " + ponto.Y);
+		
 		//TODO Não pode ser assim
 		//o filho pode estar fora da BBOX do pai
 		//Ou seja, deve ser verificado em todos os filhos mesmo que o ponto de busca 
-		//não esteja dentro da BBOX do pai
+		//não esteja dentro da BBOX do pais
 		if (this.bbox.estaDentro(ponto)) {
 			ObjetoGrafico objetoSelecionado = null;
 			for (ObjetoGrafico objetoGrafico : objetosGraficos) {
@@ -105,5 +113,9 @@ public abstract class ObjetoGrafico {
 
 	public void setSelected(boolean isSelected) {
 		this.selecionado = isSelected;
+	}
+	
+	public void setTransformacao(Transformacao transformacao) {
+		this.transformacao = transformacao;
 	}
 }

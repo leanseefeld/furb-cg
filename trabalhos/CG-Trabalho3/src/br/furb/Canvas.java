@@ -18,7 +18,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	private GLAutoDrawable glDrawable;
 	private Mundo mundo;
 	private ObjetoGrafico objetoSelecionado;
-	private Ponto mouseReal;
+	private Ponto mouseReal = new Ponto(0, 0);
 
 	@Override
 	public void display(GLAutoDrawable arg0) {
@@ -70,8 +70,6 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		mundo = new Mundo(gl, (int) ortho2D_maxX, (int) ortho2D_minX,
 				(int) ortho2D_maxY, (int) ortho2D_minY);
-		
-		mouseReal = new Ponto(0, 0);
 
 		mundo.setSelected(true);
 		objetoSelecionado = mundo;
@@ -80,19 +78,19 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		Poligono po = new Poligono(gl);
 		po.cor = new Cor(0, 1, 0);
 		mundo.addFilho(po);
-		po.addPonto(new Ponto(-200, 200));
-		po.addPonto(new Ponto(-200, -200));
-		po.addPonto(new Ponto(200, -200));
-		po.addPonto(new Ponto(200, 200));
+		po.addPonto(new Ponto(0, 100));
+		po.addPonto(new Ponto(100, 0));
+		po.addPonto(new Ponto(0, -100));
+		po.addPonto(new Ponto(-100, 0));
 		po.concluir();
 		objetoSelecionado = po;
 		Transformacao t = new Transformacao();
 		t.setMatriz(
 				new double[]{//
-					1,0,0,15,//
+					1,0,0,0,//
 					0,1,0,0,//
 					0,0,1,0,//
-					0,0,0,1});
+					100,-100,0,1});
 		po.setTransformacao(t);
 	}
 
