@@ -12,6 +12,7 @@ public abstract class ObjetoGrafico {
 	protected boolean selecionado;
 	protected BBox bbox;
 	protected Transformacao transformacao;
+	protected ObjetoGrafico parent;
 
 	public ObjetoGrafico(GL gl) {
 		super();
@@ -31,10 +32,16 @@ public abstract class ObjetoGrafico {
 		}
 	}
 
+	public abstract boolean malhaSelecionada(Ponto pontoBusca);
+
 	private void desenharSelecao() {
 		if (this.bbox != null) {
 			gl.glPointSize(4);
-			gl.glColor3f(1.0f, 0.0f, 0.0f);
+			if (Mundo.EstadoAtual == Estado.Visualizacao)
+				gl.glColor3f(1.0f, 0.0f, 0.0f);
+			else {
+				gl.glColor3f(0.0f, 1.0f, 0.0f);
+			}
 			gl.glBegin(GL.GL_POINTS);
 			{
 				gl.glVertex2d(this.bbox.getMaiorX(), this.bbox.getMaiorY());
@@ -42,11 +49,9 @@ public abstract class ObjetoGrafico {
 				gl.glVertex2d(this.bbox.getMaiorX(), this.bbox.getMenorY());
 				gl.glVertex2d(this.bbox.getMenorX(), this.bbox.getMenorY());
 
-				int pontoMeioX = this.bbox.getMenorX()
-						+ ((this.bbox.getMaiorX() - this.bbox.getMenorX()) / 2);
+				int pontoMeioX = this.bbox.getMenorX() + ((this.bbox.getMaiorX() - this.bbox.getMenorX()) / 2);
 
-				int pontoMeioY = this.bbox.getMenorY()
-						+ ((this.bbox.getMaiorY() - this.bbox.getMenorY()) / 2);
+				int pontoMeioY = this.bbox.getMenorY() + ((this.bbox.getMaiorY() - this.bbox.getMenorY()) / 2);
 
 				gl.glVertex2d(this.bbox.getMaiorX(), pontoMeioY);
 				gl.glVertex2d(this.bbox.getMenorX(), pontoMeioY);
@@ -56,7 +61,6 @@ public abstract class ObjetoGrafico {
 			gl.glEnd();
 
 			gl.glPointSize(1);
-			gl.glColor3f(1.0f, 0.0f, 0.0f);
 			gl.glBegin(GL.GL_POINTS);
 			{
 				for (int i = this.bbox.getMenorX(); i < this.bbox.getMaiorX(); i += 10) {
@@ -73,27 +77,21 @@ public abstract class ObjetoGrafico {
 		}
 	}
 
-	public abstract boolean malhaSelecionada(Ponto pontoBusca);
+	public ObjetoGrafico selecionarObjeto(Ponto ponto) {
+		ponto = transformacao.transformPointInverse(ponto);
 
-	public final ObjetoGrafico selecionarObjeto(Ponto ponto) {
-		//TODO Verificar se é apenas isso que deve ser feito aplicado sobre o ponto de seleção
-		ponto = ponto.clone();
-		ponto.X -= transformacao.getTrasnlacaoX();
-		ponto.Y += transformacao.getTrasnlacaoY();
-		System.out.println(ponto.X + " " + ponto.Y);
-		
-		//TODO Não pode ser assim
-		//o filho pode estar fora da BBOX do pai
-		//Ou seja, deve ser verificado em todos os filhos mesmo que o ponto de busca 
-		//não esteja dentro da BBOX do pais
-		if (this.bbox.estaDentro(ponto)) {
-			ObjetoGrafico objetoSelecionado = null;
-			for (ObjetoGrafico objetoGrafico : objetosGraficos) {
-				if ((objetoSelecionado = objetoGrafico.selecionarObjeto(ponto)) != null) {
-					return objetoSelecionado;
-				}
+		// Primeiro verifica se algum dos filhos foi selecionado
+		ObjetoGrafico objetoSelecionado = null;
+		for (ObjetoGrafico objetoGrafico : objetosGraficos) {
+			if ((objetoSelecionado = objetoGrafico.selecionarObjeto(ponto)) != null) {
+				return objetoSelecionado;
 			}
-			if (malhaSelecionada(ponto)) {
+		}
+
+		// Se nenhum filho foi seleiconado, então verifica se o objeto atual foi
+		// selecionado
+		if (this.bbox.estaDentro(ponto)) {
+			if (this.malhaSelecionada(ponto)) {
 				this.setSelected(true);
 				return this;
 			}
@@ -104,7 +102,7 @@ public abstract class ObjetoGrafico {
 
 	public void addFilho(Poligono poligono) {
 		this.objetosGraficos.add(poligono);
-		poligono.setSelected(true);
+		poligono.setParent(this);
 	}
 
 	public boolean isSelected() {
@@ -114,8 +112,24 @@ public abstract class ObjetoGrafico {
 	public void setSelected(boolean isSelected) {
 		this.selecionado = isSelected;
 	}
-	
+
 	public void setTransformacao(Transformacao transformacao) {
-		this.transformacao = transformacao;
+		this.transformacao = this.transformacao.transformMatrix(transformacao);
+	}
+
+	public Transformacao getTransformacao() {
+		return transformacao;
+	}
+
+	public void RemoveFilho(ObjetoGrafico objeto) {
+		this.objetosGraficos.remove(objeto);
+	}
+
+	public ObjetoGrafico getParent() {
+		return parent;
+	}
+
+	public void setParent(ObjetoGrafico objetoGrafico) {
+		this.parent = objetoGrafico;
 	}
 }
