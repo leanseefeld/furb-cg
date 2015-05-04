@@ -16,8 +16,17 @@ public class Poligono extends ObjetoGrafico {
 		this.pontos = new ArrayList<Ponto>();
 	}
 
+	public int getPrimitiva() {
+		return primitiva;
+	}
+
+	public void setPrimitiva(int primitiva) {
+		this.primitiva = primitiva;
+	}
+	
 	public void addPonto(Ponto ponto) {
-		this.pontos.add(ponto);
+		Ponto pontoTrans = this.inverseTransformRecursive(ponto);
+		this.pontos.add(pontoTrans);
 	}
 
 	public void concluir() {
@@ -111,5 +120,13 @@ public class Poligono extends ObjetoGrafico {
 
 	private float getPontoIntermediario(int a, int b, float peso) {
 		return a + (b - a) * peso;
+	}
+
+	public boolean temPontos() {
+		return this.pontos.size() > 0;
+	}
+
+	public void removerPonto(Ponto proximoPonto) {
+		this.pontos.remove(proximoPonto);
 	}
 }

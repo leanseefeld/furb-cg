@@ -11,6 +11,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import javax.swing.SwingUtilities;
 
 public class Canvas implements GLEventListener, MouseMotionListener, MouseListener, KeyListener {
 	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f, ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
@@ -20,6 +21,8 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	private Mundo mundo;
 	private Ponto mouseReal = new Ponto(0, 0);
 	private Poligono novoObjeto;
+	private Ponto pontoAnterior;
+	private Ponto pontoPosterior;
 
 	@Override
 	public void display(GLAutoDrawable arg0) {
@@ -33,6 +36,19 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		SRU();
 
 		mundo.desenhar();
+
+		if (Mundo.EstadoAtual == Estado.Criacao) {
+			if (pontoAnterior != null && pontoPosterior != null) {
+				gl.glLineWidth(2);
+				gl.glColor3f(0f, 0f, 1f);
+				gl.glBegin(GL.GL_LINES);
+				{
+					gl.glVertex2d(pontoAnterior.X, pontoAnterior.Y);
+					gl.glVertex2d(pontoPosterior.X, pontoPosterior.Y);
+				}
+				gl.glEnd();
+			}
+		}
 
 		this.desenhaPonteiro();
 	}
@@ -88,7 +104,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		gl.glColor3f(0f, 0f, 1f);
 		gl.glBegin(GL.GL_POINTS);
 		{
-			gl.glVertex2d(mouseReal.X, -mouseReal.Y);
+			gl.glVertex2d(mouseReal.X, mouseReal.Y);
 		}
 		gl.glEnd();
 	}
@@ -98,34 +114,40 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(MouseEvent e) {
 
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
+	public void mouseEntered(MouseEvent e) {
 
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
+	public void mouseExited(MouseEvent e) {
 
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(MouseEvent e) {
+		Ponto pontoSelecionado = new Ponto(e.getX(), e.getY());
+		ajustarPonto(pontoSelecionado);
 		switch (Mundo.EstadoAtual) {
 		case Visualizacao:
-			Ponto pontoSelecionado = new Ponto(arg0.getX(), arg0.getY());
-			ajustarPonto(pontoSelecionado);
-			// Não vai selecionar corretamente se o objeto sofreram translação
-			// O X está invertido
-			// Ao inverter o sinal de X, passa a funcionar a seleção de objetos
-			// translatados.
-			// Mas deixa de funcionar para objetos rotacionados
 			mundo.selecionarObjeto(pontoSelecionado);
 			break;
 		case Criacao:
+			if (SwingUtilities.isRightMouseButton(e)) {
+				this.concluirCriacao();
+			} else {
+				if (!this.novoObjeto.temPontos()) {
+					this.pontoAnterior = null;
+					this.pontoPosterior = pontoSelecionado.clone();
+				}
+				this.pontoAnterior = this.pontoPosterior;
+				this.pontoPosterior = pontoSelecionado.clone();
+				this.novoObjeto.addPonto(this.pontoAnterior);
+			}
 			break;
 		case Edicao:
 			break;
@@ -149,12 +171,17 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		this.mouseReal.X = arg0.getX();
 		this.mouseReal.Y = arg0.getY();
 		ajustarPonto(this.mouseReal);
+
+		if (this.pontoPosterior != null) {
+			this.pontoPosterior.X = this.mouseReal.X;
+			this.pontoPosterior.Y = this.mouseReal.Y;
+		}
 		glDrawable.display();
 	}
 
 	private void ajustarPonto(Ponto ponto) {
 		ponto.X = (ponto.X * 2 - 400);
-		ponto.Y = (ponto.Y * 2 - 400);
+		ponto.Y = -(ponto.Y * 2 - 400);
 	}
 
 	@Override
@@ -170,7 +197,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	 *            evento do teclado
 	 * @return retorna true se houve edição
 	 */
-	public boolean verificaEdicao(KeyEvent e) {
+	public boolean verificarEdicao(KeyEvent e) {
 		boolean reconheceu = true;
 		Transformacao trans = new Transformacao();
 		int peso = 1;
@@ -231,14 +258,18 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	 *            evento do teclado
 	 * @return retorna true se houve algum comando válido
 	 */
-	public boolean verificaVisualizacao(KeyEvent e) {
+	public boolean verificarVisualizacao(KeyEvent e) {
 		boolean reconheceu = true;
 		switch (e.getKeyCode()) {
 		// Novo objeto
 		case KeyEvent.VK_N:
 			novoObjeto = new Poligono(gl);
+			novoObjeto.setPrimitiva(GL.GL_LINE_STRIP);
 			Mundo.EstadoAtual = Estado.Criacao;
-			this.mundo.addFilho(novoObjeto);
+			if (this.mundo.getObjetoSelecionado() != null)
+				this.mundo.getObjetoSelecionado().addFilho(novoObjeto);
+			else
+				this.mundo.addFilho(novoObjeto);
 			break;
 		// Editar objeto selecionado
 		case KeyEvent.VK_E:
@@ -258,14 +289,40 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		return reconheceu;
 	}
 
+	private boolean verificarCriacao(KeyEvent e) {
+		boolean reconheceu = true;
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_ENTER:
+			concluirCriacao();
+			break;
+		default:
+			reconheceu = false;
+		}
+		return reconheceu;
+	}
+
+	private void concluirCriacao() {
+		this.novoObjeto.concluir();
+		Mundo.EstadoAtual = Estado.Visualizacao;
+		this.novoObjeto.removerPonto(pontoPosterior);
+		this.pontoPosterior = null;
+		this.novoObjeto = null;
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		boolean reconheceu = false;
 
-		if (Mundo.EstadoAtual == Estado.Visualizacao) {
-			reconheceu = verificaVisualizacao(e);
-		} else if (Mundo.EstadoAtual == Estado.Edicao) {
-			reconheceu = verificaEdicao(e);
+		switch (Mundo.EstadoAtual) {
+		case Visualizacao:
+			reconheceu = verificarVisualizacao(e);
+			break;
+		case Edicao:
+			reconheceu = verificarEdicao(e);
+			break;
+		case Criacao:
+			reconheceu = verificarCriacao(e);
+			break;
 		}
 
 		if (reconheceu) {

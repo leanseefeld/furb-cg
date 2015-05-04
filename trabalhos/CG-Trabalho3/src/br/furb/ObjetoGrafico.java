@@ -20,6 +20,7 @@ public abstract class ObjetoGrafico {
 		this.gl = gl;
 		this.selecionado = false;
 		this.transformacao = new Transformacao();
+		this.cor = new Cor(0f, 0f, 0f);
 	}
 
 	public void desenhar() {
@@ -131,5 +132,13 @@ public abstract class ObjetoGrafico {
 
 	public void setParent(ObjetoGrafico objetoGrafico) {
 		this.parent = objetoGrafico;
+	}
+	
+	public Ponto inverseTransformRecursive(Ponto ponto)
+	{
+		if(this.parent != null)
+			ponto = this.parent.inverseTransformRecursive(ponto);
+		
+		return this.transformacao.transformPointInverse(ponto);
 	}
 }

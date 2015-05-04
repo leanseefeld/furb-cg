@@ -86,18 +86,17 @@ public class Transformacao {
 	 * @return ponto na posição de origem
 	 */
 	public Ponto transformPointInverse(Ponto point) {
-		System.out.println("-------------------");
 		this.exibeMatriz();
 		Ponto pointResult = point.clone();
-		System.out.println("Antes: " + pointResult.toString());
 
 		// Diminiu o ponto para tamnho de origem
 		if (matriz[12] != 0) {
-			pointResult.X -= (matriz[12] * point.W);
+			pointResult.X -= (matriz[12] * pointResult.W);
 		}
 		if (matriz[13] != 0) {
-			pointResult.Y += (matriz[13] * point.W);
+			pointResult.Y -= (matriz[13] * pointResult.W);
 		}
+		
 		// Move o ponto para local de origem
 		pointResult.X = (int) (pointResult.X / matriz[0]);
 		pointResult.Y = (int) (pointResult.Y / matriz[5]); 
@@ -106,7 +105,6 @@ public class Transformacao {
 		/*pointResult.X += (matriz[4] == 0d ? 0d : -(-(matriz[4]) * pointResult.Y));
 		pointResult.Y += (matriz[1] == 0d ? 0d : -(-(matriz[1]) * pointResult.X));*/
 
-		System.out.println("Depois: " + pointResult.toString());
 		return pointResult;
 	}
 
