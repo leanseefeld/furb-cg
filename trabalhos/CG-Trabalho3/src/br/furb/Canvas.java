@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Random;
 
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
@@ -159,8 +160,8 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			}
 			break;
 		case Edicao:
-			if (mundo.objetoSelecionado instanceof Poligono)
-				((Poligono) mundo.objetoSelecionado).selecionarPonto(pontoSelecionado);
+			if (Mundo.objetoSelecionado instanceof Poligono)
+				((Poligono) Mundo.objetoSelecionado).selecionarPonto(pontoSelecionado);
 			break;
 		}
 
@@ -245,6 +246,10 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				trans.atribuirEscala(1 - ((double) peso / 100), 1 - ((double) peso / 100));
 				break;
 
+			case KeyEvent.VK_C:
+				Mundo.objetoSelecionado.setCor(new Cor(new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat()));
+				break;
+
 			case KeyEvent.VK_ESCAPE:
 				// TODO Implementar
 				Mundo.EstadoAtual = Estado.Visualizacao;
@@ -276,7 +281,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				obj.removerPonto(Mundo.pontoSelecionado);
 				Mundo.pontoSelecionado = null;
 				if (!obj.temPontos()) {
-					this.mundo.objetoSelecionado.parent.removerFilho(Mundo.objetoSelecionado);
+					Mundo.objetoSelecionado.parent.removerFilho(Mundo.objetoSelecionado);
 				}
 				break;
 			case KeyEvent.VK_ESCAPE:
@@ -288,7 +293,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		}
 
 		if (reconheceu) {
-			this.mundo.getObjetoSelecionado().addTransformacao(trans);
+			Mundo.getObjetoSelecionado().addTransformacao(trans);
 		}
 		return reconheceu;
 	}
@@ -308,14 +313,14 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			novoObjeto = new Poligono(gl);
 			novoObjeto.setPrimitiva(GL.GL_LINE_STRIP);
 			Mundo.EstadoAtual = Estado.Criacao;
-			if (this.mundo.getObjetoSelecionado() != null)
-				this.mundo.getObjetoSelecionado().addFilho(novoObjeto);
+			if (Mundo.getObjetoSelecionado() != null)
+				Mundo.getObjetoSelecionado().addFilho(novoObjeto);
 			else
 				this.mundo.addFilho(novoObjeto);
 			break;
 		// Editar objeto selecionado
 		case KeyEvent.VK_E:
-			if (!mundo.getObjetoSelecionado().equals(mundo)) {
+			if (!Mundo.getObjetoSelecionado().equals(mundo)) {
 				Mundo.EstadoAtual = Estado.Edicao;
 			} else {
 				System.out.println("Selecione um objeto para editar");
@@ -323,8 +328,8 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			break;
 		// Deletar objeto selecionado
 		case KeyEvent.VK_DELETE:
-			if (!this.mundo.getObjetoSelecionado().equals(this.mundo))
-				this.mundo.removeObjetoSelecionado();
+			if (!Mundo.getObjetoSelecionado().equals(this.mundo))
+				Mundo.removeObjetoSelecionado();
 			break;
 		default:
 			reconheceu = false;
@@ -350,6 +355,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		this.novoObjeto.removerPonto(pontoPosterior);
 		this.pontoPosterior = null;
 		this.novoObjeto = null;
+		Mundo.setObjetoSelecionado(this.novoObjeto);
 	}
 
 	@Override

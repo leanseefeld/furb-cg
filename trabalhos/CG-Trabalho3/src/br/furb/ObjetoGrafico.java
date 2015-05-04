@@ -37,6 +37,14 @@ public abstract class ObjetoGrafico {
 		this.parent = objetoGrafico;
 	}
 
+	public Cor getCor() {
+		return cor;
+	}
+
+	public void setCor(Cor cor) {
+		this.cor = cor;
+	}
+
 	/**
 	 * Adiciona um objeto filho
 	 * 

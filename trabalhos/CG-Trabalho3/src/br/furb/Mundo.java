@@ -30,16 +30,16 @@ public class Mundo extends ObjetoGrafico {
 		return Mundo.objetoSelecionado;
 	}
 
-	public void setObjetoSelecionado(ObjetoGrafico objetoGrafico) {
+	public static void setObjetoSelecionado(ObjetoGrafico objetoGrafico) {
 		Mundo.pontoSelecionado = null;
 		Mundo.objetoSelecionado = objetoGrafico;
 	}
 
-	public ObjetoGrafico getObjetoSelecionado() {
+	public static ObjetoGrafico getObjetoSelecionado() {
 		return objetoSelecionado;
 	}
 
-	public void removeObjetoSelecionado() {
+	public static void removeObjetoSelecionado() {
 		Mundo.objetoSelecionado.getParent().removerFilho(objetoSelecionado);
 	}
 }
