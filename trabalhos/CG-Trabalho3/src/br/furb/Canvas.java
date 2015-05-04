@@ -1,5 +1,10 @@
 package br.furb;
 
+import static java.lang.Math.abs;
+
+import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -10,12 +15,15 @@ import java.util.Random;
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 import javax.swing.SwingUtilities;
 
 public class Canvas implements GLEventListener, MouseMotionListener, MouseListener, KeyListener {
 	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f, ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
+	private int ortho2D_w = (int) (abs(ortho2D_maxX) - ortho2D_minX);
+	private int ortho2D_h = (int) (abs(ortho2D_maxY) - ortho2D_minY);
 	private GL gl;
 	private GLU glu;
 	private GLAutoDrawable glDrawable;
@@ -24,6 +32,25 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	private Poligono novoObjeto;
 	private Ponto pontoAnterior;
 	private Ponto pontoPosterior;
+
+	public Canvas(GLCanvas canvas) {
+		canvas.addGLEventListener(this);
+		canvas.addMouseMotionListener(this);
+		canvas.addMouseListener(this);
+		canvas.addKeyListener(this);
+		canvas.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				ortho2D_w = e.getComponent().getWidth();
+				ortho2D_h = e.getComponent().getHeight();
+				ortho2D_minX = ortho2D_w / -2;
+				ortho2D_maxX = ortho2D_w / 2;
+				ortho2D_minY = ortho2D_h / -2;
+				ortho2D_maxY = ortho2D_h / 2;
+			}
+		});
+		canvas.setPreferredSize(new Dimension(ortho2D_w, ortho2D_h));
+	}
 
 	@Override
 	public void display(GLAutoDrawable arg0) {
@@ -188,12 +215,14 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			this.pontoPosterior.X = this.mouseReal.X;
 			this.pontoPosterior.Y = this.mouseReal.Y;
 		}
-		glDrawable.display();
+		if (glDrawable != null) {
+			glDrawable.display();
+		}
 	}
 
 	private void ajustarPonto(Ponto ponto) {
-		ponto.X = (ponto.X * 2 - 400);
-		ponto.Y = -(ponto.Y * 2 - 400);
+		ponto.X = (int) (-ortho2D_w / 2 + ponto.X);
+		ponto.Y = (int) (ortho2D_h / 2 - ponto.Y);
 	}
 
 	@Override
