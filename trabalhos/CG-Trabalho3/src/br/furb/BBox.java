@@ -50,10 +50,11 @@ public class BBox {
 		super();
 	}
 
-	public Ponto getPontoCentral() {
-		return new Ponto((this.maiorX + this.maiorX) / 2, (this.menorX + this.menorY) / 2);
-	};
-
+	/**
+	 * Verifica se o ponto está dentro da BBox
+	 * @param ponto
+	 * @return
+	 */
 	public boolean estaDentro(Ponto ponto) {
 		if (ponto.X > this.menorX && ponto.X < this.maiorX && ponto.Y > this.menorY && ponto.Y < this.maiorY) {
 			return true;

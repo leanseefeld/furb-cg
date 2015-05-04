@@ -9,20 +9,55 @@ public abstract class ObjetoGrafico {
 	protected List<ObjetoGrafico> objetosGraficos;
 	protected Cor cor;
 	protected GL gl;
-	protected boolean selecionado;
 	protected BBox bbox;
 	protected Transformacao transformacao;
+	/**
+	 * Objeto pai
+	 */
 	protected ObjetoGrafico parent;
+
+	/**
+	 * Inclui uma transformação para o objeto
+	 * 
+	 * @param transformacao
+	 */
+	public void addTransformacao(Transformacao transformacao) {
+		this.transformacao = this.transformacao.transformMatrix(transformacao);
+	}
+
+	public Transformacao getTransformacao() {
+		return transformacao;
+	}
+
+	public ObjetoGrafico getParent() {
+		return parent;
+	}
+
+	public void setParent(ObjetoGrafico objetoGrafico) {
+		this.parent = objetoGrafico;
+	}
+
+	/**
+	 * Adiciona um objeto filho
+	 * 
+	 * @param poligono
+	 */
+	public void addFilho(Poligono poligono) {
+		this.objetosGraficos.add(poligono);
+		poligono.setParent(this);
+	}
 
 	public ObjetoGrafico(GL gl) {
 		super();
 		this.objetosGraficos = new ArrayList<ObjetoGrafico>();
 		this.gl = gl;
-		this.selecionado = false;
 		this.transformacao = new Transformacao();
 		this.cor = new Cor(0f, 0f, 0f);
 	}
 
+	/**
+	 * Desenha o objeto
+	 */
 	public void desenhar() {
 		if (this.isSelected()) {
 			desenharSelecao();
@@ -33,15 +68,18 @@ public abstract class ObjetoGrafico {
 		}
 	}
 
-	public abstract boolean malhaSelecionada(Ponto pontoBusca);
-
+	/**
+	 * Desenha o quadrado de seleção do objeto
+	 */
 	private void desenharSelecao() {
 		if (this.bbox != null) {
 			gl.glPointSize(4);
 			if (Mundo.EstadoAtual == Estado.Visualizacao)
 				gl.glColor3f(1.0f, 0.0f, 0.0f);
-			else {
+			else if (Mundo.EstadoAtual == Estado.Edicao) {
 				gl.glColor3f(0.0f, 1.0f, 0.0f);
+			} else {
+				gl.glColor3f(0.0f, 0.0f, 1.0f);
 			}
 			gl.glBegin(GL.GL_POINTS);
 			{
@@ -78,6 +116,13 @@ public abstract class ObjetoGrafico {
 		}
 	}
 
+	/**
+	 * Seleciona um objeto em o ponto se encontre dentro
+	 * 
+	 * @param ponto
+	 * @return retorna o objeto selecionado <br>
+	 *         retorna NULL se não encontrar nenhum objeto
+	 */
 	public ObjetoGrafico selecionarObjeto(Ponto ponto) {
 		ponto = transformacao.transformPointInverse(ponto);
 
@@ -89,11 +134,11 @@ public abstract class ObjetoGrafico {
 			}
 		}
 
-		// Se nenhum filho foi seleiconado, então verifica se o objeto atual foi
+		// Se nenhum filho foi selecionado, então verifica se o objeto atual foi
 		// selecionado
 		if (this.bbox.estaDentro(ponto)) {
 			if (this.malhaSelecionada(ponto)) {
-				this.setSelected(true);
+				Mundo.objetoSelecionado = this;
 				return this;
 			}
 		}
@@ -101,44 +146,39 @@ public abstract class ObjetoGrafico {
 		return null;
 	}
 
-	public void addFilho(Poligono poligono) {
-		this.objetosGraficos.add(poligono);
-		poligono.setParent(this);
-	}
+	/**
+	 * Validação extra que deve ser implementada por quem extender essa classe
+	 * abstrada
+	 * 
+	 * @param pontoBusca
+	 * @return
+	 */
+	public abstract boolean malhaSelecionada(Ponto pontoBusca);
 
+	/**
+	 * Indica se o objeto está selecionado
+	 * 
+	 * @return
+	 */
 	public boolean isSelected() {
-		return selecionado;
+		return Mundo.objetoSelecionado == this;
 	}
 
-	public void setSelected(boolean isSelected) {
-		this.selecionado = isSelected;
-	}
-
-	public void setTransformacao(Transformacao transformacao) {
-		this.transformacao = this.transformacao.transformMatrix(transformacao);
-	}
-
-	public Transformacao getTransformacao() {
-		return transformacao;
-	}
-
-	public void RemoveFilho(ObjetoGrafico objeto) {
+	public void removerFilho(ObjetoGrafico objeto) {
 		this.objetosGraficos.remove(objeto);
 	}
 
-	public ObjetoGrafico getParent() {
-		return parent;
-	}
-
-	public void setParent(ObjetoGrafico objetoGrafico) {
-		this.parent = objetoGrafico;
-	}
-	
-	public Ponto inverseTransformRecursive(Ponto ponto)
-	{
-		if(this.parent != null)
+	/**
+	 * Transforma o ponto para o ponto de origem considerando todas as
+	 * transformações dos objetos pais
+	 * 
+	 * @param ponto
+	 * @return
+	 */
+	public Ponto inverseTransformRecursive(Ponto ponto) {
+		if (this.parent != null)
 			ponto = this.parent.inverseTransformRecursive(ponto);
-		
+
 		return this.transformacao.transformPointInverse(ponto);
 	}
 }

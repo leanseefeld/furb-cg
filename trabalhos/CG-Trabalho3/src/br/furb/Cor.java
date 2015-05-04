@@ -5,6 +5,11 @@ public class Cor {
 	public float G;
 	public float B;
 
+	/**
+	 * @param r Red
+	 * @param g Green
+	 * @param b Blue
+	 */
 	public Cor(float r, float g, float b) {
 		R = r;
 		G = g;

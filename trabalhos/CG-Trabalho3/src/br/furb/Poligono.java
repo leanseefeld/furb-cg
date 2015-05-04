@@ -6,9 +6,9 @@ import java.util.List;
 import javax.media.opengl.GL;
 
 public class Poligono extends ObjetoGrafico {
+	private static final int RANGE_SELECIONAR_PONTO = 15;
 	private List<Ponto> pontos;
 	private int primitiva;
-	private Ponto pontoSelecionado;
 
 	public Poligono(GL gl) {
 		super(gl);
@@ -23,13 +23,16 @@ public class Poligono extends ObjetoGrafico {
 	public void setPrimitiva(int primitiva) {
 		this.primitiva = primitiva;
 	}
-	
+
 	public void addPonto(Ponto ponto) {
 		Ponto pontoTrans = this.inverseTransformRecursive(ponto);
 		this.pontos.add(pontoTrans);
 	}
 
-	public void concluir() {
+	/**
+	 * Monta a BBox em torno do objeto
+	 */
+	private void criarBBox() {
 		super.bbox = new BBox();
 		super.bbox.setMaiorX(Integer.MIN_VALUE);
 		super.bbox.setMenorX(Integer.MAX_VALUE);
@@ -45,6 +48,10 @@ public class Poligono extends ObjetoGrafico {
 			if (ponto.Y < this.bbox.getMenorY())
 				this.bbox.setMenorY(ponto.Y);
 		}
+	}
+
+	public void concluir() {
+		criarBBox();
 	}
 
 	public void RotacionarX(int graus) {
@@ -63,9 +70,22 @@ public class Poligono extends ObjetoGrafico {
 
 	}
 
-	public Ponto SelecionarPonto(int x, int y) {
-		pontoSelecionado = null;
-		return null;
+	/**
+	 * Destaca o ponto selecionado
+	 */
+	public void desenharPontoSelecionado() {
+		if (Mundo.pontoSelecionado != null)
+			for (Ponto ponto : this.pontos) {
+				if (ponto == Mundo.pontoSelecionado) {
+					gl.glPointSize(7);
+					gl.glColor3f(0f, 0f, 0f);
+					gl.glBegin(GL.GL_POINTS);
+					{
+						gl.glVertex2d(ponto.X, ponto.Y);
+					}
+					gl.glEnd();
+				}
+			}
 	}
 
 	public void desenhar() {
@@ -83,6 +103,9 @@ public class Poligono extends ObjetoGrafico {
 				}
 			}
 			gl.glEnd();
+
+			if (this.isSelected())
+				desenharPontoSelecionado();
 
 			super.desenhar();
 		}
@@ -118,6 +141,25 @@ public class Poligono extends ObjetoGrafico {
 		return (quantidade % 2) != 0;
 	}
 
+	/**
+	 * Seleciona um ponto do objeto
+	 * 
+	 * @param pontoSelecionado
+	 */
+	public Ponto selecionarPonto(Ponto pontoSelecionado) {
+		System.out.println("Busca : " + pontoSelecionado.toString());
+		Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado.clone());
+		System.out.println("BTrans: " + pontoTrans.toString());
+		for (Ponto ponto : this.pontos) {
+			if (Math.abs(ponto.X - pontoTrans.X) < RANGE_SELECIONAR_PONTO && Math.abs(ponto.Y - pontoTrans.Y) < RANGE_SELECIONAR_PONTO) {
+				Mundo.pontoSelecionado = ponto;
+				return ponto;
+			}
+		}
+		Mundo.pontoSelecionado = null;
+		return null;
+	}
+
 	private float getPontoIntermediario(int a, int b, float peso) {
 		return a + (b - a) * peso;
 	}
@@ -126,7 +168,8 @@ public class Poligono extends ObjetoGrafico {
 		return this.pontos.size() > 0;
 	}
 
-	public void removerPonto(Ponto proximoPonto) {
-		this.pontos.remove(proximoPonto);
+	public void removerPonto(Ponto ponto) {
+		this.pontos.remove(ponto);
+		criarBBox();
 	}
 }

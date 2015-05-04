@@ -86,7 +86,6 @@ public class Transformacao {
 	 * @return ponto na posição de origem
 	 */
 	public Ponto transformPointInverse(Ponto point) {
-		this.exibeMatriz();
 		Ponto pointResult = point.clone();
 
 		// Diminiu o ponto para tamnho de origem

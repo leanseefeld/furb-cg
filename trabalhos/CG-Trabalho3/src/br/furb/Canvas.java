@@ -37,6 +37,14 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 
 		mundo.desenhar();
 
+		this.desenhaRastro();
+		this.desenhaPonteiro();
+	}
+
+	/**
+	 * Desenha o rastro do mouse ao criar um objeto
+	 */
+	private void desenhaRastro() {
 		if (Mundo.EstadoAtual == Estado.Criacao) {
 			if (pontoAnterior != null && pontoPosterior != null) {
 				gl.glLineWidth(2);
@@ -49,10 +57,11 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				gl.glEnd();
 			}
 		}
-
-		this.desenhaPonteiro();
 	}
 
+	/**
+	 * Desenha os eixos da Tela
+	 */
 	public void SRU() {
 		// eixo x
 		gl.glColor3f(1.0f, 0.0f, 0.0f);
@@ -150,6 +159,8 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			}
 			break;
 		case Edicao:
+			if (mundo.objetoSelecionado instanceof Poligono)
+				((Poligono) mundo.objetoSelecionado).selecionarPonto(pontoSelecionado);
 			break;
 		}
 
@@ -205,48 +216,79 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			peso = 5;
 		}
 
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			trans.atribuirTranslacao(0, 10 * peso);
-			break;
-		case KeyEvent.VK_DOWN:
-			trans.atribuirTranslacao(0, -10 * peso);
-			break;
-		case KeyEvent.VK_LEFT:
-			trans.atribuirTranslacao(-10 * peso, 0);
-			break;
-		case KeyEvent.VK_RIGHT:
-			trans.atribuirTranslacao(10 * peso, 0);
-			break;
+		if (Mundo.pontoSelecionado == null) {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				trans.atribuirTranslacao(0, 10 * peso);
+				break;
+			case KeyEvent.VK_DOWN:
+				trans.atribuirTranslacao(0, -10 * peso);
+				break;
+			case KeyEvent.VK_LEFT:
+				trans.atribuirTranslacao(-10 * peso, 0);
+				break;
+			case KeyEvent.VK_RIGHT:
+				trans.atribuirTranslacao(10 * peso, 0);
+				break;
 
-		case KeyEvent.VK_1:
-			trans.atribuirRotacao(0.01 * peso);
-			break;
-		case KeyEvent.VK_2:
-			trans.atribuirRotacao(-0.01 * peso);
-			break;
+			case KeyEvent.VK_1:
+				trans.atribuirRotacao(0.01 * peso);
+				break;
+			case KeyEvent.VK_2:
+				trans.atribuirRotacao(-0.01 * peso);
+				break;
 
-		case KeyEvent.VK_ADD:
-			trans.atribuirEscala(1 + ((double) peso / 100), 1 + ((double) peso / 100));
-			break;
-		case KeyEvent.VK_SUBTRACT:
-			trans.atribuirEscala(1 - ((double) peso / 100), 1 - ((double) peso / 100));
-			break;
+			case KeyEvent.VK_ADD:
+				trans.atribuirEscala(1 + ((double) peso / 100), 1 + ((double) peso / 100));
+				break;
+			case KeyEvent.VK_SUBTRACT:
+				trans.atribuirEscala(1 - ((double) peso / 100), 1 - ((double) peso / 100));
+				break;
 
-		case KeyEvent.VK_ESCAPE:
-			// TODO Implementar
-			Mundo.EstadoAtual = Estado.Visualizacao;
-			break;
-		case KeyEvent.VK_ENTER:
-			// TODO Implementar
-			Mundo.EstadoAtual = Estado.Visualizacao;
-			break;
-		default:
-			reconheceu = false;
+			case KeyEvent.VK_ESCAPE:
+				// TODO Implementar
+				Mundo.EstadoAtual = Estado.Visualizacao;
+				break;
+			case KeyEvent.VK_ENTER:
+				// TODO Implementar
+				Mundo.EstadoAtual = Estado.Visualizacao;
+				break;
+			default:
+				reconheceu = false;
+			}
+		} else {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				Mundo.pontoSelecionado.Y += 1 * peso;
+				break;
+			case KeyEvent.VK_DOWN:
+				Mundo.pontoSelecionado.Y -= 1 * peso;
+				break;
+			case KeyEvent.VK_LEFT:
+				Mundo.pontoSelecionado.X -= 1 * peso;
+				break;
+			case KeyEvent.VK_RIGHT:
+				Mundo.pontoSelecionado.X += 1 * peso;
+				break;
+
+			case KeyEvent.VK_DELETE:
+				Poligono obj = (Poligono) Mundo.objetoSelecionado;
+				obj.removerPonto(Mundo.pontoSelecionado);
+				Mundo.pontoSelecionado = null;
+				if (!obj.temPontos()) {
+					this.mundo.objetoSelecionado.parent.removerFilho(Mundo.objetoSelecionado);
+				}
+				break;
+			case KeyEvent.VK_ESCAPE:
+				Mundo.pontoSelecionado = null;
+				break;
+			default:
+				reconheceu = false;
+			}
 		}
 
 		if (reconheceu) {
-			this.mundo.getObjetoSelecionado().setTransformacao(trans);
+			this.mundo.getObjetoSelecionado().addTransformacao(trans);
 		}
 		return reconheceu;
 	}
@@ -279,6 +321,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				System.out.println("Selecione um objeto para editar");
 			}
 			break;
+		// Deletar objeto selecionado
 		case KeyEvent.VK_DELETE:
 			if (!this.mundo.getObjetoSelecionado().equals(this.mundo))
 				this.mundo.removeObjetoSelecionado();
