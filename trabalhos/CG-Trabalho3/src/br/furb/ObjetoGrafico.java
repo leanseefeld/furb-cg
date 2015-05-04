@@ -67,9 +67,8 @@ public abstract class ObjetoGrafico {
 	 * Desenha o objeto
 	 */
 	public void desenhar() {
-		if (this.isSelected()) {
+		if (this.isSelected() && Mundo.EstadoAtual != Estado.Edicao)
 			desenharSelecao();
-		}
 
 		for (ObjetoGrafico objetoGrafico : objetosGraficos) {
 			objetoGrafico.desenhar();
