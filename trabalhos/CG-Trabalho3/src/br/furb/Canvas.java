@@ -280,12 +280,11 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				break;
 
 			case KeyEvent.VK_ESCAPE:
-				// TODO Implementar
-				Mundo.EstadoAtual = Estado.Visualizacao;
-				break;
 			case KeyEvent.VK_ENTER:
-				// TODO Implementar
 				Mundo.EstadoAtual = Estado.Visualizacao;
+				if (Mundo.objetoSelecionado instanceof Poligono) {
+					((Poligono) Mundo.getObjetoSelecionado()).concluir();
+				}
 				break;
 			default:
 				reconheceu = false;

@@ -104,12 +104,27 @@ public class Poligono extends ObjetoGrafico {
 			}
 			gl.glEnd();
 
-			if (this.isSelected())
+			if (this.isSelected()) {
+				if (Mundo.EstadoAtual == Estado.Edicao)
+					destacarPontos();
 				desenharPontoSelecionado();
+			}
 
 			super.desenhar();
 		}
 		gl.glPopMatrix();
+	}
+
+	private void destacarPontos() {
+		for (Ponto ponto : this.pontos) {
+			gl.glPointSize(7);
+			gl.glColor3f(0.2f, 0.2f, 1f);
+			gl.glBegin(GL.GL_POINTS);
+			{
+				gl.glVertex2d(ponto.X, ponto.Y);
+			}
+			gl.glEnd();
+		}
 	}
 
 	@Override
@@ -170,6 +185,5 @@ public class Poligono extends ObjetoGrafico {
 
 	public void removerPonto(Ponto ponto) {
 		this.pontos.remove(ponto);
-		criarBBox();
 	}
 }
