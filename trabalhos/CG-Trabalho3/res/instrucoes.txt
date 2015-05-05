@@ -1,0 +1,30 @@
+O programa inicia no modo de Visualização
+
+Comandos do modo de visualizacao
+    E: Para entrar em modo de edição
+        Serve para alterar um Objeto
+        Antes selecione o objeto que deseja alterar
+    N: Para entrar em modo de criação
+        Nesse modo será criado um novo objeto
+        Clicar para criar novos pontos
+        Antes selecione o objeto que será o pai do novo objeto
+        Obs: N é da palavra Novo :)
+    DELETE: Remove o objeto
+
+Comandos do modo de edição(E)
+Obs: Nesse modo é possível selecionar os pontos do objeto para edita-los
+    Sem ponto selecionado
+        Setas: Movem o objeto
+        + e -: Aumenta o tamanho do objeto proporcionalmente
+        1 e 2: Rotacionam o objeto
+        C: Troca de cor aleatoriamente
+        ESQ: Volta para o modo de Visualização
+    Com ponto
+        Setas: Movem o ponto
+        DELETE: Remove o ponto
+        ESQ: Tira a seleção do ponto
+    
+Comandos do modo de criação(N)
+    ENTER: Conclui o objeto
+    Click direito mouse: Conclui o objeto
+    Click esquerdo mouse: novo ponto
