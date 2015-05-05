@@ -101,9 +101,9 @@ public class Transformacao {
 		pointResult.Y = (int) (pointResult.Y / matriz[5]); 
 		
 		//TODO: Tratar a rotação
-		/*pointResult.X += (matriz[4] == 0d ? 0d : -(-(matriz[4]) * pointResult.Y));
-		pointResult.Y += (matriz[1] == 0d ? 0d : -(-(matriz[1]) * pointResult.X));*/
-
+		/*pointResult.X += (matriz[4] == 0d ? 0d : pointResult.Y) / matriz[4];
+		pointResult.Y += (matriz[1] == 0d ? 0d : pointResult.X / matriz[1]);
+*/
 		return pointResult;
 	}
 
@@ -132,6 +132,14 @@ public class Transformacao {
 		System.out.println("|" + GetElement(1) + " | " + GetElement(5) + " | " + GetElement(9) + " | " + GetElement(13));
 		System.out.println("|" + GetElement(2) + " | " + GetElement(6) + " | " + GetElement(10) + " | " + GetElement(14));
 		System.out.println("|" + GetElement(3) + " | " + GetElement(7) + " | " + GetElement(11) + " | " + GetElement(15));
+	}
+	
+	public void exibeMatriz(double[] matriz) {
+		System.out.println("______________________");
+		System.out.println("|" + matriz[0] + " | " + matriz[4] + " | " + matriz[8] + " | " + matriz[12]);
+		System.out.println("|" + matriz[1] + " | " + matriz[5] + " | " + matriz[9] + " | " + matriz[13]);
+		System.out.println("|" + matriz[2] + " | " + matriz[6] + " | " + matriz[10] + " | " + matriz[14]);
+		System.out.println("|" + matriz[3] + " | " + matriz[7] + " | " + matriz[11] + " | " + matriz[15]);
 	}
 
 }

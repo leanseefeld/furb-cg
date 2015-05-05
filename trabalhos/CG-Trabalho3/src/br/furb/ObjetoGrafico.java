@@ -131,7 +131,7 @@ public abstract class ObjetoGrafico {
 	 *         retorna NULL se não encontrar nenhum objeto
 	 */
 	public ObjetoGrafico selecionarObjeto(Ponto ponto) {
-		ponto = transformacao.transformPointInverse(ponto);
+	    ponto = transformacao.transformPointInverse(ponto);
 
 		// Primeiro verifica se algum dos filhos foi selecionado
 		ObjetoGrafico objetoSelecionado = null;
@@ -175,10 +175,26 @@ public abstract class ObjetoGrafico {
 		this.objetosGraficos.remove(objeto);
 	}
 
+	// /**
+	// * Retorna a transformação da raíz até este ponto Ou seja, todas as
+	// * transformações dos objetos somadas até este ponto
+	// *
+	// * @return
+	// */
+	// public Transformacao getTransformacaoTotal() {
+	// Transformacao trans;
+	// if (this.parent == null)
+	// trans = this.transformacao;
+	// else {
+	// trans =
+	// this.transformacao.transformMatrix(this.parent.getTransformacaoTotal());
+	// }
+	// return trans;
+	// }
+
 	/**
-	 * Transforma o ponto para o ponto de origem considerando todas as
+	 * Transforma o ponto para o ponto de origem considerando todas as 
 	 * transformações dos objetos pais
-	 * 
 	 * @param ponto
 	 * @return
 	 */

@@ -32,6 +32,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	private Poligono novoObjeto;
 	private Ponto pontoAnterior;
 	private Ponto pontoPosterior;
+	private Ponto pontoArrastadoAnterior;
 
 	public Canvas(GLCanvas canvas) {
 		canvas.addGLEventListener(this);
@@ -50,6 +51,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			}
 		});
 		canvas.setPreferredSize(new Dimension(ortho2D_w, ortho2D_h));
+		pontoArrastadoAnterior = new Ponto(0, 0);
 	}
 
 	@Override
@@ -202,7 +204,35 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
+		
+		if (Mundo.EstadoAtual == Estado.Edicao || Mundo.EstadoAtual == Estado.Visualizacao) {
+			if (Mundo.pontoSelecionado != null) {
+				//Pega o ponto clicado
+				Mundo.pontoSelecionado.X = arg0.getX();
+				Mundo.pontoSelecionado.Y = arg0.getY();
+				
+				//Converte para o tamanho da tela
+				ajustarPonto(Mundo.pontoSelecionado);
+				
+				//Coloca o ponto na posição de origem
+				Ponto pontoPosicaoOrigem = Mundo.objetoSelecionado.inverseTransformRecursive(Mundo.pontoSelecionado);
+				Mundo.pontoSelecionado.X = pontoPosicaoOrigem.X;
+				Mundo.pontoSelecionado.Y = pontoPosicaoOrigem.Y;
+				
+				glDrawable.display();
+			} else if (Mundo.objetoSelecionado != null) {
+				Ponto novaPosicao = new Ponto(arg0.getX(), arg0.getY());
+				ajustarPonto(novaPosicao);
 
+				Transformacao trans = new Transformacao();
+				trans.atribuirTranslacao(//
+						novaPosicao.X - pontoArrastadoAnterior.X, //
+						novaPosicao.Y - pontoArrastadoAnterior.Y);
+				Mundo.objetoSelecionado.addTransformacao(trans);
+				this.pontoArrastadoAnterior = novaPosicao;
+				glDrawable.display();
+			}
+		}
 	}
 
 	@Override
@@ -210,6 +240,9 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		this.mouseReal.X = arg0.getX();
 		this.mouseReal.Y = arg0.getY();
 		ajustarPonto(this.mouseReal);
+
+		pontoArrastadoAnterior.X = this.mouseReal.X;
+		pontoArrastadoAnterior.Y = this.mouseReal.Y;
 
 		if (this.pontoPosterior != null) {
 			this.pontoPosterior.X = this.mouseReal.X;
@@ -220,6 +253,10 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		}
 	}
 
+	/**
+	 * Ajusta o ponto para a posição na tela de acordo com as suas dimensões
+	 * @param ponto
+	 */
 	private void ajustarPonto(Ponto ponto) {
 		ponto.X = (int) (-ortho2D_w / 2 + ponto.X);
 		ponto.Y = (int) (ortho2D_h / 2 - ponto.Y);
@@ -312,6 +349,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 					Mundo.objetoSelecionado.parent.removerFilho(Mundo.objetoSelecionado);
 				}
 				break;
+			case KeyEvent.VK_ENTER:
 			case KeyEvent.VK_ESCAPE:
 				Mundo.pontoSelecionado = null;
 				break;
