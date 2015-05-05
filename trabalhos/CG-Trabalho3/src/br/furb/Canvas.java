@@ -28,11 +28,10 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	private GLU glu;
 	private GLAutoDrawable glDrawable;
 	private Mundo mundo;
-	private Ponto mouseReal = new Ponto(0, 0);
 	private Poligono novoObjeto;
 	private Ponto pontoAnterior;
 	private Ponto pontoPosterior;
-	private Ponto pontoArrastadoAnterior;
+	private Ponto pontoPosicaoMouse;
 
 	public Canvas(GLCanvas canvas) {
 		canvas.addGLEventListener(this);
@@ -51,7 +50,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 			}
 		});
 		canvas.setPreferredSize(new Dimension(ortho2D_w, ortho2D_h));
-		pontoArrastadoAnterior = new Ponto(0, 0);
+		pontoPosicaoMouse = new Ponto(0, 0);
 	}
 
 	@Override
@@ -68,7 +67,6 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		mundo.desenhar();
 
 		this.desenhaRastro();
-		this.desenhaPonteiro();
 	}
 
 	/**
@@ -136,16 +134,6 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		poFilho.concluir();
 
 		Mundo.EstadoAtual = Estado.Visualizacao;
-	}
-
-	public void desenhaPonteiro() {
-		gl.glPointSize(2);
-		gl.glColor3f(0f, 0f, 1f);
-		gl.glBegin(GL.GL_POINTS);
-		{
-			gl.glVertex2d(mouseReal.X, mouseReal.Y);
-		}
-		gl.glEnd();
 	}
 
 	@Override
@@ -226,10 +214,10 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 
 				Transformacao trans = new Transformacao();
 				trans.atribuirTranslacao(//
-						novaPosicao.X - pontoArrastadoAnterior.X, //
-						novaPosicao.Y - pontoArrastadoAnterior.Y);
+						novaPosicao.X - pontoPosicaoMouse.X, //
+						novaPosicao.Y - pontoPosicaoMouse.Y);
 				Mundo.objetoSelecionado.addTransformacao(trans);
-				this.pontoArrastadoAnterior = novaPosicao;
+				this.pontoPosicaoMouse = novaPosicao;
 				glDrawable.display();
 			}
 		}
@@ -237,17 +225,15 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		this.mouseReal.X = arg0.getX();
-		this.mouseReal.Y = arg0.getY();
-		ajustarPonto(this.mouseReal);
-
-		pontoArrastadoAnterior.X = this.mouseReal.X;
-		pontoArrastadoAnterior.Y = this.mouseReal.Y;
+		this.pontoPosicaoMouse.X = arg0.getX();
+		this.pontoPosicaoMouse.Y = arg0.getY();
+		ajustarPonto(this.pontoPosicaoMouse);
 
 		if (this.pontoPosterior != null) {
-			this.pontoPosterior.X = this.mouseReal.X;
-			this.pontoPosterior.Y = this.mouseReal.Y;
+			this.pontoPosterior.X = this.pontoPosicaoMouse.X;
+			this.pontoPosterior.Y = this.pontoPosicaoMouse.Y;
 		}
+		
 		if (glDrawable != null) {
 			glDrawable.display();
 		}
