@@ -20,8 +20,10 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 import javax.swing.SwingUtilities;
 
-public class Canvas implements GLEventListener, MouseMotionListener, MouseListener, KeyListener {
-	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f, ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
+public class Canvas implements GLEventListener, MouseMotionListener,
+		MouseListener, KeyListener {
+	private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f,
+			ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
 	private int ortho2D_w = (int) (abs(ortho2D_maxX) - ortho2D_minX);
 	private int ortho2D_h = (int) (abs(ortho2D_maxY) - ortho2D_minY);
 	private GL gl;
@@ -76,7 +78,7 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		if (Mundo.EstadoAtual == Estado.Criacao) {
 			if (pontoAnterior != null && pontoPosterior != null) {
 				gl.glLineWidth(2);
-				gl.glColor3f(0f, 0f, 1f);
+				gl.glColor3f(1f, 0f, 0f);
 				gl.glBegin(GL.GL_LINES);
 				{
 					gl.glVertex2d(pontoAnterior.X, pontoAnterior.Y);
@@ -118,41 +120,25 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		gl = drawable.getGL();
 		glu = new GLU();
 		glDrawable.setGL(new DebugGL(gl));
-		System.out.println("Espaço de desenho com tamanho: " + drawable.getWidth() + " x " + drawable.getHeight());
+		System.out.println("Espaço de desenho com tamanho: "
+				+ drawable.getWidth() + " x " + drawable.getHeight());
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		mundo = new Mundo(gl, (int) ortho2D_maxX, (int) ortho2D_minX, (int) ortho2D_maxY, (int) ortho2D_minY);
+		mundo = new Mundo(gl, (int) ortho2D_maxX, (int) ortho2D_minX,
+				(int) ortho2D_maxY, (int) ortho2D_minY);
 
-		Poligono poFilho = new Poligono(gl);
-		poFilho.cor = new Cor(1, 1, 0);
-		mundo.addFilho(poFilho);
+		Poligono po = new Poligono(gl);
+		po.cor = new Cor(1, 1, 0);
+		mundo.addFilho(po);
 
-		poFilho.addPonto(new Ponto(30, 200));
-		poFilho.addPonto(new Ponto(-30, 200));
-		poFilho.addPonto(new Ponto(-30, -200));
-		poFilho.addPonto(new Ponto(30, -200));
+		po.addPonto(new Ponto(30, 200));
+		po.addPonto(new Ponto(-30, 200));
+		po.addPonto(new Ponto(-30, -200));
+		po.addPonto(new Ponto(30, -200));
+		po.setPrimitiva(GL.GL_LINE_LOOP);
 
-		poFilho.concluir();
+		po.concluir();
 
 		Mundo.EstadoAtual = Estado.Visualizacao;
-	}
-
-	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-
 	}
 
 	@Override
@@ -173,43 +159,75 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				}
 				this.pontoAnterior = this.pontoPosterior;
 				this.pontoPosterior = pontoSelecionado.clone();
+				if (e.isControlDown()) {
+					movePontoParaPontoMaisProximo(this.novoObjeto,
+							this.pontoAnterior);
+					movePontoParaPontoMaisProximo(this.novoObjeto,
+							this.pontoPosterior);
+				}
 				this.novoObjeto.addPonto(this.pontoAnterior);
+
 			}
 			break;
 		case Edicao:
 			if (Mundo.objetoSelecionado instanceof Poligono)
-				((Poligono) Mundo.objetoSelecionado).selecionarPonto(pontoSelecionado);
+				((Poligono) Mundo.objetoSelecionado)
+						.selecionarPonto(pontoSelecionado);
 			break;
 		}
 
 		glDrawable.display();
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
+	/**
+	 * Move o ponto para o ponto mais proximo do objeto que está editado
+	 * 
+	 * @param ponto
+	 *            ponto que terá suas cordenadas alteradas
+	 */
+	private void movePontoParaPontoMaisProximo(ObjetoGrafico objetoEditado,
+			Ponto ponto) {
+		if (objetoEditado instanceof Poligono) {
 
+			Poligono pol = ((Poligono) objetoEditado);
+			Ponto pontoMaisProximo = pol.getPontoMaisProximo(ponto);
+			if (pontoMaisProximo != null) {
+				pontoMaisProximo = pol.getTransformacaoTotal().transformPoint(pontoMaisProximo);
+				ponto.X = pontoMaisProximo.X;
+				ponto.Y = pontoMaisProximo.Y;
+			} else {
+				System.out.println("Não achou");
+			}
+		}
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		
-		if (Mundo.EstadoAtual == Estado.Edicao || Mundo.EstadoAtual == Estado.Visualizacao) {
+	public void mouseDragged(MouseEvent e) {
+
+		if (Mundo.EstadoAtual == Estado.Edicao
+				|| Mundo.EstadoAtual == Estado.Visualizacao) {
 			if (Mundo.pontoSelecionado != null) {
-				//Pega o ponto clicado
-				Mundo.pontoSelecionado.X = arg0.getX();
-				Mundo.pontoSelecionado.Y = arg0.getY();
-				
-				//Converte para o tamanho da tela
-				ajustarPonto(Mundo.pontoSelecionado);
-				
-				//Coloca o ponto na posição de origem
-				Ponto pontoPosicaoOrigem = Mundo.objetoSelecionado.inverseTransformRecursive(Mundo.pontoSelecionado);
-				Mundo.pontoSelecionado.X = pontoPosicaoOrigem.X;
-				Mundo.pontoSelecionado.Y = pontoPosicaoOrigem.Y;
-				
+				if (!e.isControlDown()) {
+					// Pega o ponto clicado
+					Mundo.pontoSelecionado.X = e.getX();
+					Mundo.pontoSelecionado.Y = e.getY();
+
+					// Converte para o tamanho da tela
+					ajustarPonto(Mundo.pontoSelecionado);
+
+					// Coloca o ponto na posição de origem
+					Ponto pontoPosicaoOrigem = Mundo.objetoSelecionado
+							.inverseTransformRecursive(Mundo.pontoSelecionado);
+					Mundo.pontoSelecionado.X = pontoPosicaoOrigem.X;
+					Mundo.pontoSelecionado.Y = pontoPosicaoOrigem.Y;
+				} else {
+					movePontoParaPontoMaisProximo(Mundo.getObjetoSelecionado(),
+							Mundo.pontoSelecionado);
+				}
+
 				glDrawable.display();
-			} else if (Mundo.objetoSelecionado != null) {
-				Ponto novaPosicao = new Ponto(arg0.getX(), arg0.getY());
+			} else if (Mundo.objetoSelecionado != null && Mundo.objetoSelecionado instanceof Poligono) {
+				Ponto novaPosicao = new Ponto(e.getX(), e.getY());
 				ajustarPonto(novaPosicao);
 
 				Transformacao trans = new Transformacao();
@@ -224,16 +242,20 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		this.pontoPosicaoMouse.X = arg0.getX();
-		this.pontoPosicaoMouse.Y = arg0.getY();
+	public void mouseMoved(MouseEvent e) {
+		this.pontoPosicaoMouse.X = e.getX();
+		this.pontoPosicaoMouse.Y = e.getY();
 		ajustarPonto(this.pontoPosicaoMouse);
 
 		if (this.pontoPosterior != null) {
 			this.pontoPosterior.X = this.pontoPosicaoMouse.X;
 			this.pontoPosterior.Y = this.pontoPosicaoMouse.Y;
 		}
-		
+
+		if (Mundo.EstadoAtual == Estado.Criacao && e.isControlDown()) {
+			movePontoParaPontoMaisProximo(this.novoObjeto, this.pontoPosterior);
+		}
+
 		if (glDrawable != null) {
 			glDrawable.display();
 		}
@@ -241,16 +263,12 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 
 	/**
 	 * Ajusta o ponto para a posição na tela de acordo com as suas dimensões
+	 * 
 	 * @param ponto
 	 */
 	private void ajustarPonto(Ponto ponto) {
 		ponto.X = (int) (-ortho2D_w / 2 + ponto.X);
 		ponto.Y = (int) (ortho2D_h / 2 - ponto.Y);
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-
 	}
 
 	/**
@@ -292,14 +310,18 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				break;
 
 			case KeyEvent.VK_ADD:
-				trans.atribuirEscala(1 + ((double) peso / 100), 1 + ((double) peso / 100));
+				trans.atribuirEscala(1 + ((double) peso / 100),
+						1 + ((double) peso / 100));
 				break;
 			case KeyEvent.VK_SUBTRACT:
-				trans.atribuirEscala(1 - ((double) peso / 100), 1 - ((double) peso / 100));
+				trans.atribuirEscala(1 - ((double) peso / 100),
+						1 - ((double) peso / 100));
 				break;
 
 			case KeyEvent.VK_C:
-				Mundo.objetoSelecionado.setCor(new Cor(new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat()));
+				Mundo.objetoSelecionado.setCor(new Cor(
+						new Random().nextFloat(), new Random().nextFloat(),
+						new Random().nextFloat()));
 				break;
 
 			case KeyEvent.VK_ESCAPE:
@@ -332,7 +354,8 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 				obj.removerPonto(Mundo.pontoSelecionado);
 				Mundo.pontoSelecionado = null;
 				if (!obj.temPontos()) {
-					Mundo.objetoSelecionado.parent.removerFilho(Mundo.objetoSelecionado);
+					Mundo.objetoSelecionado.parent
+							.removerFilho(Mundo.objetoSelecionado);
 				}
 				break;
 			case KeyEvent.VK_ENTER:
@@ -363,7 +386,6 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		// Novo objeto
 		case KeyEvent.VK_N:
 			novoObjeto = new Poligono(gl);
-			novoObjeto.setPrimitiva(GL.GL_LINE_STRIP);
 			Mundo.EstadoAtual = Estado.Criacao;
 			if (Mundo.getObjetoSelecionado() != null)
 				Mundo.getObjetoSelecionado().addFilho(novoObjeto);
@@ -406,8 +428,8 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 		Mundo.EstadoAtual = Estado.Visualizacao;
 		this.novoObjeto.removerPonto(pontoPosterior);
 		this.pontoPosterior = null;
-		this.novoObjeto = null;
 		Mundo.setObjetoSelecionado(this.novoObjeto);
+		this.novoObjeto = null;
 	}
 
 	@Override
@@ -432,7 +454,38 @@ public class Canvas implements GLEventListener, MouseMotionListener, MouseListen
 	}
 
 	@Override
+	public void mouseReleased(MouseEvent arg0) {
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
+			int arg4) {
+	}
+
+	@Override
 	public void keyReleased(KeyEvent e) {
 
 	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
 }

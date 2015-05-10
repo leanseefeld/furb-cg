@@ -1,30 +1,32 @@
-O programa inicia no modo de Visualização
+﻿Estados do programa: Visualisação, Edição e Criação.
+O programa inicia no stado de Visualização
 
-Comandos do modo de visualizacao
-    E: Para entrar em modo de edição
-        Serve para alterar um Objeto
-        Antes selecione o objeto que deseja alterar
-    N: Para entrar em modo de criação
-        Nesse modo será criado um novo objeto
+Comandos do modo de Visualização
+    E (Editar): Para entrar em modo de edição
+        Serve para alterar o objeto selecionado
+    N (Novo): Para entrar em modo de criação
+        Nesse modo será criado um novo objeto. Este será filho do objeto selecionado
         Clicar para criar novos pontos
-        Antes selecione o objeto que será o pai do novo objeto
-        Obs: N é da palavra Novo :)
+        Segurar Ctrl para que o proximo ponto seja criado na mesma posição do ponto mais proximo do objeto em criação
     DELETE: Remove o objeto
+    Mouse-Arrastar: É possível mover o objeto no modo de visualização arrastando o objeto.
 
 Comandos do modo de edição(E)
-Obs: Nesse modo é possível selecionar os pontos do objeto para edita-los
+    Mouse-Click: Seleciona um ponto do objeto
+    Mouse-Arrastar: Move o objeto ou o ponto
     Sem ponto selecionado
         Setas: Movem o objeto
         + e -: Aumenta o tamanho do objeto proporcionalmente
         1 e 2: Rotacionam o objeto
-        C: Troca de cor aleatoriamente
-        ESQ: Volta para o modo de Visualização
+        C (Cor): Troca de cor aleatoriamente do objeto
+        ENTER ou ESC: Finaliza a edição e volta para o modo de Visualização
     Com ponto
         Setas: Movem o ponto
         DELETE: Remove o ponto
-        ESQ: Tira a seleção do ponto
+        ENTER ou ESC: Tira a seleção do ponto
     
 Comandos do modo de criação(N)
-    ENTER: Conclui o objeto
-    Click direito mouse: Conclui o objeto
-    Click esquerdo mouse: novo ponto
+    Mouse-Click direito ou ENTER ou ESC: Finaliza a criação e o programa volta para o estado de Visualização
+    Mouse-Click esquerdo: cria um novo ponto   
+         Se o Ctrl estiver pressionado o novo ponto será criado na mesma posição de um ponto ja existente no objeto
+  

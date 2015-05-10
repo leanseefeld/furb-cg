@@ -12,7 +12,7 @@ public class Poligono extends ObjetoGrafico {
 
 	public Poligono(GL gl) {
 		super(gl);
-		this.primitiva = GL.GL_LINE_LOOP;
+		this.primitiva = GL.GL_LINE_STRIP;
 		this.pontos = new ArrayList<Ponto>();
 	}
 
@@ -50,8 +50,17 @@ public class Poligono extends ObjetoGrafico {
 		}
 	}
 
+	/**
+	 * Finaliza a edição do poligono
+	 */
 	public void concluir() {
 		criarBBox();
+		//Se o ultimo ponto e o primeiro tiverem a mesma posição, então remove um dos 2
+		//e altera a primitiva para formar um objeto fechado
+		if (this.pontos.get(0).mesmaPosicao(this.pontos.get(this.pontos.size() - 1))) {
+			this.pontos.remove(this.pontos.size() - 1);
+			this.primitiva = GL.GL_LINE_LOOP;
+		}
 	}
 
 	public void RotacionarX(int graus) {
@@ -78,7 +87,7 @@ public class Poligono extends ObjetoGrafico {
 			for (Ponto ponto : this.pontos) {
 				if (ponto == Mundo.pontoSelecionado) {
 					gl.glPointSize(7);
-					gl.glColor3f(0f, 0f, 0f);
+					gl.glColor3f(1f, 0f, 0f);
 					gl.glBegin(GL.GL_POINTS);
 					{
 						gl.glVertex2d(ponto.X, ponto.Y);
@@ -118,7 +127,7 @@ public class Poligono extends ObjetoGrafico {
 	private void destacarPontos() {
 		for (Ponto ponto : this.pontos) {
 			gl.glPointSize(7);
-			gl.glColor3f(0.2f, 0.2f, 1f);
+			gl.glColor3f(0f, 1f, 1f);
 			gl.glBegin(GL.GL_POINTS);
 			{
 				gl.glVertex2d(ponto.X, ponto.Y);
@@ -143,11 +152,13 @@ public class Poligono extends ObjetoGrafico {
 				// Não consigera por enquanto
 			} else {
 				// Verifica se o ponto está entre o Y dos pontos A e B
-				float t = ((float) pontoBusca.Y - (float) pontoA.Y) / ((float) pontoB.Y - (float) pontoA.Y);
+				float t = ((float) pontoBusca.Y - (float) pontoA.Y)
+						/ ((float) pontoB.Y - (float) pontoA.Y);
 				if (t > 0 && t < 1) {
 					// Verifica se o ponto está a direita da intersecção ou a
 					// esquerda e considera apenas um dos lados
-					float XInterseccao = getPontoIntermediario(pontoA.X, pontoB.X, t);
+					float XInterseccao = getPontoIntermediario(pontoA.X,
+							pontoB.X, t);
 					if (XInterseccao > pontoBusca.X)
 						quantidade++;
 				}
@@ -162,17 +173,35 @@ public class Poligono extends ObjetoGrafico {
 	 * @param pontoSelecionado
 	 */
 	public Ponto selecionarPonto(Ponto pontoSelecionado) {
-		System.out.println("Busca : " + pontoSelecionado.toString());
-		Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado.clone());
-		System.out.println("BTrans: " + pontoTrans.toString());
+		Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado
+				.clone());
 		for (Ponto ponto : this.pontos) {
-			if (Math.abs(ponto.X - pontoTrans.X) < RANGE_SELECIONAR_PONTO && Math.abs(ponto.Y - pontoTrans.Y) < RANGE_SELECIONAR_PONTO) {
+			if (Math.abs(ponto.X - pontoTrans.X) < RANGE_SELECIONAR_PONTO
+					&& Math.abs(ponto.Y - pontoTrans.Y) < RANGE_SELECIONAR_PONTO) {
 				Mundo.pontoSelecionado = ponto;
 				return ponto;
 			}
 		}
 		Mundo.pontoSelecionado = null;
 		return null;
+	}
+
+	public Ponto getPontoMaisProximo(Ponto pontoSelecionado) {
+		double menorDistancia = Double.MAX_VALUE;
+		Ponto pontoMaisProximo = null;
+		Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado
+				.clone());
+		for (Ponto ponto : this.pontos) {
+			if (pontoSelecionado != ponto) {
+				double distancia = Math.abs(ponto.X - pontoTrans.X)
+						+ Math.abs(ponto.Y - pontoTrans.Y);
+				if (distancia < menorDistancia) {
+					menorDistancia = distancia;
+					pontoMaisProximo = ponto;
+				}
+			}
+		}
+		return pontoMaisProximo;
 	}
 
 	private float getPontoIntermediario(int a, int b, float peso) {

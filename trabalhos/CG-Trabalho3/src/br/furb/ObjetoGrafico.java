@@ -83,9 +83,7 @@ public abstract class ObjetoGrafico {
 			gl.glPointSize(4);
 			if (Mundo.EstadoAtual == Estado.Visualizacao)
 				gl.glColor3f(1.0f, 0.0f, 0.0f);
-			else if (Mundo.EstadoAtual == Estado.Edicao) {
-				gl.glColor3f(0.0f, 1.0f, 0.0f);
-			} else {
+			else {
 				gl.glColor3f(0.0f, 0.0f, 1.0f);
 			}
 			gl.glBegin(GL.GL_POINTS);
@@ -95,9 +93,11 @@ public abstract class ObjetoGrafico {
 				gl.glVertex2d(this.bbox.getMaiorX(), this.bbox.getMenorY());
 				gl.glVertex2d(this.bbox.getMenorX(), this.bbox.getMenorY());
 
-				int pontoMeioX = this.bbox.getMenorX() + ((this.bbox.getMaiorX() - this.bbox.getMenorX()) / 2);
+				int pontoMeioX = this.bbox.getMenorX()
+						+ ((this.bbox.getMaiorX() - this.bbox.getMenorX()) / 2);
 
-				int pontoMeioY = this.bbox.getMenorY() + ((this.bbox.getMaiorY() - this.bbox.getMenorY()) / 2);
+				int pontoMeioY = this.bbox.getMenorY()
+						+ ((this.bbox.getMaiorY() - this.bbox.getMenorY()) / 2);
 
 				gl.glVertex2d(this.bbox.getMaiorX(), pontoMeioY);
 				gl.glVertex2d(this.bbox.getMenorX(), pontoMeioY);
@@ -131,7 +131,7 @@ public abstract class ObjetoGrafico {
 	 *         retorna NULL se não encontrar nenhum objeto
 	 */
 	public ObjetoGrafico selecionarObjeto(Ponto ponto) {
-	    ponto = transformacao.transformPointInverse(ponto);
+		ponto = transformacao.transformPointInverse(ponto);
 
 		// Primeiro verifica se algum dos filhos foi selecionado
 		ObjetoGrafico objetoSelecionado = null;
@@ -175,26 +175,27 @@ public abstract class ObjetoGrafico {
 		this.objetosGraficos.remove(objeto);
 	}
 
-	// /**
-	// * Retorna a transformação da raíz até este ponto Ou seja, todas as
-	// * transformações dos objetos somadas até este ponto
-	// *
-	// * @return
-	// */
-	// public Transformacao getTransformacaoTotal() {
-	// Transformacao trans;
-	// if (this.parent == null)
-	// trans = this.transformacao;
-	// else {
-	// trans =
-	// this.transformacao.transformMatrix(this.parent.getTransformacaoTotal());
-	// }
-	// return trans;
-	// }
+	/**
+	 * Retorna a transformação da raíz até este ponto Ou seja, todas as
+	 * transformações dos objetos somadas até este ponto
+	 *
+	 * @return
+	 */
+	public Transformacao getTransformacaoTotal() {
+		Transformacao trans;
+		if (this.parent == null)
+			trans = this.transformacao;
+		else {
+			trans = this.transformacao.transformMatrix(this.parent
+					.getTransformacaoTotal());
+		}
+		return trans;
+	}
 
 	/**
-	 * Transforma o ponto para o ponto de origem considerando todas as 
+	 * Transforma o ponto para o ponto de origem considerando todas as
 	 * transformações dos objetos pais
+	 * 
 	 * @param ponto
 	 * @return
 	 */
