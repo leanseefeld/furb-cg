@@ -41,5 +41,6 @@ public class Mundo extends ObjetoGrafico {
 
 	public static void removeObjetoSelecionado() {
 		Mundo.objetoSelecionado.getParent().removerFilho(objetoSelecionado);
+		Mundo.objetoSelecionado = null;
 	}
 }

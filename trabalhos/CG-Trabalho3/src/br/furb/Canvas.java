@@ -188,7 +188,8 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 	 * @param transformaParaPosicaoTela
 	 *            O ponto retornado está com as coordenadas originais do objeto, <br>
 	 *            ou seja, está sem as trasnformações.<br>
-	 *            Ao passar True o ponto é trasnformado para exibir no local correto da tela
+	 *            Ao passar True o ponto é trasnformado para exibir no local
+	 *            correto da tela
 	 */
 	private void movePontoParaPontoMaisProximo(ObjetoGrafico objetoEditado,
 			Ponto ponto, boolean transformaParaPosicaoTela) {
@@ -199,8 +200,7 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 			if (pontoMaisProximo != null) {
 				if (transformaParaPosicaoTela) {
 					Transformacao trans = pol.getTransformacaoTotal();
-					pontoMaisProximo = trans
-							.transformPoint(pontoMaisProximo);
+					pontoMaisProximo = trans.transformPoint(pontoMaisProximo);
 				}
 
 				ponto.X = pontoMaisProximo.X;
@@ -215,14 +215,14 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		if (Mundo.EstadoAtual == Estado.Edicao
 				|| Mundo.EstadoAtual == Estado.Visualizacao) {
 			if (Mundo.pontoSelecionado != null) {
+				// Pega o ponto clicado
+				Mundo.pontoSelecionado.X = e.getX();
+				Mundo.pontoSelecionado.Y = e.getY();
+
+				// Converte para o tamanho da tela
+				ajustarPonto(Mundo.pontoSelecionado);
+				
 				if (!e.isControlDown()) {
-					// Pega o ponto clicado
-					Mundo.pontoSelecionado.X = e.getX();
-					Mundo.pontoSelecionado.Y = e.getY();
-
-					// Converte para o tamanho da tela
-					ajustarPonto(Mundo.pontoSelecionado);
-
 					// Coloca o ponto na posição de origem
 					Ponto pontoPosicaoOrigem = Mundo.objetoSelecionado
 							.inverseTransformRecursive(Mundo.pontoSelecionado);
@@ -262,7 +262,8 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		}
 
 		if (Mundo.EstadoAtual == Estado.Criacao && e.isControlDown()) {
-			movePontoParaPontoMaisProximo(this.novoObjeto, this.pontoPosterior, true);
+			movePontoParaPontoMaisProximo(this.novoObjeto, this.pontoPosterior,
+					true);
 		}
 
 		if (glDrawable != null) {
@@ -394,12 +395,11 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		switch (e.getKeyCode()) {
 		// Novo objeto
 		case KeyEvent.VK_N:
+			if (Mundo.getObjetoSelecionado() == null)
+				Mundo.setObjetoSelecionado(mundo);
 			novoObjeto = new Poligono(gl);
 			Mundo.EstadoAtual = Estado.Criacao;
-			if (Mundo.getObjetoSelecionado() != null)
-				Mundo.getObjetoSelecionado().addFilho(novoObjeto);
-			else
-				this.mundo.addFilho(novoObjeto);
+			Mundo.getObjetoSelecionado().addFilho(novoObjeto);
 			break;
 		// Editar objeto selecionado
 		case KeyEvent.VK_E:
