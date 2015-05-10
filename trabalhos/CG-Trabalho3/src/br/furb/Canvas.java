@@ -157,14 +157,15 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 					this.pontoAnterior = null;
 					this.pontoPosterior = pontoSelecionado.clone();
 				}
-				this.pontoAnterior = this.pontoPosterior;
-				this.pontoPosterior = pontoSelecionado.clone();
+
 				if (e.isControlDown()) {
 					movePontoParaPontoMaisProximo(this.novoObjeto,
-							this.pontoAnterior);
-					movePontoParaPontoMaisProximo(this.novoObjeto,
-							this.pontoPosterior);
+							this.pontoPosterior, true);
 				}
+
+				this.pontoAnterior = this.pontoPosterior;
+				this.pontoPosterior = pontoSelecionado.clone();
+
 				this.novoObjeto.addPonto(this.pontoAnterior);
 
 			}
@@ -184,19 +185,26 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 	 * 
 	 * @param ponto
 	 *            ponto que terá suas cordenadas alteradas
+	 * @param transformaParaPosicaoTela
+	 *            O ponto retornado está com as coordenadas originais do objeto, <br>
+	 *            ou seja, está sem as trasnformações.<br>
+	 *            Ao passar True o ponto é trasnformado para exibir no local correto da tela
 	 */
 	private void movePontoParaPontoMaisProximo(ObjetoGrafico objetoEditado,
-			Ponto ponto) {
+			Ponto ponto, boolean transformaParaPosicaoTela) {
 		if (objetoEditado instanceof Poligono) {
 
 			Poligono pol = ((Poligono) objetoEditado);
 			Ponto pontoMaisProximo = pol.getPontoMaisProximo(ponto);
 			if (pontoMaisProximo != null) {
-				pontoMaisProximo = pol.getTransformacaoTotal().transformPoint(pontoMaisProximo);
+				if (transformaParaPosicaoTela) {
+					Transformacao trans = pol.getTransformacaoTotal();
+					pontoMaisProximo = trans
+							.transformPoint(pontoMaisProximo);
+				}
+
 				ponto.X = pontoMaisProximo.X;
 				ponto.Y = pontoMaisProximo.Y;
-			} else {
-				System.out.println("Não achou");
 			}
 		}
 	}
@@ -222,11 +230,12 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 					Mundo.pontoSelecionado.Y = pontoPosicaoOrigem.Y;
 				} else {
 					movePontoParaPontoMaisProximo(Mundo.getObjetoSelecionado(),
-							Mundo.pontoSelecionado);
+							Mundo.pontoSelecionado, false);
 				}
 
 				glDrawable.display();
-			} else if (Mundo.objetoSelecionado != null && Mundo.objetoSelecionado instanceof Poligono) {
+			} else if (Mundo.objetoSelecionado != null
+					&& Mundo.objetoSelecionado instanceof Poligono) {
 				Ponto novaPosicao = new Ponto(e.getX(), e.getY());
 				ajustarPonto(novaPosicao);
 
@@ -253,7 +262,7 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 		}
 
 		if (Mundo.EstadoAtual == Estado.Criacao && e.isControlDown()) {
-			movePontoParaPontoMaisProximo(this.novoObjeto, this.pontoPosterior);
+			movePontoParaPontoMaisProximo(this.novoObjeto, this.pontoPosterior, true);
 		}
 
 		if (glDrawable != null) {

@@ -183,11 +183,11 @@ public abstract class ObjetoGrafico {
 	 */
 	public Transformacao getTransformacaoTotal() {
 		Transformacao trans;
-		if (this.parent == null)
-			trans = this.transformacao;
-		else {
+		if (this.parent != null)
 			trans = this.transformacao.transformMatrix(this.parent
 					.getTransformacaoTotal());
+		else {
+			trans = this.transformacao;
 		}
 		return trans;
 	}
