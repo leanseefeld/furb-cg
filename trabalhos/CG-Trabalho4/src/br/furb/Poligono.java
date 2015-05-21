@@ -1,0 +1,218 @@
+package br.furb;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.media.opengl.GL;
+
+public class Poligono extends ObjetoGrafico {
+	private static final int RANGE_SELECIONAR_PONTO = 15;
+	private List<Ponto> pontos;
+	private int primitiva;
+
+	public Poligono(GL gl) {
+		super(gl);
+		this.primitiva = GL.GL_LINE_STRIP;
+		this.pontos = new ArrayList<Ponto>();
+	}
+
+	public int getPrimitiva() {
+		return primitiva;
+	}
+
+	public void setPrimitiva(int primitiva) {
+		this.primitiva = primitiva;
+	}
+
+	public void addPonto(Ponto ponto) {
+		Ponto pontoTrans = this.inverseTransformRecursive(ponto);
+		this.pontos.add(pontoTrans);
+	}
+
+	/**
+	 * Monta a BBox em torno do objeto
+	 */
+	private void criarBBox() {
+		super.bbox = new BBox();
+		super.bbox.setMaiorX(Integer.MIN_VALUE);
+		super.bbox.setMenorX(Integer.MAX_VALUE);
+		super.bbox.setMaiorY(Integer.MIN_VALUE);
+		super.bbox.setMenorY(Integer.MAX_VALUE);
+		for (Ponto ponto : pontos) {
+			if (ponto.X > this.bbox.getMaiorX())
+				this.bbox.setMaiorX(ponto.X);
+			if (ponto.X < this.bbox.getMenorX())
+				this.bbox.setMenorX(ponto.X);
+			if (ponto.Y > this.bbox.getMaiorY())
+				this.bbox.setMaiorY(ponto.Y);
+			if (ponto.Y < this.bbox.getMenorY())
+				this.bbox.setMenorY(ponto.Y);
+		}
+	}
+
+	/**
+	 * Finaliza a edição do poligono
+	 */
+	public void concluir() {
+		criarBBox();
+		//Se o ultimo ponto e o primeiro tiverem a mesma posição, então remove um dos 2
+		//e altera a primitiva para formar um objeto fechado
+		if (this.pontos.get(0).mesmaPosicao(this.pontos.get(this.pontos.size() - 1))) {
+			this.pontos.remove(this.pontos.size() - 1);
+			this.primitiva = GL.GL_LINE_LOOP;
+		}
+	}
+
+	public void RotacionarX(int graus) {
+
+	}
+
+	public void RotacionarY(int graus) {
+
+	}
+
+	public void Mover(int x, int y) {
+
+	}
+
+	public void Escalonar(int quantidade) {
+
+	}
+
+	/**
+	 * Destaca o ponto selecionado
+	 */
+	public void desenharPontoSelecionado() {
+		if (Mundo.pontoSelecionado != null)
+			for (Ponto ponto : this.pontos) {
+				if (ponto == Mundo.pontoSelecionado) {
+					gl.glPointSize(7);
+					gl.glColor3f(1f, 0f, 0f);
+					gl.glBegin(GL.GL_POINTS);
+					{
+						gl.glVertex2d(ponto.X, ponto.Y);
+					}
+					gl.glEnd();
+				}
+			}
+	}
+
+	public void desenhar() {
+		gl.glLineWidth(3);
+		gl.glColor3f(cor.R, cor.G, cor.B);
+
+		gl.glPushMatrix();
+		{
+			gl.glMultMatrixd(transformacao.getMatriz(), 0);
+
+			gl.glBegin(primitiva);
+			{
+				for (Ponto ponto : pontos) {
+					gl.glVertex2d(ponto.X, ponto.Y);
+				}
+			}
+			gl.glEnd();
+
+			if (this.isSelected()) {
+				if (Mundo.EstadoAtual == Estado.Edicao)
+					destacarPontos();
+				desenharPontoSelecionado();
+			}
+
+			super.desenhar();
+		}
+		gl.glPopMatrix();
+	}
+
+	private void destacarPontos() {
+		for (Ponto ponto : this.pontos) {
+			gl.glPointSize(7);
+			gl.glColor3f(0f, 1f, 1f);
+			gl.glBegin(GL.GL_POINTS);
+			{
+				gl.glVertex2d(ponto.X, ponto.Y);
+			}
+			gl.glEnd();
+		}
+	}
+
+	@Override
+	public boolean malhaSelecionada(Ponto pontoBusca) {
+		int quantidade = 0;
+		Ponto pontoA = null;
+		Ponto pontoB = null;
+		for (int i = 0; i < pontos.size(); i++) {
+			pontoA = pontos.get(i);
+			if (i + 1 < pontos.size())
+				pontoB = pontos.get(i + 1);
+			else
+				pontoB = pontos.get(0);
+
+			if (pontoA.Y == pontoB.Y) {
+				// Não consigera por enquanto
+			} else {
+				// Verifica se o ponto está entre o Y dos pontos A e B
+				float t = ((float) pontoBusca.Y - (float) pontoA.Y)
+						/ ((float) pontoB.Y - (float) pontoA.Y);
+				if (t > 0 && t < 1) {
+					// Verifica se o ponto está a direita da intersecção ou a
+					// esquerda e considera apenas um dos lados
+					float XInterseccao = getPontoIntermediario(pontoA.X,
+							pontoB.X, t);
+					if (XInterseccao > pontoBusca.X)
+						quantidade++;
+				}
+			}
+		}
+		return (quantidade % 2) != 0;
+	}
+
+	/**
+	 * Seleciona um ponto do objeto
+	 * 
+	 * @param pontoSelecionado
+	 */
+	public Ponto selecionarPonto(Ponto pontoSelecionado) {
+		Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado
+				.clone());
+		for (Ponto ponto : this.pontos) {
+			if (Math.abs(ponto.X - pontoTrans.X) < RANGE_SELECIONAR_PONTO
+					&& Math.abs(ponto.Y - pontoTrans.Y) < RANGE_SELECIONAR_PONTO) {
+				Mundo.pontoSelecionado = ponto;
+				return ponto;
+			}
+		}
+		Mundo.pontoSelecionado = null;
+		return null;
+	}
+
+	public Ponto getPontoMaisProximo(Ponto pontoSelecionado) {
+		double menorDistancia = Double.MAX_VALUE;
+		Ponto pontoMaisProximo = null;
+		Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado
+				.clone());
+		for (Ponto ponto : this.pontos) {
+			if (pontoSelecionado != ponto) {
+				double distancia = Math.abs(ponto.X - pontoTrans.X)
+						+ Math.abs(ponto.Y - pontoTrans.Y);
+				if (distancia < menorDistancia) {
+					menorDistancia = distancia;
+					pontoMaisProximo = ponto;
+				}
+			}
+		}
+		return pontoMaisProximo;
+	}
+
+	private float getPontoIntermediario(int a, int b, float peso) {
+		return a + (b - a) * peso;
+	}
+
+	public boolean temPontos() {
+		return this.pontos.size() > 0;
+	}
+
+	public void removerPonto(Ponto ponto) {
+		this.pontos.remove(ponto);
+	}
+}
