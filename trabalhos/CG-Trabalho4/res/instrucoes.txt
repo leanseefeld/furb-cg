@@ -1,32 +1,12 @@
-﻿Estados do programa: Visualisação, Edição e Criação.
-O programa inicia no stado de Visualização
+﻿Fazer matriz que representa a arena
+Fazer 2 motos
+Fazer com que as motos se desloquem pela arena
+Fazer com que as motos deixem um rastro por onde passam
+Fazer com que quando uma moto passar pelo rastro DO INIMIGO ela se "desintegre"
+Fazer com que o rastro vá sumindo depois de um tempo
+Fazer com a aplicação se conecte com outra instância para transmitir o controle de uma das motos
+Fazer arte! =D
 
-Comandos do modo de Visualização
-    E (Editar): Para entrar em modo de edição
-        Serve para alterar o objeto selecionado
-    N (Novo): Para entrar em modo de criação
-        Nesse modo será criado um novo objeto. Este será filho do objeto selecionado
-        Clicar para criar novos pontos
-        Segurar Ctrl para que o proximo ponto seja criado na mesma posição do ponto mais proximo do objeto em criação
-    DELETE: Remove o objeto
-    Mouse-Arrastar: É possível mover o objeto no modo de visualização arrastando o objeto.
-
-Comandos do modo de edição(E)
-    Mouse-Click: Seleciona um ponto do objeto
-    Mouse-Arrastar: Move o objeto ou o ponto
-    Sem ponto selecionado
-        Setas: Movem o objeto
-        + e -: Aumenta o tamanho do objeto proporcionalmente
-        1 e 2: Rotacionam o objeto
-        C (Cor): Troca de cor aleatoriamente do objeto
-        ENTER ou ESC: Finaliza a edição e volta para o modo de Visualização
-    Com ponto
-        Setas: Movem o ponto
-        DELETE: Remove o ponto
-        ENTER ou ESC: Tira a seleção do ponto
-    
-Comandos do modo de criação(N)
-    Mouse-Click direito ou ENTER ou ESC: Finaliza a criação e o programa volta para o estado de Visualização
-    Mouse-Click esquerdo: cria um novo ponto   
-         Se o Ctrl estiver pressionado o novo ponto será criado na mesma posição de um ponto ja existente no objeto
-  
+Se formos foda o suficiente:
+Mais ângulos de movimento
+Spline pra suavizar as curvas
