@@ -17,14 +17,23 @@ public abstract class ObjetoGrafico {
 	protected ObjetoGrafico parent;
 
 	/**
-	 * Inclui uma transformação para o objeto
+	 * Inclui um movimentação ou uma expansão do objeto
 	 * 
 	 * @param transformacao
 	 */
 	public void addTransformacao(Transformacao transformacao) {
-		this.transformacao = this.transformacao.transformMatrix(transformacao);
+	    this.transformacao = transformacao.transformMatrix(this.transformacao);
 	}
 
+	/**
+	 * Incluir uma rotação no objeto
+	 * 
+	 * @param transformacao
+	 */
+	public void addRotacao(Transformacao transformacao) {
+	    this.transformacao = this.transformacao.transformMatrix(transformacao);
+	}
+	
 	public Transformacao getTransformacao() {
 		return transformacao;
 	}
@@ -205,4 +214,5 @@ public abstract class ObjetoGrafico {
 
 		return this.transformacao.transformPointInverse(ponto);
 	}
+
 }

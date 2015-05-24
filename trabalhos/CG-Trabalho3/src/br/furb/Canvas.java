@@ -291,6 +291,7 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 	 */
 	public boolean verificarEdicao(KeyEvent e) {
 		boolean reconheceu = true;
+		boolean foiRotacao = true;
 		Transformacao trans = new Transformacao();
 		int peso = 1;
 		if (e.isControlDown()) {
@@ -314,9 +315,11 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 
 			case KeyEvent.VK_1:
 				trans.atribuirRotacao(0.01 * peso);
+				foiRotacao = true;
 				break;
 			case KeyEvent.VK_2:
 				trans.atribuirRotacao(-0.01 * peso);
+				foiRotacao = true;
 				break;
 
 			case KeyEvent.VK_ADD:
@@ -343,6 +346,14 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 				break;
 			default:
 				reconheceu = false;
+			}
+			
+			if (reconheceu) {
+			    if(!foiRotacao) {
+				Mundo.getObjetoSelecionado().addTransformacao(trans);
+			    } else {
+				Mundo.getObjetoSelecionado().addRotacao(trans);
+			    }
 			}
 		} else {
 			switch (e.getKeyCode()) {
@@ -377,9 +388,6 @@ public class Canvas implements GLEventListener, MouseMotionListener,
 			}
 		}
 
-		if (reconheceu) {
-			Mundo.getObjetoSelecionado().addTransformacao(trans);
-		}
 		return reconheceu;
 	}
 
