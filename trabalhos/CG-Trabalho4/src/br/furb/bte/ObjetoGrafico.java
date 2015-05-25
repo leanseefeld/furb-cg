@@ -17,11 +17,29 @@ public abstract class ObjetoGrafico {
     protected ObjetoGrafico parent;
 
     /**
-     * Inclui uma transformação para o objeto
+     * Inclui um movimentação no objeto
      * 
      * @param transformacao
      */
-    public void addTransformacao(Transformacao transformacao) {
+    public void addMovimentacao(Transformacao transformacao) {
+	this.transformacao = transformacao.transformMatrix(this.transformacao);
+    }
+    
+    /**
+     * Inclui uma expansão no objeto
+     * 
+     * @param transformacao
+     */
+    public void addExpansao(Transformacao transformacao) {
+	this.transformacao = transformacao.transformMatrix(this.transformacao);
+    }
+
+    /**
+     * Incluir uma rotação no objeto
+     * 
+     * @param transformacao
+     */
+    public void addRotacao(Transformacao transformacao) {
 	this.transformacao = this.transformacao.transformMatrix(transformacao);
     }
 
@@ -73,46 +91,7 @@ public abstract class ObjetoGrafico {
 	}
     }
 
-    /**
-     * Indica se o objeto está selecionado
-     * 
-     * @return
-     */
-    public boolean isSelected() {
-	return Mundo.objetoSelecionado == this;
-    }
-
     public void removerFilho(ObjetoGrafico objeto) {
 	this.objetosGraficos.remove(objeto);
-    }
-
-    /**
-     * Retorna a transformação da raíz até este ponto Ou seja, todas as transformações dos objetos
-     * somadas até este ponto
-     *
-     * @return
-     */
-    public Transformacao getTransformacaoTotal() {
-	Transformacao trans;
-	if (this.parent != null)
-	    trans = this.transformacao.transformMatrix(this.parent.getTransformacaoTotal());
-	else {
-	    trans = this.transformacao;
-	}
-	return trans;
-    }
-
-    /**
-     * Transforma o ponto para o ponto de origem considerando todas as transformações dos objetos
-     * pais
-     * 
-     * @param ponto
-     * @return
-     */
-    public Ponto inverseTransformRecursive(Ponto ponto) {
-	if (this.parent != null)
-	    ponto = this.parent.inverseTransformRecursive(ponto);
-
-	return this.transformacao.transformPointInverse(ponto);
     }
 }

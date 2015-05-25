@@ -9,6 +9,8 @@ public class Arena extends Poligono {
 
     public Arena(GL gl) {
 	super(gl);
+	this.primitiva = GL.GL_QUADS;
+	this.cor = new Cor(1, 1, 0);
     }
 
     @Override
@@ -20,10 +22,4 @@ public class Arena extends Poligono {
 	pontos.add(new Ponto(+300, -300));
 	return pontos;
     }
-
-    @Override
-    public int getPrimitiva() {
-	return GL.GL_LINE_LOOP;
-    }
-
 }

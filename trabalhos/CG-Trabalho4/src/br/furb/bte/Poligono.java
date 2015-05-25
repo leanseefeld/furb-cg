@@ -1,18 +1,17 @@
 package br.furb.bte;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
 
 public abstract class Poligono extends ObjetoGrafico {
 
     private final List<Ponto> pontos;
-    private int primitiva;
+    protected int primitiva;
 
     public Poligono(GL gl) {
 	super(gl);
 	this.primitiva = GL.GL_LINE_LOOP;
-	this.pontos = new ArrayList<Ponto>();
+	this.pontos = this.criarPontos();
     }
 
     protected abstract List<Ponto> criarPontos();
@@ -63,44 +62,9 @@ public abstract class Poligono extends ObjetoGrafico {
 	    }
 	    gl.glEnd();
 
-	    if (this.isSelected()) {
-	    }
-
 	    super.desenhar();
 	}
 	gl.glPopMatrix();
-    }
-
-    private void destacarPontos() {
-	for (Ponto ponto : this.pontos) {
-	    gl.glPointSize(7);
-	    gl.glColor3f(0f, 1f, 1f);
-	    gl.glBegin(GL.GL_POINTS);
-	    {
-		gl.glVertex2d(ponto.X, ponto.Y);
-	    }
-	    gl.glEnd();
-	}
-    }
-
-    public Ponto getPontoMaisProximo(Ponto pontoSelecionado) {
-	double menorDistancia = Double.MAX_VALUE;
-	Ponto pontoMaisProximo = null;
-	Ponto pontoTrans = this.inverseTransformRecursive(pontoSelecionado.clone());
-	for (Ponto ponto : this.pontos) {
-	    if (pontoSelecionado != ponto) {
-		double distancia = Math.abs(ponto.X - pontoTrans.X) + Math.abs(ponto.Y - pontoTrans.Y);
-		if (distancia < menorDistancia) {
-		    menorDistancia = distancia;
-		    pontoMaisProximo = ponto;
-		}
-	    }
-	}
-	return pontoMaisProximo;
-    }
-
-    private float getPontoIntermediario(int a, int b, float peso) {
-	return a + (b - a) * peso;
     }
 
     public boolean temPontos() {

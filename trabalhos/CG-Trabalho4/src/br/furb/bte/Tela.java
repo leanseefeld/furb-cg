@@ -25,6 +25,8 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
     private GLU glu;
     private GLAutoDrawable glDrawable;
     private Mundo mundo;
+    private Moto moto1;
+    private Moto moto2;
 
     public Tela() {
 	addGLEventListener(this);
@@ -43,29 +45,9 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	gl.glMatrixMode(GL.GL_MODELVIEW);
 	gl.glLoadIdentity();
 
-	SRU();
-
 	mundo.desenhar();
 
-    }
-
-    /**
-     * Desenha os eixos da Tela
-     */
-    public void SRU() {
-	// eixo x
-	gl.glColor3f(1.0f, 0.0f, 0.0f);
-	gl.glLineWidth(1.0f);
-	gl.glBegin(GL.GL_LINES);
-	gl.glVertex2f(-200.0f, 0.0f);
-	gl.glVertex2f(200.0f, 0.0f);
-	gl.glEnd();
-	// eixo y
-	gl.glColor3f(0.0f, 1.0f, 0.0f);
-	gl.glBegin(GL.GL_LINES);
-	gl.glVertex2f(0.0f, -200.0f);
-	gl.glVertex2f(0.0f, 200.0f);
-	gl.glEnd();
+	SRU();
     }
 
     @Override
@@ -85,7 +67,10 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	mundo = new Mundo(gl, (int) ortho2D_maxX, (int) ortho2D_minX, (int) ortho2D_maxY, (int) ortho2D_minY);
 
 	Arena arena = new Arena(gl);
-	arena.cor = new Cor(1, 1, 0);
+	this.moto1 = new Moto(gl, new Ponto(-100, 0), 0);
+	arena.addFilho(moto1);
+	this.moto2 = new Moto(gl, new Ponto(+100, 0), 180);
+	arena.addFilho(moto2);
 
 	mundo.addFilho(arena);
     }
@@ -107,8 +92,26 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 
     @Override
     public void keyPressed(KeyEvent e) {
-	boolean reconheceu = false;
-	// TODO: reconhecer setas do teclado e controlar a motoca
+	boolean reconheceu = true;
+	switch (e.getKeyCode()) {
+	    case KeyEvent.VK_UP:
+		this.moto1.setAngulo(90);
+		break;
+	    case KeyEvent.VK_RIGHT:
+		this.moto1.setAngulo(0);
+		break;
+	    case KeyEvent.VK_DOWN:
+		this.moto1.setAngulo(+270);
+		break;
+	    case KeyEvent.VK_LEFT:
+		this.moto1.setAngulo(+180);
+		break;
+	    case KeyEvent.VK_SPACE:
+		this.moto1.andar();
+		break;
+	    default:
+		reconheceu = false;
+	}
 	if (reconheceu) {
 	    glDrawable.display();
 	}
@@ -148,4 +151,22 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 
     }
 
+    /**
+     * Desenha os eixos da Tela
+     */
+    public void SRU() {
+	// eixo x
+	gl.glColor3f(1.0f, 0.0f, 0.0f);
+	gl.glLineWidth(1.0f);
+	gl.glBegin(GL.GL_LINES);
+	gl.glVertex2f(-200.0f, 0.0f);
+	gl.glVertex2f(200.0f, 0.0f);
+	gl.glEnd();
+	// eixo y
+	gl.glColor3f(0.0f, 1.0f, 0.0f);
+	gl.glBegin(GL.GL_LINES);
+	gl.glVertex2f(0.0f, -200.0f);
+	gl.glVertex2f(0.0f, 200.0f);
+	gl.glEnd();
+    }
 }

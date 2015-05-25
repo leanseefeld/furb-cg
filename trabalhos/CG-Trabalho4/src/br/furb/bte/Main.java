@@ -1,7 +1,6 @@
 package br.furb.bte;
 
 import java.awt.BorderLayout;
-import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
