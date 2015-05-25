@@ -106,7 +106,7 @@ public class BBox {
 	{
 		if( this.getMenorX() > bbox.getMaiorX() )
 			return false; 
-		if( this.getMaiorX < bbox.getMenorX )
+		if( this.getMaiorX() < bbox.getMenorX() )
 			return false; 
 		if( this.getMaiorY() > bbox.getMenorY() )
 			return false; 
@@ -122,8 +122,8 @@ public class BBox {
      * @param pontoB
      */
     public boolean estaSendoCruzadoPor(Ponto pontoA, Ponto pontoB) {
-		BBox bboxLinha = new BBox(Arras.asList(pontoA, pontoB));
+		BBox bboxLinha = new BBox(Arrays.asList(pontoA, pontoB));
 		boolean estaColidindo = this.estaColidindo(bboxLinha);
-		return false;
+		return estaColidindo;
     }
 }
