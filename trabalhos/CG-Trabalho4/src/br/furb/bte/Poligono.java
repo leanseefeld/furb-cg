@@ -5,16 +5,23 @@ import javax.media.opengl.GL;
 
 public abstract class Poligono extends ObjetoGrafico {
 
-    private final List<Ponto> pontos;
+    protected final List<Ponto> pontos;
     protected int primitiva;
+    private int largura;
 
     public Poligono(GL gl) {
 	super(gl);
 	this.primitiva = GL.GL_LINE_LOOP;
 	this.pontos = this.criarPontos();
+	this.largura = 1;
+	this.criarBBox();
     }
 
     protected abstract List<Ponto> criarPontos();
+
+    protected void setLarguraLinha(int largura) {
+	this.largura = largura;
+    }
 
     public int getPrimitiva() {
 	return primitiva;
@@ -47,7 +54,7 @@ public abstract class Poligono extends ObjetoGrafico {
 
     @Override
     public void desenhar() {
-	gl.glLineWidth(3);
+	gl.glLineWidth(this.largura);
 	gl.glColor3f(cor.R, cor.G, cor.B);
 
 	gl.glPushMatrix();

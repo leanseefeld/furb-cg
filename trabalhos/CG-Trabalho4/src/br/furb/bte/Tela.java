@@ -67,10 +67,13 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	mundo = new Mundo(gl, (int) ortho2D_maxX, (int) ortho2D_minX, (int) ortho2D_maxY, (int) ortho2D_minY);
 
 	Arena arena = new Arena(gl);
-	this.moto1 = new Moto(gl, new Ponto(-100, 0), 0);
+	this.moto1 = new Moto(gl, new Ponto(-100, 0), Moto.DIREITA, new Cor(1, 0, 0));
 	arena.addFilho(moto1);
-	this.moto2 = new Moto(gl, new Ponto(+100, 0), 180);
+	arena.addFilho(this.moto1.getRastro());
+	
+	this.moto2 = new Moto(gl, new Ponto(+100, 0), Moto.ESQUERDA, new Cor(0, 1, 0));
 	arena.addFilho(moto2);
+	arena.addFilho(this.moto2.getRastro());
 
 	mundo.addFilho(arena);
     }
@@ -94,20 +97,32 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
     public void keyPressed(KeyEvent e) {
 	boolean reconheceu = true;
 	switch (e.getKeyCode()) {
+	    case KeyEvent.VK_W:
+		this.moto2.setAngulo(Moto.CIMA);
+		break;
 	    case KeyEvent.VK_UP:
-		this.moto1.setAngulo(90);
+		this.moto1.setAngulo(Moto.CIMA);
+		break;
+	    case KeyEvent.VK_D:
+		this.moto2.setAngulo(Moto.DIREITA);
 		break;
 	    case KeyEvent.VK_RIGHT:
-		this.moto1.setAngulo(0);
+		this.moto1.setAngulo(Moto.DIREITA);
+		break;
+	    case KeyEvent.VK_S:
+		this.moto2.setAngulo(Moto.BAIXO);
 		break;
 	    case KeyEvent.VK_DOWN:
-		this.moto1.setAngulo(+270);
+		this.moto1.setAngulo(Moto.BAIXO);
+		break;
+	    case KeyEvent.VK_A:
+		this.moto2.setAngulo(Moto.ESQUERDA);
 		break;
 	    case KeyEvent.VK_LEFT:
-		this.moto1.setAngulo(+180);
+		this.moto1.setAngulo(Moto.ESQUERDA);
 		break;
 	    case KeyEvent.VK_SPACE:
-		this.moto1.andar();
+		this.executarComportamentos();		
 		break;
 	    default:
 		reconheceu = false;
@@ -115,6 +130,16 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	if (reconheceu) {
 	    glDrawable.display();
 	}
+    }
+
+    private void executarComportamentos() {
+	this.moto1.mover();
+	this.moto2.mover();
+	
+	this.moto1.verificaColisao(this.moto1.getRastro());
+	this.moto1.verificaColisao(this.moto2.getRastro());
+	this.moto2.verificaColisao(this.moto1.getRastro());
+	this.moto2.verificaColisao(this.moto2.getRastro());
     }
 
     @Override

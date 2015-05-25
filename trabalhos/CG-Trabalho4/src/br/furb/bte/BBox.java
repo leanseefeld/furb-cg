@@ -76,4 +76,18 @@ public class BBox {
 	}
 	return false;
     }
+
+    public Ponto getCentro() {
+	return new Ponto((this.getMaiorX() + this.getMenorX()) / 2, (this.getMaiorY() + this.getMenorY()) / 2);
+    }
+
+    /**
+     * Verifica se a linha que forma entre os pontos A e B passa por dentro da BBOX
+     * @param pontoA
+     * @param pontoB
+     */
+    public boolean estaSendoCruzadoPor(Ponto pontoA, Ponto pontoB) {
+	//TODO Ver como faz isso
+	return false;
+    }
 }
