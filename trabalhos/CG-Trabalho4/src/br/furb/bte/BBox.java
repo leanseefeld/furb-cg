@@ -1,5 +1,8 @@
 package br.furb.bte;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BBox {
 
     private Ponto maior;
@@ -83,11 +86,31 @@ public class BBox {
 
     /**
      * Verifica se a linha que forma entre os pontos A e B passa por dentro da BBOX
+     * 
      * @param pontoA
      * @param pontoB
      */
     public boolean estaSendoCruzadoPor(Ponto pontoA, Ponto pontoB) {
-	//TODO Ver como faz isso
+
+	List<Ponto> pontosVerificacao = new ArrayList<>();
+	pontosVerificacao.add(new Ponto(this.getMaiorX(), this.getMaiorY()));
+	pontosVerificacao.add(new Ponto(this.getMaiorX(), this.getMenorY()));
+	pontosVerificacao.add(new Ponto(this.getMenorX(), this.getMenorY()));
+	pontosVerificacao.add(new Ponto(this.getMenorX(), this.getMaiorY()));
+
+	Ponto pontoBBoxA = null;
+	Ponto pontoBBoxB = null;
+	for (int i = 0; i < pontosVerificacao.size(); i++) {
+	    pontoBBoxA = pontosVerificacao.get(i);
+	    if (i + 1 < pontosVerificacao.size())
+		pontoBBoxB = pontosVerificacao.get(i + 1);
+	    else
+		pontoBBoxB = pontosVerificacao.get(0);
+	    
+	    //TODO: E agora?
+
+	}
+
 	return false;
     }
 }
