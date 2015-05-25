@@ -1,7 +1,9 @@
 package br.furb.bte;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class BBox {
 
@@ -14,27 +16,28 @@ public class BBox {
     }
 
     public BBox(int maiorX, int menorX, int maiorY, int menorY) {
-		this.maior = new Ponto(maiorX, maiorY);
-		this.menor = new Ponto(menorX, menorY);
+	this.maior = new Ponto(maiorX, maiorY);
+	this.menor = new Ponto(menorX, menorY);
     }
-	
-	public BBox(List<Ponto> pontos) {
-		BBox bbox = new BBox();
-		bbox.setMaiorX(Integer.MIN_VALUE);
-		bbox.setMenorX(Integer.MAX_VALUE);
-		bbox.setMaiorY(Integer.MIN_VALUE);
-		bbox.setMenorY(Integer.MAX_VALUE);
-		for (Ponto ponto : pontos) {
-			if (ponto.X > bbox.getMaiorX())
-				bbox.setMaiorX(ponto.X);
-			if (ponto.X < bbox.getMenorX())
-				bbox.setMenorX(ponto.X);
-			if (ponto.Y > bbox.getMaiorY())
-				bbox.setMaiorY(ponto.Y);
-			if (ponto.Y < bbox.getMenorY())
-				bbox.setMenorY(ponto.Y);
-		}
+
+    public BBox(List<Ponto> pontos) {
+	this.maior = new Ponto(0, 0);
+	this.menor = new Ponto(0, 0);
+	this.setMaiorX(Integer.MIN_VALUE);
+	this.setMenorX(Integer.MAX_VALUE);
+	this.setMaiorY(Integer.MIN_VALUE);
+	this.setMenorY(Integer.MAX_VALUE);
+	for (Ponto ponto : pontos) {
+	    if (ponto.X > this.getMaiorX())
+		this.setMaiorX(ponto.X);
+	    if (ponto.X < this.getMenorX())
+		this.setMenorX(ponto.X);
+	    if (ponto.Y > this.getMaiorY())
+		this.setMaiorY(ponto.Y);
+	    if (ponto.Y < this.getMenorY())
+		this.setMenorY(ponto.Y);
 	}
+    }
 
     public int getMaiorX() {
 	return maior.X;
@@ -101,20 +104,19 @@ public class BBox {
     public Ponto getCentro() {
 	return new Ponto((this.getMaiorX() + this.getMenorX()) / 2, (this.getMaiorY() + this.getMenorY()) / 2);
     }
-	
-	public boolean estaColidindo(BBox bbox)
-	{
-		if( this.getMenorX() > bbox.getMaiorX() )
-			return false; 
-		if( this.getMaiorX() < bbox.getMenorX() )
-			return false; 
-		if( this.getMaiorY() > bbox.getMenorY() )
-			return false; 
-		if( this.getMenorY() < bbox.getMaiorY() )
-			return false; 
-		return true; 
-	}
-	
+
+    public boolean estaColidindo(BBox bbox) {
+	if (this.getMenorX() > bbox.getMaiorX())
+	    return false;
+	if (this.getMaiorX() < bbox.getMenorX())
+	    return false;
+	if (this.getMaiorY() > bbox.getMenorY())
+	    return false;
+	if (this.getMenorY() < bbox.getMaiorY())
+	    return false;
+	return true;
+    }
+
     /**
      * Verifica se a linha que forma entre os pontos A e B passa por dentro da BBOX
      * 
@@ -122,8 +124,8 @@ public class BBox {
      * @param pontoB
      */
     public boolean estaSendoCruzadoPor(Ponto pontoA, Ponto pontoB) {
-		BBox bboxLinha = new BBox(Arrays.asList(pontoA, pontoB));
-		boolean estaColidindo = this.estaColidindo(bboxLinha);
-		return estaColidindo;
+	BBox bboxLinha = new BBox(Arrays.asList(pontoA, pontoB));
+	boolean estaColidindo = this.estaColidindo(bboxLinha);
+	return estaColidindo;
     }
 }

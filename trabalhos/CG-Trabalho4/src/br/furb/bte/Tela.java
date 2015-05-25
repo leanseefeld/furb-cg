@@ -70,7 +70,7 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	this.moto1 = new Moto(gl, new Ponto(-100, 0), Moto.DIREITA, new Cor(1, 0, 0));
 	arena.addFilho(moto1);
 	arena.addFilho(this.moto1.getRastro());
-	
+
 	this.moto2 = new Moto(gl, new Ponto(+100, 0), Moto.ESQUERDA, new Cor(0, 1, 0));
 	arena.addFilho(moto2);
 	arena.addFilho(this.moto2.getRastro());
@@ -122,7 +122,7 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 		this.moto1.setAngulo(Moto.ESQUERDA);
 		break;
 	    case KeyEvent.VK_SPACE:
-		this.executarComportamentos();		
+		this.executarComportamentos();
 		break;
 	    default:
 		reconheceu = false;
@@ -135,11 +135,15 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
     private void executarComportamentos() {
 	this.moto1.mover();
 	this.moto2.mover();
-	
-	this.moto1.verificaColisao(this.moto1.getRastro());
-	this.moto1.verificaColisao(this.moto2.getRastro());
-	this.moto2.verificaColisao(this.moto1.getRastro());
-	this.moto2.verificaColisao(this.moto2.getRastro());
+
+	boolean teveColisao = false;
+	teveColisao |= this.moto1.verificaColisao(this.moto1.getRastro());
+	teveColisao |= this.moto1.verificaColisao(this.moto2.getRastro());
+	teveColisao |= this.moto2.verificaColisao(this.moto1.getRastro());
+	teveColisao |= this.moto2.verificaColisao(this.moto2.getRastro());
+	if (teveColisao) {
+	    System.out.println("COLISÃO");
+	}
     }
 
     @Override

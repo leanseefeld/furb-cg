@@ -14,7 +14,7 @@ public abstract class Poligono extends ObjetoGrafico {
 	this.primitiva = GL.GL_LINE_LOOP;
 	this.pontos = this.criarPontos();
 	this.largura = 1;
-	this.criarBBox();
+	this.bbox = new BBox(this.pontos);
     }
 
     protected abstract List<Ponto> criarPontos();
@@ -29,27 +29,6 @@ public abstract class Poligono extends ObjetoGrafico {
 
     public void setPrimitiva(int primitiva) {
 	this.primitiva = primitiva;
-    }
-
-    /**
-     * Monta a BBox em torno do objeto
-     */
-    public void criarBBox() {
-	super.bbox = new BBox();
-	super.bbox.setMaiorX(Integer.MIN_VALUE);
-	super.bbox.setMenorX(Integer.MAX_VALUE);
-	super.bbox.setMaiorY(Integer.MIN_VALUE);
-	super.bbox.setMenorY(Integer.MAX_VALUE);
-	for (Ponto ponto : pontos) {
-	    if (ponto.X > this.bbox.getMaiorX())
-		this.bbox.setMaiorX(ponto.X);
-	    if (ponto.X < this.bbox.getMenorX())
-		this.bbox.setMenorX(ponto.X);
-	    if (ponto.Y > this.bbox.getMaiorY())
-		this.bbox.setMaiorY(ponto.Y);
-	    if (ponto.Y < this.bbox.getMenorY())
-		this.bbox.setMenorY(ponto.Y);
-	}
     }
 
     @Override

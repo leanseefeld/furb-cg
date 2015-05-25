@@ -70,7 +70,6 @@ public abstract class ObjetoGrafico {
      */
     public void addFilho(Poligono poligono) {
 	this.objetosGraficos.add(poligono);
-	poligono.criarBBox();
 	poligono.setParent(this);
     }
 
