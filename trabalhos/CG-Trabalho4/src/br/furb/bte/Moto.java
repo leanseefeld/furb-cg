@@ -8,6 +8,7 @@ public class Moto extends Poligono {
 
     private int angulo;
     private static final int VELOCIDADE = 10;
+    private static final int MAX_ROTACAO = 90;
 
     public Moto(GL gl, Ponto pontoInicial, int anguloIncial) {
 	super(gl);
@@ -18,10 +19,10 @@ public class Moto extends Poligono {
 
 	Transformacao transTranslacao = new Transformacao();
 	transTranslacao.atribuirTranslacao(pontoInicial.X, pontoInicial.Y);
-	
+
 	Transformacao transRotacao = new Transformacao();
 	transRotacao.atribuirRotacao(Math.toRadians(anguloIncial));
-	
+
 	//this.transformacao = transRotacao.transformMatrix(transTranslacao);
 	this.transformacao = transTranslacao.transformMatrix(transRotacao);
     }
@@ -29,12 +30,12 @@ public class Moto extends Poligono {
     @Override
     protected List<Ponto> criarPontos() {
 	List<Ponto> pontos = new ArrayList<>(4);
-	
+
 	pontos.add(new Ponto(+17, +4));
 	pontos.add(new Ponto(+17, -4));
 	pontos.add(new Ponto(-19, -6));
 	pontos.add(new Ponto(-19, +6));
-	
+
 	return pontos;
     }
 
@@ -46,8 +47,8 @@ public class Moto extends Poligono {
     }
 
     public void andar() {
-	int moverX = (int)Math.cos(Math.toRadians(this.angulo)) * VELOCIDADE;
-	int moverY = (int)Math.sin(Math.toRadians(this.angulo)) * VELOCIDADE;
+	int moverX = (int) Math.cos(Math.toRadians(this.angulo)) * VELOCIDADE;
+	int moverY = (int) Math.sin(Math.toRadians(this.angulo)) * VELOCIDADE;
 	Transformacao trans = new Transformacao();
 	trans.atribuirTranslacao(moverX, moverY);
 	this.addMovimentacao(trans);
@@ -55,7 +56,11 @@ public class Moto extends Poligono {
 
     public void setAngulo(int angulo) {
 	int grausGirar = angulo - this.angulo;
-	this.girar(grausGirar); 
-	this.angulo = angulo;
+	if (grausGirar < -180 || grausGirar > 180)
+	    grausGirar = -(grausGirar % 180);
+	if (grausGirar >= -MAX_ROTACAO && grausGirar <= MAX_ROTACAO) {
+	    this.girar(grausGirar);
+	    this.angulo = angulo;
+	}
     }
 }
