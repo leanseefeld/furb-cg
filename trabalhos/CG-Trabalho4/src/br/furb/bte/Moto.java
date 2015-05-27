@@ -68,7 +68,14 @@ public class Moto extends Poligono {
 	this.rastro.criarRastro(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
-    public boolean verificaColisao(Rastro rastro) {
+    public boolean verificarColisao(Rastro rastro) {
+	
+	List<Ponto> pontosTransformados = new ArrayList<Ponto>(super.pontos.size());
+	for (Ponto ponto : super.pontos) {
+	    pontosTransformados.add(this.transformacao.transformPoint(ponto));
+	}
+	BBox bboxTransformada = new BBox(pontosTransformados);
+	
 	Ponto pontoA = null;
 	Ponto pontoB = null;
 	for (int i = 0; i < rastro.pontos.size(); i++) {
@@ -79,7 +86,7 @@ public class Moto extends Poligono {
 	    else
 		pontoB = rastro.pontos.get(0);
 
-	    if (this.bbox.estaSendoCruzadoPor(pontoA, pontoB)) {
+	    if (bboxTransformada.estaSendoCruzadoPor(pontoA, pontoB)) {
 		return true;
 	    }
 	}

@@ -2,6 +2,7 @@ package br.furb.bte;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
@@ -110,9 +111,9 @@ public class BBox {
 	    return false;
 	if (this.getMaiorX() < bbox.getMenorX())
 	    return false;
-	if (this.getMaiorY() > bbox.getMenorY())
+	if (this.getMenorY() > bbox.getMaiorY())
 	    return false;
-	if (this.getMenorY() < bbox.getMaiorY())
+	if (this.getMaiorY() < bbox.getMenorY())
 	    return false;
 	return true;
     }
