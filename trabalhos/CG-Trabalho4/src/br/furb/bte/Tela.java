@@ -136,14 +136,26 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	this.moto1.mover();
 	this.moto2.mover();
 
+	verificaColisaoMoto(moto1);
+	verificaColisaoMoto(moto2);
+    }
+
+    private void verificaColisaoMoto(Moto moto) {
 	boolean teveColisao = false;
-	teveColisao |= this.moto1.verificarColisao(this.moto1.getRastro());
-	teveColisao |= this.moto1.verificarColisao(this.moto2.getRastro());
-	teveColisao |= this.moto2.verificarColisao(this.moto1.getRastro());
-	teveColisao |= this.moto2.verificarColisao(this.moto2.getRastro());
-	if (teveColisao) {
-	    System.out.println("COLISÃO");
-	}
+	teveColisao |= moto.verificarColisao(moto1.getRastro());
+	teveColisao |= moto.verificarColisao(moto2.getRastro());
+	teveColisao |= moto.verificarColisao(getEnemy(moto));
+	if (teveColisao)
+	    moto.setColisao();
+	else
+	    moto.setNormal();
+    }
+
+    private Moto getEnemy(Moto moto) {
+	if (moto == this.moto1)
+	    return moto2;
+	else
+	    return moto1;
     }
 
     @Override
