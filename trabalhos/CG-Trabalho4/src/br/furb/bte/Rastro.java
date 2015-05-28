@@ -21,7 +21,7 @@ public class Rastro extends Poligono {
 	return pontos;
     }
 
-    public void criarRastro(Ponto novaPosicao) {
+    public void arrastar(Ponto novaPosicao) {
 	this.pontos.add(novaPosicao);
 	if (this.pontos.size() > TAMANHO_RASTRO) {
 	    this.pontos.remove(0);

@@ -56,7 +56,7 @@ public class Moto extends Poligono {
 	Transformacao trans = new Transformacao();
 	trans.atribuirRotacao(Math.toRadians(graus));
 	this.addRotacao(trans);
-	this.rastro.criarRastro(this.transformacao.transformPoint(this.bbox.getCentro()));
+	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
     public void mover() {
@@ -65,26 +65,46 @@ public class Moto extends Poligono {
 	Transformacao trans = new Transformacao();
 	trans.atribuirTranslacao(moverX, moverY);
 	this.addMovimentacao(trans);
-	this.rastro.criarRastro(this.transformacao.transformPoint(this.bbox.getCentro()));
+	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
     public boolean verificarColisao(Rastro rastro) {
-	
+
 	List<Ponto> pontosTransformados = new ArrayList<Ponto>(super.pontos.size());
 	for (Ponto ponto : super.pontos) {
 	    pontosTransformados.add(this.transformacao.transformPoint(ponto));
 	}
 	BBox bboxTransformada = new BBox(pontosTransformados);
-	
+
 	Ponto pontoA = null;
 	Ponto pontoB = null;
-	for (int i = 0; i < rastro.pontos.size(); i++) {
+	Ponto pontoBAux = null;
+	int qtdIgnorar = rastro == this.rastro ? 4 : 0;
+	for (int i = 1; i < rastro.pontos.size() - qtdIgnorar; i++) {
 
-	    pontoA = rastro.pontos.get(i);
-	    if (i + 1 < rastro.pontos.size())
-		pontoB = rastro.pontos.get(i + 1);
-	    else
-		pontoB = rastro.pontos.get(0);
+	    pontoA = rastro.pontos.get(i - 1);
+	    pontoB = rastro.pontos.get((i));
+
+//	    i++;
+//	    if (pontoA.X == pontoB.X) {
+//		while (i < rastro.pontos.size() - qtdIgnorar) {
+//		    pontoBAux = rastro.pontos.get((i) % rastro.pontos.size());
+//		    if (pontoA.X != pontoBAux.X) {
+//			break;
+//		    }
+//		    pontoB = pontoBAux;
+//		    i++;
+//		}
+//	    } else {
+//		while (i < rastro.pontos.size() - qtdIgnorar) {
+//		    pontoBAux = rastro.pontos.get((i) % rastro.pontos.size());
+//		    if (pontoA.Y == pontoBAux.Y) {
+//			break;
+//		    }
+//		    pontoB = pontoBAux;
+//		    i++;
+//		}
+//	    }
 
 	    if (bboxTransformada.estaSendoCruzadoPor(pontoA, pontoB)) {
 		return true;
