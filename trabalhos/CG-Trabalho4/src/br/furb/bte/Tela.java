@@ -60,6 +60,10 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	System.out.println(" --- init ---");
 	glDrawable = drawable;
 	gl = drawable.getGL();
+
+	//gl.glEnable(GL.GL_DEPTH_TEST);
+	//gl.glEnable(GL.GL_CULL_FACE);
+
 	glu = new GLU();
 	glDrawable.setGL(new DebugGL(gl));
 	System.out.println("Espaço de desenho com tamanho: " + drawable.getWidth() + " x " + drawable.getHeight());
@@ -76,6 +80,23 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	arena.addFilho(this.moto2.getRastro());
 
 	mundo.addFilho(arena);
+
+	Thread pintero = new Thread() {
+
+	    @Override
+	    public void run() {
+		while (true) {
+		    try {
+			Thread.sleep(50);
+		    } catch (InterruptedException e) {
+			e.printStackTrace();
+		    }
+		    executarComportamentos();
+		    glDrawable.display();
+		}
+	    }
+	};
+	pintero.start();
     }
 
     @Override
@@ -121,9 +142,6 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	    case KeyEvent.VK_LEFT:
 		this.moto1.setAngulo(Moto.ESQUERDA);
 		break;
-	    case KeyEvent.VK_SPACE:
-		this.executarComportamentos();
-		break;
 	    default:
 		reconheceu = false;
 	}
@@ -145,6 +163,8 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	teveColisao |= moto.verificarColisao(moto1.getRastro());
 	teveColisao |= moto.verificarColisao(moto2.getRastro());
 	teveColisao |= moto.verificarColisao(getEnemy(moto));
+
+	teveColisao |= !moto.verificarColisao(this.mundo);
 	if (teveColisao)
 	    moto.setColisao();
 	else

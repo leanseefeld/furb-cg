@@ -28,9 +28,9 @@ public class Main extends JFrame {
 
     @Override
     public void setVisible(boolean b) {
-	canvas.requestFocus();
 	pack();
 	super.setVisible(b);
+	canvas.requestFocus();
     }
 
     public static void main(String[] args) {

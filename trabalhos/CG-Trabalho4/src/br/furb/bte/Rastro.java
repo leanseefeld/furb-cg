@@ -17,8 +17,7 @@ public class Rastro extends Poligono {
 
     @Override
     protected List<Ponto> criarPontos() {
-	List<Ponto> pontos = new ArrayList<>(4);
-	return pontos;
+	return new ArrayList<>(TAMANHO_RASTRO);
     }
 
     public void arrastar(Ponto novaPosicao) {

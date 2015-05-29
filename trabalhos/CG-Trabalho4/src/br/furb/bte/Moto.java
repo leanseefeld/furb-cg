@@ -73,12 +73,18 @@ public class Moto extends Poligono {
 	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
-    public boolean verificarColisao(Moto moto) {
-	return this.getBBoxTrasnformada().estaColidindo(moto.getBBoxTrasnformada());
+    public boolean verificarColisao(Poligono moto) {
+	return this.getBBoxTransformada().estaColidindo(moto.getBBoxTransformada());
+    }
+    
+    public boolean verificarColisao(ObjetoGrafico objeto) {
+	BBox bbox = this.getBBoxTransformada();
+	boolean colisao = bbox.estaColidindo(objeto.bbox);
+	return colisao;
     }
     
     public boolean verificarColisao(Rastro rastro) {
-	BBox bboxTransformado = getBBoxTrasnformada();
+	BBox bboxTransformado = getBBoxTransformada();
 	
 	boolean existeColisao = false;
 
@@ -123,15 +129,6 @@ public class Moto extends Poligono {
 	else
 	    this.cor = this.corNormal;
 	return existeColisao;
-    }
-
-    public BBox getBBoxTrasnformada() {
-	List<Ponto> pontosTransformados = new ArrayList<Ponto>(super.pontos.size());
-	for (Ponto ponto : super.pontos) {
-	    pontosTransformados.add(this.transformacao.transformPoint(ponto));
-	}
-	BBox bboxTransformado = new BBox(pontosTransformados);
-	return bboxTransformado;
     }
 
     public void girar() {

@@ -1,5 +1,6 @@
 package br.furb.bte;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
 
@@ -59,5 +60,14 @@ public abstract class Poligono extends ObjetoGrafico {
 
     public void removerPonto(Ponto ponto) {
 	this.pontos.remove(ponto);
+    }
+
+    public BBox getBBoxTransformada() {
+	List<Ponto> pontosTransformados = new ArrayList<Ponto>(this.pontos.size());
+	for (Ponto ponto : this.pontos) {
+	    pontosTransformados.add(this.transformacao.transformPoint(ponto));
+	}
+	BBox bboxTransformado = new BBox(pontosTransformados);
+	return bboxTransformado;
     }
 }
