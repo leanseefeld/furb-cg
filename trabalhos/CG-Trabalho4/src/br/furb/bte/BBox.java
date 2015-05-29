@@ -103,6 +103,11 @@ public class BBox {
 	return new Ponto((this.getMaiorX() + this.getMenorX()) / 2, (this.getMaiorY() + this.getMenorY()) / 2);
     }
 
+    /**
+     * Returna true se uma parte de ambos os BBox estão no mesmo espaço
+     * @param bbox
+     * @return
+     */
     public boolean estaColidindo(BBox bbox) {
 	if (this.getMenorX() > bbox.getMaiorX())
 	    return false;
@@ -113,6 +118,18 @@ public class BBox {
 	if (this.getMaiorY() < bbox.getMenorY())
 	    return false;
 	return true;
+    }
+
+    /**
+     * Retorna true se esse BBox está totalmente dentro do bbox recebido por parametro
+     * @param bbox
+     * @return
+     */
+    public boolean estaDentro(BBox bbox) {
+	if (this.getMenorX() >= bbox.getMenorX() && this.getMaiorX() <= bbox.getMaiorX()
+		&& this.getMenorY() >= bbox.getMenorY() && this.getMaiorY() <= bbox.getMaiorY())
+	    return true;
+	return false;
     }
 
     /**

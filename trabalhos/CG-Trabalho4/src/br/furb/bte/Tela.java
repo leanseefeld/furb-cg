@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.concurrent.Semaphore;
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -27,6 +28,12 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
     private Mundo mundo;
     private Moto moto1;
     private Moto moto2;
+    private Arena arena;
+    /**
+     * Utilizado para pausar o jogo
+     * TODO: Alterar para algo que funcione melhor
+     */
+    private Semaphore semaphore;
 
     public Tela() {
 	addGLEventListener(this);
@@ -68,35 +75,50 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	glDrawable.setGL(new DebugGL(gl));
 	System.out.println("Espaço de desenho com tamanho: " + drawable.getWidth() + " x " + drawable.getHeight());
 	gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	mundo = new Mundo(gl, (int) ortho2D_maxX, (int) ortho2D_minX, (int) ortho2D_maxY, (int) ortho2D_minY);
+	mundo = new Mundo(gl);
 
-	Arena arena = new Arena(gl);
-	this.moto1 = new Moto(gl, new Ponto(-100, 0), Moto.DIREITA, new Cor(1, 0, 0));
-	arena.addFilho(moto1);
-	arena.addFilho(this.moto1.getRastro());
+	semaphore = new Semaphore(1);
 
-	this.moto2 = new Moto(gl, new Ponto(+100, 0), Moto.ESQUERDA, new Cor(0, 1, 0));
-	arena.addFilho(moto2);
-	arena.addFilho(this.moto2.getRastro());
-
-	mundo.addFilho(arena);
+	reset();
 
 	Thread pintero = new Thread() {
 
 	    @Override
 	    public void run() {
-		while (true) {
-		    try {
-			Thread.sleep(50);
-		    } catch (InterruptedException e) {
-			e.printStackTrace();
+		try {
+		    while (true) {
+			try {
+			    Thread.sleep(50);
+			} catch (InterruptedException e) {
+			    e.printStackTrace();
+			}
+			executarComportamentos();
+			glDrawable.display();
+			semaphore.acquire();
+			semaphore.release();
 		    }
-		    executarComportamentos();
-		    glDrawable.display();
+		} catch (InterruptedException e1) {
+		    // TODO Auto-generated catch block
+		    e1.printStackTrace();
 		}
 	    }
 	};
 	pintero.start();
+    }
+
+    private void reset() {
+	this.mundo.removerTodosFilhos();
+	arena = new Arena(gl);
+	moto1 = new Moto(gl, new Ponto(this.arena.bbox.getMenorX() + 50, 0), Moto.DIREITA, new Cor(1, 0, 0));
+	arena.addFilho(moto1);
+	arena.addFilho(moto1.getRastro());
+
+	moto2 = new Moto(gl, new Ponto(this.arena.bbox.getMaiorX() - 50, 0), Moto.ESQUERDA, new Cor(0, 1, 0));
+	arena.addFilho(moto2);
+	arena.addFilho(moto2.getRastro());
+
+	mundo.addFilho(arena);
+	semaphore.release();
     }
 
     @Override
@@ -142,6 +164,9 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	    case KeyEvent.VK_LEFT:
 		this.moto1.setAngulo(Moto.ESQUERDA);
 		break;
+	    case KeyEvent.VK_R:
+		this.reset();
+		break;
 	    default:
 		reconheceu = false;
 	}
@@ -154,21 +179,31 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	this.moto1.mover();
 	this.moto2.mover();
 
-	verificaColisaoMoto(moto1);
-	verificaColisaoMoto(moto2);
+	boolean teveColisao = false;
+	teveColisao |= verificaColisaoMoto(moto1);
+	teveColisao |= verificaColisaoMoto(moto2);
+	if (teveColisao) {
+	    try {
+		semaphore.acquire();
+	    } catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	}
     }
 
-    private void verificaColisaoMoto(Moto moto) {
+    private boolean verificaColisaoMoto(Moto moto) {
 	boolean teveColisao = false;
-	teveColisao |= moto.verificarColisao(moto1.getRastro());
-	teveColisao |= moto.verificarColisao(moto2.getRastro());
-	teveColisao |= moto.verificarColisao(getEnemy(moto));
+	teveColisao |= moto.estaColidindo(moto1.getRastro());
+	teveColisao |= moto.estaColidindo(moto2.getRastro());
+	teveColisao |= moto.estaColidindo(getEnemy(moto));
 
-	teveColisao |= !moto.verificarColisao(this.mundo);
+	teveColisao |= !moto.estaDentro(arena);
 	if (teveColisao)
 	    moto.setColisao();
 	else
 	    moto.setNormal();
+	return teveColisao;
     }
 
     private Moto getEnemy(Moto moto) {

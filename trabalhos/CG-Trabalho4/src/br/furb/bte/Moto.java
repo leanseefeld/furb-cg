@@ -36,6 +36,14 @@ public class Moto extends Poligono {
 	this.girar();
     }
 
+    public void setColisao() {
+	this.cor = this.corColisao;
+    }
+
+    public void setNormal() {
+	this.cor = this.corNormal;
+    }
+
     private void setPosicao(Ponto pontoInicial) {
 	Transformacao transTranslacao = new Transformacao();
 	transTranslacao.atribuirTranslacao(pontoInicial.X, pontoInicial.Y);
@@ -73,19 +81,15 @@ public class Moto extends Poligono {
 	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
-    public boolean verificarColisao(Poligono moto) {
-	return this.getBBoxTransformada().estaColidindo(moto.getBBoxTransformada());
-    }
-    
-    public boolean verificarColisao(ObjetoGrafico objeto) {
+    public boolean estaColidindo(Poligono objeto) {
 	BBox bbox = this.getBBoxTransformada();
-	boolean colisao = bbox.estaColidindo(objeto.bbox);
-	return colisao;
+	BBox bbox2 = objeto.getBBoxTransformada();
+	return bbox.estaColidindo(bbox2);
     }
-    
-    public boolean verificarColisao(Rastro rastro) {
+
+    public boolean estaColidindo(Rastro rastro) {
 	BBox bboxTransformado = getBBoxTransformada();
-	
+
 	boolean existeColisao = false;
 
 	Ponto pontoA = null;
@@ -131,6 +135,12 @@ public class Moto extends Poligono {
 	return existeColisao;
     }
 
+    public boolean estaDentro(Poligono objeto) {
+	BBox bbox = this.getBBoxTransformada();
+	BBox bbox2 = objeto.getBBoxTransformada();
+	return bbox.estaDentro(bbox2);
+    }
+    
     public void girar() {
 	int graus = this.anguloProximo - this.angulo;
 	this.angulo = this.anguloProximo;
@@ -149,11 +159,5 @@ public class Moto extends Poligono {
 	}
     }
 
-    public void setColisao() {
-	this.cor = this.corColisao;
-    }
 
-    public void setNormal() {
-	this.cor = this.corNormal;
-    }
 }

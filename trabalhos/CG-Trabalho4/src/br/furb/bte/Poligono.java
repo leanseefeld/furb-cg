@@ -9,6 +9,9 @@ public abstract class Poligono extends ObjetoGrafico {
     protected final List<Ponto> pontos;
     protected int primitiva;
     private int largura;
+    protected Cor cor;
+    protected BBox bbox;
+    protected Transformacao transformacao;
 
     public Poligono(GL gl) {
 	super(gl);
@@ -16,8 +19,18 @@ public abstract class Poligono extends ObjetoGrafico {
 	this.pontos = this.criarPontos();
 	this.largura = 1;
 	this.bbox = new BBox(this.pontos);
+	this.transformacao = new Transformacao();
+	this.cor = new Cor(0f, 0f, 0f);
     }
 
+    public Cor getCor() {
+	return cor;
+    }
+
+    public void setCor(Cor cor) {
+	this.cor = cor;
+    }
+    
     protected abstract List<Ponto> criarPontos();
 
     protected void setLarguraLinha(int largura) {
@@ -63,11 +76,46 @@ public abstract class Poligono extends ObjetoGrafico {
     }
 
     public BBox getBBoxTransformada() {
+	
 	List<Ponto> pontosTransformados = new ArrayList<Ponto>(this.pontos.size());
 	for (Ponto ponto : this.pontos) {
+	  //TODO: Se necessário, aplicar trasnformação do objeto pai tbm
 	    pontosTransformados.add(this.transformacao.transformPoint(ponto));
 	}
 	BBox bboxTransformado = new BBox(pontosTransformados);
 	return bboxTransformado;
     }
+    
+
+    /**
+     * Inclui um movimentação no objeto
+     * 
+     * @param transformacao
+     */
+    public void addMovimentacao(Transformacao transformacao) {
+	this.transformacao = transformacao.transformMatrix(this.transformacao);
+    }
+    
+    /**
+     * Inclui uma expansão no objeto
+     * 
+     * @param transformacao
+     */
+    public void addExpansao(Transformacao transformacao) {
+	this.transformacao = transformacao.transformMatrix(this.transformacao);
+    }
+
+    /**
+     * Incluir uma rotação no objeto
+     * 
+     * @param transformacao
+     */
+    public void addRotacao(Transformacao transformacao) {
+	this.transformacao = this.transformacao.transformMatrix(transformacao);
+    }
+
+    public Transformacao getTransformacao() {
+	return transformacao;
+    }
+
 }
