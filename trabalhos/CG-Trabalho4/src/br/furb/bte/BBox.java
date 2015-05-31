@@ -9,22 +9,29 @@ public class BBox {
     private Ponto menor;
 
     public BBox() {
-	this.maior = new Ponto(0, 0);
-	this.menor = new Ponto(0, 0);
+	this.maior = new Ponto(0, 0, 0);
+	this.menor = new Ponto(0, 0, 0);
     }
 
-    public BBox(int maiorX, int menorX, int maiorY, int menorY) {
-	this.maior = new Ponto(maiorX, maiorY);
-	this.menor = new Ponto(menorX, menorY);
+    public BBox(Ponto maior, Ponto menor) {
+	this.maior = maior;
+	this.menor = menor;
+    }
+
+    public BBox(int maiorX, int menorX, int maiorY, int menorY, int maiorZ, int menorZ) {
+	this.maior = new Ponto(maiorX, maiorY, maiorZ);
+	this.menor = new Ponto(menorX, menorY, menorZ);
     }
 
     public BBox(List<Ponto> pontos) {
-	this.maior = new Ponto(0, 0);
-	this.menor = new Ponto(0, 0);
+	this.maior = new Ponto(0, 0, 0);
+	this.menor = new Ponto(0, 0, 0);
 	this.setMaiorX(Integer.MIN_VALUE);
 	this.setMenorX(Integer.MAX_VALUE);
 	this.setMaiorY(Integer.MIN_VALUE);
 	this.setMenorY(Integer.MAX_VALUE);
+	this.setMaiorZ(Integer.MIN_VALUE);
+	this.setMenorZ(Integer.MAX_VALUE);
 	for (Ponto ponto : pontos) {
 	    if (ponto.X > this.getMaiorX())
 		this.setMaiorX(ponto.X);
@@ -34,6 +41,10 @@ public class BBox {
 		this.setMaiorY(ponto.Y);
 	    if (ponto.Y < this.getMenorY())
 		this.setMenorY(ponto.Y);
+	    if (ponto.Z > this.getMaiorZ())
+		this.setMaiorZ(ponto.Z);
+	    if (ponto.Z < this.getMenorZ())
+		this.setMenorZ(ponto.Z);
 	}
     }
 
@@ -53,6 +64,14 @@ public class BBox {
 	return menor.Y;
     }
 
+    public int getMaiorZ() {
+	return maior.Z;
+    }
+
+    public int getMenorZ() {
+	return menor.Z;
+    }
+
     public void setMaiorX(int maiorX) {
 	this.maior.X = maiorX;
     }
@@ -69,6 +88,14 @@ public class BBox {
 	this.menor.Y = menorY;
     }
 
+    public void setMaiorZ(int maiorZ) {
+	this.maior.Z = maiorZ;
+    }
+
+    public void setMenorZ(int menorZ) {
+	this.menor.Z = menorZ;
+    }
+
     /**
      * Verifica se o ponto está dentro da BBox
      * 
@@ -77,34 +104,23 @@ public class BBox {
      */
     public boolean estaDentro(Ponto ponto) {
 	if (ponto.X > this.menor.X && ponto.X < this.maior.X //
-		&& ponto.Y > this.menor.Y && ponto.Y < this.maior.Y) {
-	    return true;
-	}
-	return false;
-    }
-
-    /**
-     * Verifica se o ponto está dentro da BBox
-     * 
-     * @param ponto
-     * @return
-     */
-    public boolean estaDentro(Ponto ponto, Transformacao transformacao) {
-	Ponto maiorTrans = transformacao.transformPoint(maior);
-	Ponto menorTrans = transformacao.transformPoint(menor);
-	if (ponto.X > menorTrans.X && ponto.X < maiorTrans.X //
-		&& ponto.Y > menorTrans.Y && ponto.Y < maiorTrans.Y) {
+		&& ponto.Y > this.menor.Y && ponto.Y < this.maior.Y// 
+		&& ponto.Z > this.menor.Z && ponto.Z < this.maior.Z) {
 	    return true;
 	}
 	return false;
     }
 
     public Ponto getCentro() {
-	return new Ponto((this.getMaiorX() + this.getMenorX()) / 2, (this.getMaiorY() + this.getMenorY()) / 2);
+	return new Ponto(//
+		(this.getMaiorX() + this.getMenorX()) / 2, //
+		(this.getMaiorY() + this.getMenorY()) / 2, //
+		(this.getMaiorZ() + this.getMenorZ()) / 2);
     }
 
     /**
      * Returna true se uma parte de ambos os BBox estão no mesmo espaço
+     * 
      * @param bbox
      * @return
      */
@@ -117,17 +133,22 @@ public class BBox {
 	    return false;
 	if (this.getMaiorY() < bbox.getMenorY())
 	    return false;
+	if (this.getMenorZ() > bbox.getMaiorZ())
+	    return false;
+	if (this.getMaiorZ() < bbox.getMenorZ())
+	    return false;
 	return true;
     }
 
     /**
-     * Retorna true se esse BBox está totalmente dentro do bbox recebido por parametro
+     * Retorna true se esse BBox sobre o bbox recebido por parametro. Ou seja, se está encima
+     * 
      * @param bbox
      * @return
      */
-    public boolean estaDentro(BBox bbox) {
+    public boolean estaSob(BBox bbox) {
 	if (this.getMenorX() >= bbox.getMenorX() && this.getMaiorX() <= bbox.getMaiorX()
-		&& this.getMenorY() >= bbox.getMenorY() && this.getMaiorY() <= bbox.getMaiorY())
+		&& this.getMenorZ() >= bbox.getMenorZ() && this.getMaiorZ() <= bbox.getMaiorZ())
 	    return true;
 	return false;
     }
@@ -142,5 +163,19 @@ public class BBox {
 	BBox bboxLinha = new BBox(Arrays.asList(pontoA, pontoB));
 	boolean estaColidindo = this.estaColidindo(bboxLinha);
 	return estaColidindo;
+    }
+
+    public Ponto getMaior() {
+	return this.maior;
+    }
+
+    public Ponto getMenor() {
+	return this.menor;
+    }
+
+    public BBox transformar(Transformacao transformacao) {
+	Ponto maiorTrans = transformacao.transformPoint(this.maior);
+	Ponto menorTrans = transformacao.transformPoint(this.menor);
+	return new BBox(maiorTrans, menorTrans);
     }
 }

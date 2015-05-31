@@ -40,11 +40,13 @@ public class Transformacao {
      * 
      * @param x
      * @param y
+     * @param z
      */
-    public void atribuirTranslacao(double x, double y) {
+    public void atribuirTranslacao(double x, double y, double z) {
 	atribuirIdentidade();
 	matriz[12] = x;
 	matriz[13] = y;
+	matriz[14] = z;
     }
 
     /**
@@ -52,11 +54,14 @@ public class Transformacao {
      * 
      * @param x
      * @param y
+     * @param z
      */
-    public void atribuirEscala(double x, double y) {
+    public Transformacao atribuirEscala(double x, double y, double z) {
 	atribuirIdentidade();
 	matriz[0] = x;
 	matriz[5] = y;
+	matriz[10] = z;
+	return this;
     }
 
     /**
@@ -65,18 +70,51 @@ public class Transformacao {
      * 
      * @param radians
      */
-    public void atribuirRotacao(double radians) {
+    public Transformacao atribuirRotacaoZ(double radians) {
 	atribuirIdentidade();
 	matriz[0] = Math.cos(radians);
 	matriz[4] = -Math.sin(radians);
 	matriz[1] = Math.sin(radians);
 	matriz[5] = Math.cos(radians);
+	return this;
     }
 
+    /**
+     * Atribui o valor de Rotacao (angulo) no eixo X a matriz de Transformacao. Elemento Neutro eh 0
+     * (zero).
+     * 
+     * @param radians
+     */
+    public Transformacao atribuirRotacaoX(double radians) {
+	atribuirIdentidade();
+	//TODO Implementar
+	matriz[5] = Math.cos(radians);
+	matriz[6] = -Math.sin(radians);
+	matriz[9] = Math.sin(radians);
+	matriz[10] = Math.cos(radians);
+	return this;
+    }
+    
+    /**
+     * Atribui o valor de Rotacao (angulo) no eixo X a matriz de Transformacao. Elemento Neutro eh 0
+     * (zero).
+     * 
+     * @param radians
+     */
+    public Transformacao atribuirRotacaoY(double radians) {
+	atribuirIdentidade();
+	matriz[0] = Math.cos(radians);
+	matriz[2] = -Math.sin(radians);
+	matriz[8] = Math.sin(radians);
+	matriz[10] = Math.cos(radians);
+	return this;
+    }
+    
     public Ponto transformPoint(Ponto point) {
 	Ponto pointResult = new Ponto(//
-		matriz[0] * point.X + matriz[4] * point.Y + matriz[12] * point.W, //
-		matriz[1] * point.X + matriz[5] * point.Y + matriz[13] * point.W);
+		matriz[0] * point.X + matriz[4] * point.Y + matriz[8] * point.Z + matriz[12] * point.W, //
+		matriz[1] * point.X + matriz[5] * point.Y + matriz[9] * point.Z + matriz[13] * point.W,
+		matriz[2] * point.X + matriz[6] * point.Y + matriz[10] * point.Z + matriz[14] * point.W );
 	return pointResult;
     }
 

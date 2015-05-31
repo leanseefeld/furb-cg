@@ -10,16 +10,16 @@ public class Arena extends Poligono {
     public Arena(GL gl) {
 	super(gl);
 	this.primitiva = GL.GL_QUADS;
-	this.cor = new Cor(1, 1, 0);
+	this.cor = new Cor(0.1f, 0.5f, 0.5f);
     }
 
     @Override
     protected List<Ponto> criarPontos() {
 	List<Ponto> pontos = new ArrayList<>(4);
-	pontos.add(new Ponto(+300, +300));
-	pontos.add(new Ponto(-300, +300));
-	pontos.add(new Ponto(-300, -300));
-	pontos.add(new Ponto(+300, -300));
+	pontos.add(new Ponto(+300, -5, -300));
+	pontos.add(new Ponto(-300, -5, -300));
+	pontos.add(new Ponto(-300, -5, +300));
+	pontos.add(new Ponto(+300, -5, +300));
 	return pontos;
     }
 }

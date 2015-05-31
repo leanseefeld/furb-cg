@@ -40,11 +40,13 @@ public class Transformacao {
      * 
      * @param x
      * @param y
+     * @param z
      */
-    public void atribuirTranslacao(double x, double y) {
+    public void atribuirTranslacao(double x, double y, double z) {
 	atribuirIdentidade();
 	matriz[12] = x;
 	matriz[13] = y;
+	matriz[14] = z;
     }
 
     /**
@@ -52,6 +54,7 @@ public class Transformacao {
      * 
      * @param x
      * @param y
+     * @param z
      */
     public Transformacao atribuirEscala(double x, double y, double z) {
 	atribuirIdentidade();

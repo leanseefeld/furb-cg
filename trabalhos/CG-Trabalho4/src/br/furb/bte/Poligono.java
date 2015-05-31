@@ -1,6 +1,5 @@
 package br.furb.bte;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
 
@@ -30,7 +29,7 @@ public abstract class Poligono extends ObjetoGrafico {
     public void setCor(Cor cor) {
 	this.cor = cor;
     }
-    
+
     protected abstract List<Ponto> criarPontos();
 
     protected void setLarguraLinha(int largura) {
@@ -57,7 +56,7 @@ public abstract class Poligono extends ObjetoGrafico {
 	    gl.glBegin(primitiva);
 	    {
 		for (Ponto ponto : pontos) {
-		    gl.glVertex2d(ponto.X, ponto.Y);
+		    gl.glVertex3d(ponto.X, ponto.Y, ponto.Z);
 		}
 	    }
 	    gl.glEnd();
@@ -75,17 +74,13 @@ public abstract class Poligono extends ObjetoGrafico {
 	this.pontos.remove(ponto);
     }
 
+    /**
+     * Retorna a BBox com a transformação do objeto aplicada
+     * @return
+     */
     public BBox getBBoxTransformada() {
-	
-	List<Ponto> pontosTransformados = new ArrayList<Ponto>(this.pontos.size());
-	for (Ponto ponto : this.pontos) {
-	  //TODO: Se necessário, aplicar trasnformação do objeto pai tbm
-	    pontosTransformados.add(this.transformacao.transformPoint(ponto));
-	}
-	BBox bboxTransformado = new BBox(pontosTransformados);
-	return bboxTransformado;
+	return this.bbox.transformar(this.transformacao);
     }
-    
 
     /**
      * Inclui um movimentação no objeto
@@ -95,7 +90,7 @@ public abstract class Poligono extends ObjetoGrafico {
     public void addMovimentacao(Transformacao transformacao) {
 	this.transformacao = transformacao.transformMatrix(this.transformacao);
     }
-    
+
     /**
      * Inclui uma expansão no objeto
      * 

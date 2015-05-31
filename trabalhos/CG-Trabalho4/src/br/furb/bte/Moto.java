@@ -19,19 +19,19 @@ public class Moto extends Poligono {
     private final Cor corNormal;
     private static final int VELOCIDADE = 10;
     private static final int MAX_ROTACAO = 90;
-    public static final int CIMA = 90;
+    public static final int CIMA = -90;
     public static final int DIREITA = 0;
-    public static final int BAIXO = -90;
+    public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
 
-    public Moto(GL gl, Ponto pontoInicial, int anguloIncial, Cor cor) {
+    public Moto(GL gl, int x, int z, int anguloIncial, Cor cor) {
 	super(gl);
 	this.transformacao = new Transformacao();
 	this.primitiva = GL.GL_QUADS;
 	this.cor = cor;
 	this.corNormal = cor;
 	this.rastro = new Rastro(gl, cor);
-	this.setPosicao(pontoInicial);
+	this.setPosicao(x, z);
 	this.anguloProximo = anguloIncial;
 	this.girar();
     }
@@ -44,9 +44,9 @@ public class Moto extends Poligono {
 	this.cor = this.corNormal;
     }
 
-    private void setPosicao(Ponto pontoInicial) {
+    private void setPosicao(int x, int z) {
 	Transformacao transTranslacao = new Transformacao();
-	transTranslacao.atribuirTranslacao(pontoInicial.X, pontoInicial.Y);
+	transTranslacao.atribuirTranslacao(x, 0, z);
 	this.addMovimentacao(transTranslacao);
     }
 
@@ -60,12 +60,44 @@ public class Moto extends Poligono {
 
     @Override
     protected List<Ponto> criarPontos() {
-	List<Ponto> pontos = new ArrayList<>(4);
+	List<Ponto> pontos = new ArrayList<>();
 
-	pontos.add(new Ponto(+17, +4));
-	pontos.add(new Ponto(+17, -4));
-	pontos.add(new Ponto(-19, -6));
-	pontos.add(new Ponto(-19, +6));
+	//Cima
+	pontos.add(new Ponto(+17, +4, +4));
+	pontos.add(new Ponto(+17, +4, -4));
+	pontos.add(new Ponto(-19, +4, -6));
+	pontos.add(new Ponto(-19, +4, +6));
+
+	//Baixo
+	pontos.add(new Ponto(-19, +0, +6));
+	pontos.add(new Ponto(-19, +0, -6));
+	pontos.add(new Ponto(+17, +0, -4));
+	pontos.add(new Ponto(+17, +0, +4));
+
+	//Frente
+	pontos.add(new Ponto(-19, +4, -6));
+	pontos.add(new Ponto(-19, +0, -6));
+	pontos.add(new Ponto(-19, +0, +6));
+	pontos.add(new Ponto(-19, +4, +6));
+
+	//Traz
+	pontos.add(new Ponto(+17, +4, +4));
+	pontos.add(new Ponto(+17, +0, +4));
+	pontos.add(new Ponto(+17, +0, -4));
+	pontos.add(new Ponto(+17, +4, -4));
+
+	//Lateral Esquerda
+	pontos.add(new Ponto(+17, +4, +4));
+	pontos.add(new Ponto(-19, +4, +6));
+	pontos.add(new Ponto(-19, +0, +6));
+	pontos.add(new Ponto(+17, +0, +4));
+
+	//Lateral Direita
+	pontos.add(new Ponto(+17, +0, -4));
+	pontos.add(new Ponto(-19, +0, -6));
+	pontos.add(new Ponto(-19, +4, -6));
+	pontos.add(new Ponto(+17, +4, -4));
+
 
 	return pontos;
     }
@@ -73,9 +105,9 @@ public class Moto extends Poligono {
     public void mover() {
 	this.girar();
 	int moverX = (int) Math.cos(Math.toRadians(this.angulo)) * VELOCIDADE;
-	int moverY = (int) Math.sin(Math.toRadians(this.angulo)) * VELOCIDADE;
+	int moverZ = (int) Math.sin(Math.toRadians(this.angulo)) * VELOCIDADE;
 	Transformacao trans = new Transformacao();
-	trans.atribuirTranslacao(moverX, moverY);
+	trans.atribuirTranslacao(moverX, 0, moverZ);
 	this.addMovimentacao(trans);
 
 	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
@@ -135,17 +167,17 @@ public class Moto extends Poligono {
 	return existeColisao;
     }
 
-    public boolean estaDentro(Poligono objeto) {
+    public boolean estaSobre(Poligono objeto) {
 	BBox bbox = this.getBBoxTransformada();
 	BBox bbox2 = objeto.getBBoxTransformada();
-	return bbox.estaDentro(bbox2);
+	return bbox.estaSob(bbox2);
     }
     
     public void girar() {
 	int graus = this.anguloProximo - this.angulo;
 	this.angulo = this.anguloProximo;
 	Transformacao trans = new Transformacao();
-	trans.atribuirRotacao(Math.toRadians(graus));
+	trans.atribuirRotacaoY(Math.toRadians(graus));
 	this.addRotacao(trans);
 	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
@@ -158,6 +190,4 @@ public class Moto extends Poligono {
 	    this.anguloProximo = angulo;
 	}
     }
-
-
 }
