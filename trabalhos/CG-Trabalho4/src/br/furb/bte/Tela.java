@@ -1,6 +1,7 @@
 package br.furb.bte;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -14,6 +15,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import com.sun.opengl.util.j2d.TextRenderer;
 
 public class Tela //
 	extends GLCanvas //
@@ -37,6 +39,7 @@ public class Tela //
     private Transformacao transformacaoMundo;
     private boolean pararThread;
     private Thread loopGame;
+    private Estado estado;
 
     public Tela() {
 	addGLEventListener(this);
@@ -50,7 +53,7 @@ public class Tela //
 	para = new Ponto(0, 0, 0);
 	mouse = new Ponto(0, 0, 0);
 	transformacaoMundo = new Transformacao();
-
+	estado = Estado.Pausado;
     }
 
     @Override
@@ -69,7 +72,6 @@ public class Tela //
 	mundo = new Mundo(gl);
 
 	reset();
-
     }
 
     @Override
@@ -86,6 +88,34 @@ public class Tela //
 	    //	    gl.glFlush();
 	}
 	gl.glPopMatrix();
+
+	TextRenderer text = new TextRenderer(new Font("SansSerif", Font.BOLD, 18));
+	text.beginRendering(largura, altura);
+	{
+	    text.setColor(1, 1, 1, 1);
+	    switch (estado) {
+		case Pausado:
+		    text.draw("Pausado", 175, 200);
+		    text.draw("Espaço para continuar", 120, 180);
+		    break;
+		case Perdeu:
+		    text.draw("Perdeu", 175, 200);
+		    text.draw("R para reiniciar", 150, 180);
+		    break;
+		case Rodando:
+		    text.draw("Rodando", 0, 385);
+		    break;
+		case Venceu:
+		    text.draw("Venceu", 175, 200);
+		    text.draw("R para reiniciar", 150, 180);
+		    break;
+		case Empatou:
+		    text.draw("Empatou", 175, 200);
+		    text.draw("R para reiniciar", 150, 180);
+		    break;
+	    }
+	}
+	text.endRendering();
     }
 
     @Override
@@ -101,6 +131,7 @@ public class Tela //
     }
 
     private void reset() {
+	this.estado = Estado.Pausado;
 	this.pararThread = true;
 	this.mundo.removerTodosFilhos();
 	arena = new Arena(gl);
@@ -181,11 +212,13 @@ public class Tela //
 		this.reset();
 		break;
 	    case KeyEvent.VK_SPACE:
-		if (this.loopGame == null || !this.loopGame.isAlive()) {
+		if (loopGame == null || !loopGame.isAlive()) {
 		    pararThread = false;
-		    this.loopGame = new minhaTredi();
-		    this.loopGame.start();
-		} else if (this.loopGame != null && this.loopGame.isAlive()) {
+		    loopGame = new minhaTredi();
+		    loopGame.start();
+		    estado = Estado.Rodando;
+		} else if (loopGame != null && loopGame.isAlive()) {
+		    estado = Estado.Pausado;
 		    pararThread = true;
 		}
 		reconheceu = false;
@@ -205,11 +238,19 @@ public class Tela //
 	this.moto1.mover();
 	this.moto2.mover();
 
-	boolean teveColisao = false;
-	teveColisao |= verificaColisaoMoto(moto1);
-	teveColisao |= verificaColisaoMoto(moto2);
-	if (teveColisao) {
+	boolean teveColisao1 = false;
+	boolean teveColisao2 = false;
+	teveColisao1 = verificaColisaoMoto(moto1);
+	teveColisao2 = verificaColisaoMoto(moto2);
+	if (teveColisao1 || teveColisao2) {
 	    this.pararThread = true;
+	    if (teveColisao1 && teveColisao2) {
+		this.estado = Estado.Empatou;
+	    } else if (teveColisao1) {
+		this.estado = Estado.Perdeu;
+	    } else {
+		this.estado = Estado.Venceu;
+	    }
 	}
     }
 
