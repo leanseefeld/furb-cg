@@ -1,6 +1,5 @@
 package br.furb.teste;
 
-import static java.lang.Math.abs;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,60 +12,28 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import com.sun.opengl.util.GLUT;
 
 public class Tela extends GLCanvas implements GLEventListener, MouseMotionListener, MouseListener, KeyListener {
 
     private static final long serialVersionUID = 1L;
 
-    private float ortho2D_minX = -400.0f, ortho2D_maxX = 400.0f, ortho2D_minY = -400.0f, ortho2D_maxY = 400.0f;
-    private int ortho2D_w = (int) (abs(ortho2D_maxX) - ortho2D_minX);
-    private int ortho2D_h = (int) (abs(ortho2D_maxY) - ortho2D_minY);
+    private int largura = 400;
+    private int altura = 400;
     private GL gl;
     private GLU glu;
     private GLAutoDrawable glDrawable;
-
-    /**
-     * Utilizado para pausar o jogo TODO: Alterar para algo que funcione melhor
-     */
+    private GLUT glut;
+    private float rotacaoCubo;
+    private Ponto olho;
+    private Ponto para;
 
     public Tela() {
 	addGLEventListener(this);
 	addMouseMotionListener(this);
 	addMouseListener(this);
 	addKeyListener(this);
-	setPreferredSize(new Dimension(ortho2D_w, ortho2D_h));
-    }
-
-    @Override
-    public void display(GLAutoDrawable arg0) {
-	gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-	gl.glMatrixMode(GL.GL_PROJECTION);
-	gl.glLoadIdentity();
-
-	gl.glPushMatrix();
-	{
-	    Transformacao trans = new Transformacao();
-	    trans = trans.transformMatrix(new Transformacao().atribuirRotacaoX(3));
-	    trans = trans.transformMatrix(new Transformacao().atribuirRotacaoZ(3));
-	    trans = trans.transformMatrix(new Transformacao().atribuirRotacaoY(3));
-
-	    gl.glMultMatrixd(trans.getMatriz(), 0);
-
-	    glu.gluOrtho2D(ortho2D_minX, ortho2D_maxX, ortho2D_minY, ortho2D_maxY);
-	    gl.glMatrixMode(GL.GL_MODELVIEW);
-	}
-	gl.glPopMatrix();
-	
-	gl.glLoadIdentity();
-
-	SRU();
-
-	//desenharCubo();
-    }
-
-    @Override
-    public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
-
+	setPreferredSize(new Dimension(largura, altura));
     }
 
     @Override
@@ -74,28 +41,54 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
 	System.out.println(" --- init ---");
 	glDrawable = drawable;
 	gl = drawable.getGL();
+	glut = new GLUT();
 
-	//gl.glEnable(GL.GL_DEPTH_TEST);
-	//gl.glEnable(GL.GL_CULL_FACE);
+	gl.glEnable(GL.GL_DEPTH_TEST);
+	gl.glEnable(GL.GL_CULL_FACE);
 
 	glu = new GLU();
 	glDrawable.setGL(new DebugGL(gl));
-	System.out.println("Espaço de desenho com tamanho: " + drawable.getWidth() + " x " + drawable.getHeight());
-	gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	gl.glClearColor(0f, 0f, 0f, 1.0f);
+
+	this.olho = new Ponto(100, 100, 500);
+	this.para = new Ponto(0, 0, 0);
     }
 
-    private void desenharCubo() {
-	gl.glColor3d(1, 0, 1);
-	gl.glBegin(GL.GL_TRIANGLE_FAN);
-	{
-	    gl.glNormal3d(1, 1, 1);
+    @Override
+    public void display(GLAutoDrawable arg0) {
+	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+	SRU();
+	rotacaoCubo += 0.16f;
+	desenharCubo(rotacaoCubo);
+	gl.glFlush();
+    }
 
-	    gl.glVertex3d(1, 1, 1);
-	    gl.glVertex3d(-1, 1, 1);
-	    gl.glVertex3d(-1, -1, 1);
-	    gl.glVertex3d(1, -1, 1);
+    @Override
+    public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
+	gl.glMatrixMode(GL.GL_PROJECTION);
+	gl.glLoadIdentity();
+	float h = (float) arg0.getHeight() / (float) arg0.getWidth();
+	glu.gluPerspective(60, h, 1, 1000);
+	gl.glMatrixMode(GL.GL_MODELVIEW);
+	gl.glLoadIdentity();
+	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
+    }
+
+    @Override
+    public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+
+    }
+
+    private void desenharCubo(float rotacao) {
+	gl.glColor3d(1, 1, 1);
+	gl.glPushMatrix();
+	{
+	    //	    gl.glTranslatef(40f, 40f, 40f);
+	    //	    gl.glRotated(rotacao, 1, 1, 1);
+	    gl.glScaled(100, 100, 100);
+	    glut.glutWireCube(1);
 	}
-	gl.glEnd();
+	gl.glPopMatrix();
     }
 
     @Override
@@ -125,10 +118,6 @@ public class Tela extends GLCanvas implements GLEventListener, MouseMotionListen
     @Override
     public void keyTyped(KeyEvent e) {
 
-    }
-
-    @Override
-    public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
     }
 
     @Override

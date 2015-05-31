@@ -108,8 +108,9 @@ public class Transformacao {
     
     public Ponto transformPoint(Ponto point) {
 	Ponto pointResult = new Ponto(//
-		matriz[0] * point.X + matriz[4] * point.Y + matriz[12] * point.W, //
-		matriz[1] * point.X + matriz[5] * point.Y + matriz[13] * point.W);
+		matriz[0] * point.X + matriz[4] * point.Y + matriz[8] * point.Z + matriz[12] * point.W, //
+		matriz[1] * point.X + matriz[5] * point.Y + matriz[9] * point.Z + matriz[13] * point.W,
+		matriz[2] * point.X + matriz[6] * point.Y + matriz[10] * point.Z + matriz[14] * point.W );
 	return pointResult;
     }
 
