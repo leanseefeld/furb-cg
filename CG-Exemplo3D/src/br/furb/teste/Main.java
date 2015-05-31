@@ -1,6 +1,5 @@
 package br.furb.teste;
 
-
 import java.awt.BorderLayout;
 import javax.media.opengl.GLCapabilities;
 import javax.swing.JFrame;
