@@ -179,20 +179,18 @@ public class Tela //
     public void mouseDragged(MouseEvent e) {
 	double qtdX = mouse.X - e.getX();
 	double qtdY = mouse.Y - e.getY();
-	
-	qtdX = -qtdX/100;
-	qtdY = qtdY/100;
-	
+
+	qtdX = -qtdX / 100;
+	qtdY = qtdY / 100;
+
 	mouse.X = e.getX();
 	mouse.Y = e.getY();
 	// TODO: talvez movimentar proporcionalmente um pouco a câmera...
-	
-	
+
 	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoY(qtdX));
 	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoX(qtdY));
 	glDrawable.display();
-	
-	
+
     }
 
     @Override
@@ -265,9 +263,12 @@ public class Tela //
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent arg0) {
-	this.olho.X += arg0.getWheelRotation() * this.olho.X / 10;
-	this.olho.Y += arg0.getWheelRotation() * this.olho.Y / 10;
-	this.olho.Z += arg0.getWheelRotation() * this.olho.Z / 10;
+	System.out.println(arg0.getWheelRotation());
+	transformacaoMundo = transformacaoMundo.transformMatrix(//
+		new Transformacao().atribuirEscala(//
+			1 + (float) arg0.getWheelRotation() / 10, //
+			1 + (float) arg0.getWheelRotation() / 10, //
+			1 + (float) arg0.getWheelRotation() / 10));
 	glDrawable.display();
     }
 }

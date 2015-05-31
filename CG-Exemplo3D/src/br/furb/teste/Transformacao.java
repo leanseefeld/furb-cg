@@ -53,10 +53,11 @@ public class Transformacao {
      * @param x
      * @param y
      */
-    public Transformacao atribuirEscala(double x, double y) {
+    public Transformacao atribuirEscala(double x, double y, double z) {
 	atribuirIdentidade();
 	matriz[0] = x;
 	matriz[5] = y;
+	matriz[10] = z;
 	return this;
     }
 
