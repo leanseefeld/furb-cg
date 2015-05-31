@@ -1,5 +1,6 @@
 package br.furb.bte;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
 
@@ -79,7 +80,15 @@ public abstract class Poligono extends ObjetoGrafico {
      * @return
      */
     public BBox getBBoxTransformada() {
-	return this.bbox.transformar(this.transformacao);
+	//TODO: Ver forma mais performática de fazer a colisão
+	List<Ponto> pontosTrans = new ArrayList<Ponto>();
+	for (Ponto ponto : this.pontos) {
+	    pontosTrans.add(this.transformacao.transformPoint(ponto));
+	}
+	BBox bbox = new BBox(pontosTrans);
+	
+//	return this.bbox.transformar(this.transformacao);
+	return bbox;
     }
 
     /**
