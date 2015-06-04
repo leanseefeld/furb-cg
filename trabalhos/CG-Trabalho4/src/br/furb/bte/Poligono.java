@@ -6,21 +6,35 @@ import javax.media.opengl.GL;
 
 public abstract class Poligono extends ObjetoGrafico {
 
-    protected final List<Ponto> pontos;
+    private List<Ponto> pontos;
     protected int primitiva;
-    private int largura;
     protected Cor cor;
     protected BBox bbox;
     protected Transformacao transformacao;
 
     public Poligono(GL gl) {
 	super(gl);
-	this.primitiva = GL.GL_LINE_LOOP;
-	this.pontos = this.criarPontos();
-	this.largura = 1;
-	this.bbox = new BBox(this.pontos);
 	this.transformacao = new Transformacao();
 	this.cor = new Cor(0f, 0f, 0f);
+    }
+
+    protected abstract List<Ponto> criarPontos();
+
+    public void setPontos(List<Ponto> pontos) {
+	this.pontos = pontos;
+	this.bbox = new BBox(this.pontos);
+    }
+
+    public void addPonto(Ponto ponto) {
+	this.pontos.add(ponto);
+    }
+
+    public List<Ponto> getPontos() {
+	return this.pontos;
+    }
+
+    public int getNumeroPontos() {
+	return this.pontos.size();
     }
 
     public Cor getCor() {
@@ -29,12 +43,6 @@ public abstract class Poligono extends ObjetoGrafico {
 
     public void setCor(Cor cor) {
 	this.cor = cor;
-    }
-
-    protected abstract List<Ponto> criarPontos();
-
-    protected void setLarguraLinha(int largura) {
-	this.largura = largura;
     }
 
     public int getPrimitiva() {
@@ -47,7 +55,6 @@ public abstract class Poligono extends ObjetoGrafico {
 
     @Override
     public void desenhar() {
-	gl.glLineWidth(this.largura);
 	gl.glColor3f(cor.R, cor.G, cor.B);
 
 	gl.glPushMatrix();
@@ -75,8 +82,13 @@ public abstract class Poligono extends ObjetoGrafico {
 	this.pontos.remove(ponto);
     }
 
+    public void removerPonto(int index) {
+	this.pontos.remove(index);
+    }
+
     /**
      * Retorna a BBox com a transformação do objeto aplicada
+     * 
      * @return
      */
     public BBox getBBoxTransformada() {
@@ -86,8 +98,8 @@ public abstract class Poligono extends ObjetoGrafico {
 	    pontosTrans.add(this.transformacao.transformPoint(ponto));
 	}
 	BBox bbox = new BBox(pontosTrans);
-	
-//	return this.bbox.transformar(this.transformacao);
+
+	//	return this.bbox.transformar(this.transformacao);
 	return bbox;
     }
 

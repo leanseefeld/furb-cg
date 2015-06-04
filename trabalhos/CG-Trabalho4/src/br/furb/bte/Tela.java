@@ -23,6 +23,7 @@ public class Tela //
 	MouseListener, KeyListener, MouseWheelListener {
 
     private static final long serialVersionUID = 1L;
+    private static final int TAMANHO_ARENA = 500;
 
     private int largura = 400;
     private int altura = 400;
@@ -134,7 +135,7 @@ public class Tela //
 	this.estado = Estado.Pausado;
 	this.pararThread = true;
 	this.mundo.removerTodosFilhos();
-	arena = new Arena(gl);
+	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto(gl, this.arena.bbox.getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
 	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
