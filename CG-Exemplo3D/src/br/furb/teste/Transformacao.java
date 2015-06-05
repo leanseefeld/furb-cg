@@ -42,11 +42,11 @@ public class Transformacao {
      * @param y
      * @param z
      */
-    public void atribuirTranslacao(double x, double y, double z) {
-	atribuirIdentidade();
+    public Transformacao atribuirTranslacao(double x, double y, double z) {
 	matriz[12] = x;
 	matriz[13] = y;
 	matriz[14] = z;
+	return this;
     }
 
     /**
@@ -57,7 +57,6 @@ public class Transformacao {
      * @param z
      */
     public Transformacao atribuirEscala(double x, double y, double z) {
-	atribuirIdentidade();
 	matriz[0] = x;
 	matriz[5] = y;
 	matriz[10] = z;
@@ -71,7 +70,6 @@ public class Transformacao {
      * @param radians
      */
     public Transformacao atribuirRotacaoZ(double radians) {
-	atribuirIdentidade();
 	matriz[0] = Math.cos(radians);
 	matriz[4] = -Math.sin(radians);
 	matriz[1] = Math.sin(radians);
@@ -86,8 +84,6 @@ public class Transformacao {
      * @param radians
      */
     public Transformacao atribuirRotacaoX(double radians) {
-	atribuirIdentidade();
-	//TODO Implementar
 	matriz[5] = Math.cos(radians);
 	matriz[6] = -Math.sin(radians);
 	matriz[9] = Math.sin(radians);
@@ -102,7 +98,6 @@ public class Transformacao {
      * @param radians
      */
     public Transformacao atribuirRotacaoY(double radians) {
-	atribuirIdentidade();
 	matriz[0] = Math.cos(radians);
 	matriz[2] = -Math.sin(radians);
 	matriz[8] = Math.sin(radians);

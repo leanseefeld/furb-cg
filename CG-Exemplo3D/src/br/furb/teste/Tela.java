@@ -45,7 +45,7 @@ public class Tela //
 	addMouseWheelListener(this);
 	setPreferredSize(new Dimension(largura, altura));
 
-	olho = new Ponto(100, 100, 500);
+	olho = new Ponto(100, 100, 200);
 	para = new Ponto(0, 0, 0);
 	mouse = new Ponto(0, 0, 0);
 	transformacaoMundo = new Transformacao();
@@ -69,16 +69,16 @@ public class Tela //
     @Override
     public void display(GLAutoDrawable arg0) {
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-	gl.glLoadIdentity();
-	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
 
 	gl.glPushMatrix();
 	{
 	    gl.glMultMatrixd(this.transformacaoMundo.getMatriz(), 0);
 	    SRU();
-	    rotacaoCubo += 0.16f;
-	    desenharCubo(rotacaoCubo);
-	    desenharMoto();
+	    desenharCubo(rotacaoCubo += 0.15f);
+	    desenharMoto(new Transformacao().atribuirEscala(0.1, 0.1, 0.1).atribuirTranslacao(-50, 0, 0));
+	    desenharFolha(new Transformacao().atribuirTranslacao(50, 0, 0));
+
+	    desenharRastro(new Transformacao().atribuirTranslacao(0, 0, 10));
 	    gl.glFlush();
 
 	}
@@ -92,9 +92,10 @@ public class Tela //
 	gl.glMatrixMode(GL.GL_PROJECTION);
 	gl.glLoadIdentity();
 	float h = (float) arg0.getHeight() / (float) arg0.getWidth();
-	glu.gluPerspective(60, h, 1, 1000);
+	glu.gluPerspective(60, h, 10, 1000);
 	gl.glMatrixMode(GL.GL_MODELVIEW);
 	gl.glLoadIdentity();
+	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
     }
 
     private void desenharCubo(float rotacao) {
@@ -110,7 +111,38 @@ public class Tela //
 	gl.glPopMatrix();
     }
 
-    private void desenharMoto() {
+    private void desenharRastro(Transformacao trans) {
+	gl.glPushMatrix();
+	{
+	    gl.glMultMatrixd(trans.getMatriz(), 0);
+	    
+	    gl.glBegin(GL.GL_POLYGON);
+	    {
+		gl.glColor3f(1f, 0f, 0f);
+		gl.glVertex3d(+0, +0, +0);
+		gl.glVertex3d(+0, +10, +0);
+		gl.glVertex3d(+10, +10, +0);
+		gl.glVertex3d(+10, +0, +0);
+
+		gl.glColor3f(0f, 0f, 1f);
+		gl.glVertex3d(+10, +0, +10);
+		gl.glVertex3d(+0, +0, +10);
+
+		gl.glColor3f(0f, 1f, 0f);
+		gl.glVertex3d(+0, +10, +10);
+		gl.glVertex3d(+0, +10, +0);
+
+		gl.glColor3f(1f, 1f, 1f);
+		gl.glVertex3d(+10, +10, +10);
+
+		gl.glVertex3d(+0, +10, +10);
+	    }
+	    gl.glEnd();
+	}
+	gl.glPopMatrix();
+    }
+
+    private void desenharMoto(Transformacao trans) {
 	List<Ponto> pontos = new ArrayList<Ponto>();
 	//Cima
 	pontos.add(new Ponto(+170, +40, +40));
@@ -148,15 +180,42 @@ public class Tela //
 	pontos.add(new Ponto(+170, +00, -40));
 	pontos.add(new Ponto(+170, +00, +40));
 
-	gl.glColor3f(1.0f, 0.0f, 0.0f);
-	gl.glBegin(GL.GL_QUADS);
+	gl.glPushMatrix();
 	{
-	    for (Ponto ponto : pontos) {
-		gl.glVertex3d(ponto.X, ponto.Y, ponto.Z);
+	    gl.glMultMatrixd(trans.getMatriz(), 0);
+	    gl.glColor3f(1.0f, 0.0f, 0.0f);
+	    gl.glBegin(GL.GL_QUADS);
+	    {
+		for (Ponto ponto : pontos) {
+		    gl.glVertex3d(ponto.X, ponto.Y, ponto.Z);
+		}
 	    }
+	    gl.glEnd();
 	}
-	gl.glEnd();
+	gl.glPopMatrix();
+    }
 
+    private void desenharFolha(Transformacao trans) {
+	List<Ponto> pontos = new ArrayList<Ponto>();
+	pontos.add(new Ponto(10, 10, 10));
+	pontos.add(new Ponto(10, -20, 30));
+	pontos.add(new Ponto(30, 10, 30));
+	pontos.add(new Ponto(30, -20, 10));
+
+	gl.glPushMatrix();
+	{
+	    gl.glMultMatrixd(trans.getMatriz(), 0);
+	    gl.glColor3f(1.0f, 1.0f, 0.0f);
+	    gl.glBegin(GL.GL_QUAD_STRIP);
+	    {
+		gl.glNormal3d(0, 0, 0);
+		for (Ponto ponto : pontos) {
+		    gl.glVertex3d(ponto.X, ponto.Y, ponto.Z);
+		}
+	    }
+	    gl.glEnd();
+	}
+	gl.glPopMatrix();
     }
 
     @Override
