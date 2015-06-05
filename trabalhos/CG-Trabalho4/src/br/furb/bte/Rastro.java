@@ -7,7 +7,7 @@ import javax.media.opengl.GL;
 
 public class Rastro extends Poligono {
 
-    private static final int TAMANHO_RASTRO = 500;
+    private static final int TAMANHO_RASTRO = 300;
     private static final int PONTO_MAIS_ALTO = 10;
     private static final int PONTO_MAIS_BAIXO = 0;
 
@@ -61,32 +61,30 @@ public class Rastro extends Poligono {
     public List<BBox> getBBoxes() {
 	List<Ponto> pontos = this.getPontos();
 	List<BBox> bboxes = new ArrayList<BBox>();
-	for (int i = 0; i < pontos.size() - 2; i += 2) {
-	    BBox bbox = new BBox(Arrays.asList(//
-		    pontos.get(i), //
-		    pontos.get(i + 1))); //
+	int numeroMinimoPontos = 2;
+	for (int i = 0; i < pontos.size() - numeroMinimoPontos; i++) {
+	    Ponto pontoA = pontos.get(i);
+	    Ponto pontoB = pontos.get(++i);
+
+	    int diferenaX = pontoA.X - pontoB.X;
+	    int diferenaZ = pontoA.Z - pontoB.Z;
+
+	    //Busca o ultimo ponto da reta
+	    Ponto pontoC;
+	    i++;
+	    while (i < pontos.size() - numeroMinimoPontos) {
+		pontoC = pontos.get(i);
+		if ((pontoB.X - pontoC.X) != diferenaX || (pontoB.Z - pontoC.Z) != diferenaZ) {
+		    break;
+		}
+		pontoB = pontoC;
+		i++;
+	    }
+	    i--;
+
+	    BBox bbox = new BBox(Arrays.asList(pontoA, pontoB));
 	    bboxes.add(bbox);
-	    //	    i++;
-	    //	    if (pontoA.X == pontoB.X) {
-	    //		while (i < rastro.pontos.size() - qtdIgnorar) {
-	    //		    pontoBAux = rastro.pontos.get((i) % rastro.pontos.size());
-	    //		    if (pontoA.X != pontoBAux.X) {
-	    //			break;
-	    //		    }
-	    //		    pontoB = pontoBAux;
-	    //		    i++;
-	    //		}
-	    //	    } else {
-	    //		while (i < rastro.pontos.size() - qtdIgnorar) {
-	    //		    pontoBAux = rastro.pontos.get((i) % rastro.pontos.size());
-	    //		    if (pontoA.Y == pontoBAux.Y) {
-	    //			break;
-	    //		    }
-	    //		    pontoB = pontoBAux;
-	    //		    i++;
-	    //		}
-	    //	    }
-	    //	    i--;
+
 	}
 	return bboxes;
     }

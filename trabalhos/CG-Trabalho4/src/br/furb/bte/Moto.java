@@ -108,7 +108,6 @@ public class Moto extends Poligono {
 	Transformacao trans = new Transformacao();
 	trans.atribuirTranslacao(moverX, 0, moverZ);
 	this.addMovimentacao(trans);
-
 	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
@@ -122,12 +121,13 @@ public class Moto extends Poligono {
 	BBox bboxTransformado = getBBoxTransformada();
 
 	boolean existeColisao = false;
-	int qtdIgnorar = rastro == this.rastro ? 2 : 0;
+	int qtdIgnorar = rastro == this.rastro ? 3 : 0;
 
 	List<BBox> bboxes = rastro.getBBoxes();
 	for (int i = 0; i < bboxes.size() - qtdIgnorar; i++) {
 	    if (bboxTransformado.estaColidindo(bboxes.get(i))) {
 		existeColisao = true;
+		System.out.println("BBox nº " + i);
 		break;
 	    }
 	}
@@ -151,7 +151,6 @@ public class Moto extends Poligono {
 	Transformacao trans = new Transformacao();
 	trans.atribuirRotacaoY(Math.toRadians(graus));
 	this.addRotacao(trans);
-	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
     }
 
     public void setAngulo(int angulo) {
