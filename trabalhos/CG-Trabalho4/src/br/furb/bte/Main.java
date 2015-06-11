@@ -23,7 +23,7 @@ public class Main extends JFrame {
 
 	canvas = new Tela();
 	add(canvas, BorderLayout.CENTER);
-	setResizable(false);
+//	setResizable(false);
     }
 
     @Override

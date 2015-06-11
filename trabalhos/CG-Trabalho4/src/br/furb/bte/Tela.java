@@ -25,8 +25,8 @@ public class Tela //
     private static final long serialVersionUID = 1L;
     private static final int TAMANHO_ARENA = 500;
 
-    private int largura = 400;
-    private int altura = 400;
+    private int largura = 800;
+    private int altura = 800;
     private GL gl;
     private GLU glu;
     private GLAutoDrawable glDrawable;
@@ -125,7 +125,7 @@ public class Tela //
 	gl.glMatrixMode(GL.GL_PROJECTION);
 	gl.glLoadIdentity();
 	float h = (float) arg0.getHeight() / (float) arg0.getWidth();
-	glu.gluPerspective(60, h, 1, 1000);
+	glu.gluPerspective(60, h, 1, 2000);
 	gl.glMatrixMode(GL.GL_MODELVIEW);
 	gl.glLoadIdentity();
 	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);

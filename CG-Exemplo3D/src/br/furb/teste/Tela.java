@@ -64,6 +64,11 @@ public class Tela //
 	glu = new GLU();
 	glDrawable.setGL(new DebugGL(gl));
 	gl.glClearColor(0f, 0f, 0f, 1.0f);
+
+	float[] posicao = { 20, 20, 50, 0 };
+//	gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, posicao, 0);
+//	gl.glEnable(GL.GL_LIGHTING);
+//	gl.glEnable(GL.GL_LIGHT7);
     }
 
     @Override
@@ -115,7 +120,7 @@ public class Tela //
 	gl.glPushMatrix();
 	{
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
-	    
+
 	    gl.glBegin(GL.GL_POLYGON);
 	    {
 		gl.glColor3f(1f, 0f, 0f);
@@ -182,6 +187,7 @@ public class Tela //
 
 	gl.glPushMatrix();
 	{
+//	    gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, new float[]	{ 0, 0, 0, 0 }, 0);
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
 	    gl.glColor3f(1.0f, 0.0f, 0.0f);
 	    gl.glBegin(GL.GL_QUADS);
@@ -206,6 +212,7 @@ public class Tela //
 	{
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
 	    gl.glColor3f(1.0f, 1.0f, 0.0f);
+	    gl.glDisable(GL.GL_CULL_FACE);
 	    gl.glBegin(GL.GL_QUAD_STRIP);
 	    {
 		gl.glNormal3d(0, 0, 0);
@@ -214,6 +221,7 @@ public class Tela //
 		}
 	    }
 	    gl.glEnd();
+	    gl.glEnable(GL.GL_CULL_FACE);
 	}
 	gl.glPopMatrix();
     }

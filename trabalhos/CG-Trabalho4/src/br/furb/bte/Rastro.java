@@ -39,21 +39,18 @@ public class Rastro extends Poligono {
 	{
 	    gl.glMultMatrixd(transformacao.getMatriz(), 0);
 
+	    gl.glDisable(GL.GL_CULL_FACE);
 	    gl.glBegin(primitiva);
 	    {
-		for (int i = this.getPontos().size() - 1; i >= 0; i--) {
-		    gl.glVertex3d(this.getPontos().get(i).X, PONTO_MAIS_BAIXO, this.getPontos().get(i).Z);
-		    gl.glVertex3d(this.getPontos().get(i).X, PONTO_MAIS_ALTO, this.getPontos().get(i).Z);
-		}
-
 		for (int i = 0; i < this.getPontos().size(); i++) {
 		    gl.glVertex3d(this.getPontos().get(i).X, PONTO_MAIS_BAIXO, this.getPontos().get(i).Z);
 		    gl.glVertex3d(this.getPontos().get(i).X, PONTO_MAIS_ALTO, this.getPontos().get(i).Z);
 		}
 	    }
 	    gl.glEnd();
+	    gl.glEnable(GL.GL_CULL_FACE);
 
-	    super.desenhar();
+	    desenharFilhos();
 	}
 	gl.glPopMatrix();
     }

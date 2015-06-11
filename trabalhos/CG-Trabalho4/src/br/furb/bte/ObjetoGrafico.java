@@ -41,6 +41,10 @@ public abstract class ObjetoGrafico {
      * Desenha o objeto
      */
     public void desenhar() {
+	desenharFilhos();
+    }
+    
+    protected void desenharFilhos() {
 	for (ObjetoGrafico objetoGrafico : objetosGraficos) {
 	    objetoGrafico.desenhar();
 	}
