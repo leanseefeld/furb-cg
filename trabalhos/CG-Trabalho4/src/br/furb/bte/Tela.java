@@ -4,11 +4,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -19,8 +14,8 @@ import com.sun.opengl.util.j2d.TextRenderer;
 
 public class Tela //
 	extends GLCanvas //
-	implements GLEventListener, MouseMotionListener, //
-	MouseListener, KeyListener, MouseWheelListener {
+	implements GLEventListener, //
+	KeyListener {
 
     private static final long serialVersionUID = 1L;
     private static final int TAMANHO_ARENA = 500;
@@ -36,25 +31,23 @@ public class Tela //
     private Moto moto1;
     private Moto moto2;
     private Arena arena;
-    private Ponto mouse;
     private Transformacao transformacaoMundo;
-    private boolean pararThread;
+    private boolean pararComportamentos;
     private Thread loopGame;
     private Estado estado;
+    private final Camera camera;
 
     public Tela() {
 	addGLEventListener(this);
-	addMouseMotionListener(this);
-	addMouseListener(this);
 	addKeyListener(this);
-	addMouseWheelListener(this);
 	setPreferredSize(new Dimension(largura, altura));
 
 	olho = new Ponto(500, 500, 1000);
 	para = new Ponto(0, 0, 0);
-	mouse = new Ponto(0, 0, 0);
 	transformacaoMundo = new Transformacao();
 	estado = Estado.Pausado;
+
+	camera = new Camera(this);
     }
 
     @Override
@@ -79,9 +72,10 @@ public class Tela //
     public void display(GLAutoDrawable arg0) {
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
+	transformacaoMundo = camera.absorverTransformacao(transformacaoMundo);
 	gl.glPushMatrix();
 	{
-	    gl.glMultMatrixd(this.transformacaoMundo.getMatriz(), 0);
+	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
 	    mundo.desenhar();
 	    SRU();
@@ -133,7 +127,7 @@ public class Tela //
 
     private void reset() {
 	this.estado = Estado.Pausado;
-	this.pararThread = true;
+	this.pararComportamentos = true;
 	this.mundo.removerTodosFilhos();
 	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto(gl, this.arena.bbox.getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
@@ -150,35 +144,6 @@ public class Tela //
     @Override
     public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-	double qtdX = mouse.X - e.getX();
-	double qtdY = mouse.Y - e.getY();
-
-	qtdX = -qtdX / 100;
-	qtdY = qtdY / 100;
-
-	mouse.X = e.getX();
-	mouse.Y = e.getY();
-	// TODO: talvez movimentar proporcionalmente um pouco a câmera...
-
-	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoY(qtdX));
-	//	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoX(qtdY));
-	glDrawable.display();
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-	mouse.X = e.getX();
-	mouse.Y = e.getY();
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-	// TODO: talvez movimentar proporcionalmente um pouco a câmera...
     }
 
     @Override
@@ -229,13 +194,13 @@ public class Tela //
 		break;
 	    case KeyEvent.VK_SPACE:
 		if (loopGame == null || !loopGame.isAlive()) {
-		    pararThread = false;
-		    loopGame = new minhaTredi();
+		    pararComportamentos = false;
+		    loopGame = new RenderLoop();
 		    loopGame.start();
 		    estado = Estado.Rodando;
 		} else if (loopGame != null && loopGame.isAlive()) {
 		    estado = Estado.Pausado;
-		    pararThread = true;
+		    pararComportamentos = true;
 		}
 		reconheceu = false;
 		break;
@@ -245,9 +210,9 @@ public class Tela //
 	    default:
 		reconheceu = false;
 	}
-	if (reconheceu) {
-	    glDrawable.display();
-	}
+	//	if (reconheceu) {
+	//	    glDrawable.display();
+	//	}
     }
 
     private void executarComportamentos() {
@@ -259,7 +224,7 @@ public class Tela //
 	teveColisao1 = verificaColisaoMoto(moto1);
 	teveColisao2 = verificaColisaoMoto(moto2);
 	if (teveColisao1 || teveColisao2) {
-	    this.pararThread = true;
+	    this.pararComportamentos = true;
 	    if (teveColisao1 && teveColisao2) {
 		this.estado = Estado.Empatou;
 	    } else if (teveColisao1) {
@@ -292,32 +257,12 @@ public class Tela //
     }
 
     @Override
-    public void mouseReleased(MouseEvent arg0) {
-
-    }
-
-    @Override
     public void keyTyped(KeyEvent e) {
 
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
 
     }
 
@@ -355,31 +300,21 @@ public class Tela //
 	gl.glEnd();
     }
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent arg0) {
-	transformacaoMundo = transformacaoMundo.transformMatrix(//
-		new Transformacao().atribuirEscala(//
-			1 - (float) arg0.getWheelRotation() / 10, //
-			1 - (float) arg0.getWheelRotation() / 10, //
-			1 - (float) arg0.getWheelRotation() / 10));
-	glDrawable.display();
-    }
-
-    private class minhaTredi extends Thread {
+    private class RenderLoop extends Thread {
 
 	@Override
 	public void run() {
-	    try {
-		while (!pararThread) {
-
-		    Thread.sleep(50);
-		    executarComportamentos();
+	    while (true) {
+		try {
+		    if (!pararComportamentos) {
+			executarComportamentos();
+		    }
 		    glDrawable.display();
+		    Thread.sleep(50);
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
 		}
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
 	    }
-	    pararThread = false;
 	}
     }
 }
