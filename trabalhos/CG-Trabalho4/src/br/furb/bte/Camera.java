@@ -11,6 +11,8 @@ import java.awt.event.MouseWheelListener;
 
 public class Camera implements MouseMotionListener, MouseListener, MouseWheelListener {
 
+    private static final int TELEPORT_MARGIN = 5;
+
     private final Ponto oldMouse;
     private final Tela tela;
     private Robot robot;
@@ -24,6 +26,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	tela.addMouseWheelListener(this);
 	try {
 	    robot = new Robot();
+	    robot.setAutoDelay(0);
 	} catch (AWTException e) {
 	    e.printStackTrace();
 	}
@@ -63,30 +66,44 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     @Override
     public void mouseExited(MouseEvent e) {
-	if (robot != null && e.isShiftDown() && !e.isControlDown()) {
-	    int absX = e.getXOnScreen();
-	    int absY = e.getYOnScreen();
-	    Point screenLocation = tela.getLocationOnScreen();
-	    int limiteEsquerda = screenLocation.x + tela.getWidth();
-	    if (absX >= limiteEsquerda) {
-		robot.mouseMove(screenLocation.x, absY);
-	    } else if (absX <= screenLocation.x) {
-		robot.mouseMove(limiteEsquerda, absY);
+	if (!e.isControlDown()) {
+	    teleportMouse(e);
+	}
+    }
+
+    private boolean teleportMouse(MouseEvent e) {
+	if (robot != null && !e.isShiftDown()) {
+	    return false;
+	}
+	int absX = e.getXOnScreen();
+	int absY = e.getYOnScreen();
+	Point screenLocation = tela.getLocationOnScreen();
+	Point newMouse = new Point();
+	int limiteEsquerda = screenLocation.x + tela.getWidth();
+	newMouse.y = absY;
+	if (absX + TELEPORT_MARGIN >= limiteEsquerda) {
+	    newMouse.x = screenLocation.x + TELEPORT_MARGIN + 1;
+	} else if (absX - TELEPORT_MARGIN <= screenLocation.x) {
+	    newMouse.x = limiteEsquerda - TELEPORT_MARGIN - 1;
+	} else {
+	    int limiteBaixo = screenLocation.y + tela.getHeight();
+	    newMouse.x = absX;
+	    if (absY + TELEPORT_MARGIN >= limiteBaixo) {
+		newMouse.y = screenLocation.y + TELEPORT_MARGIN + 1;
+	    } else if (absY - TELEPORT_MARGIN <= screenLocation.y) {
+		newMouse.y = limiteBaixo - TELEPORT_MARGIN - 1;
 	    } else {
-		int limiteBaixo = screenLocation.y + tela.getHeight();
-		if (absY >= limiteBaixo) {
-		    robot.mouseMove(absX, screenLocation.y);
-		} else if (absY <= screenLocation.y) {
-		    robot.mouseMove(absX, limiteBaixo);
-		}
+		return false;
 	    }
 	}
+	robot.mouseMove(newMouse.x, newMouse.y);
+	oldMouse.X = newMouse.x - screenLocation.x;
+	oldMouse.Y = newMouse.y - screenLocation.y;
+	return true;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-	oldMouse.X = e.getX();
-	oldMouse.Y = e.getY();
     }
 
     @Override
@@ -95,24 +112,29 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+	mouseMoved(e);
     }
 
     @Override
     public void mouseMoved(MouseEvent newMouse) {
 	if (!newMouse.isControlDown()) {
+	    if (teleportMouse(newMouse)) {
+		return;
+	    }
+
 	    double offsetX = oldMouse.X - newMouse.getX();
-	    double offsetY = oldMouse.Y - newMouse.getY();
+//	    double offsetY = oldMouse.Y - newMouse.getY();
 
-	    double maxSize = tela.getWidth() / 3;
+	    double scaleX = tela.getWidth() / 3;
+//	    double scaleY = tela.getHeight();
 
-	    offsetX /= -maxSize;
-	    offsetY /= 100;
+	    offsetX /= -scaleX;
+//	    offsetY /= scaleY;
 
 	    // TODO: talvez movimentar proporcionalmente um pouco a câmera...
 
 	    setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoY(offsetX)));
-	    //	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoX(qtdY));
+	    //		setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoX(offsetY)));
 	    tela.render();
 	}
 	oldMouse.X = newMouse.getX();
