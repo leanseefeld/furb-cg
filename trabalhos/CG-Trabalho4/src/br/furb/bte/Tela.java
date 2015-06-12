@@ -72,6 +72,20 @@ public class Tela //
     }
 
     @Override
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+	gl.glMatrixMode(GL.GL_PROJECTION);
+	gl.glLoadIdentity();
+	float aspect = width / (float) height;
+	glu.gluPerspective(60, aspect, 1, 2000);
+	gl.glMatrixMode(GL.GL_MODELVIEW);
+	gl.glLoadIdentity();
+	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
+
+	this.altura = height;
+	this.largura = width;
+    }
+
+    @Override
     public void display(GLAutoDrawable arg0) {
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
@@ -114,18 +128,6 @@ public class Tela //
 	    }
 	}
 	text.endRendering();
-    }
-
-    @Override
-    public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
-	gl.glViewport(0, 0, arg0.getWidth(), arg0.getHeight());
-	gl.glMatrixMode(GL.GL_PROJECTION);
-	gl.glLoadIdentity();
-	float h = (float) arg0.getHeight() / (float) arg0.getWidth();
-	glu.gluPerspective(60, h, 1, 2000);
-	gl.glMatrixMode(GL.GL_MODELVIEW);
-	gl.glLoadIdentity();
-	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
     }
 
     private void alterarEstado(Estado novoEstado) {
