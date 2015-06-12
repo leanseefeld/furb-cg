@@ -17,6 +17,7 @@ public class Tela //
 	implements GLEventListener, //
 	KeyListener {
 
+    private static final Font FONT = new Font("SansSerif", Font.BOLD, 18);
     private static final long serialVersionUID = 1L;
     private static final int TAMANHO_ARENA = 500;
 
@@ -45,7 +46,7 @@ public class Tela //
 	olho = new Ponto(500, 500, 1000);
 	para = new Ponto(0, 0, 0);
 	transformacaoMundo = new Transformacao();
-	estado = Estado.Pausado;
+	estado = Estado.PAUSADO;
 
 	camera = new Camera(this);
 	renderLoop = new RenderLoop();
@@ -86,27 +87,27 @@ public class Tela //
 	}
 	gl.glPopMatrix();
 
-	TextRenderer text = new TextRenderer(new Font("SansSerif", Font.BOLD, 18));
+	TextRenderer text = new TextRenderer(FONT);
 	text.beginRendering(largura, altura);
 	{
 	    text.setColor(1, 1, 1, 1);
 	    switch (estado) {
-		case Pausado:
+		case PAUSADO:
 		    text.draw("Pausado", (largura / 2) - 25, (altura / 2));
 		    text.draw("Espaço para continuar", largura / 2 - 80, (altura / 2) - 20);
 		    break;
-		case Perdeu:
+		case DERROTADO:
 		    text.draw("Perdeu", (largura / 2) - 25, altura);
 		    text.draw("R para reiniciar", largura / 2 - 50, (altura / 2) - 20);
 		    break;
-		case Rodando:
+		case RODANDO:
 		    text.draw("Rodando", 0, altura - 25);
 		    break;
-		case Venceu:
+		case VITORIOSO:
 		    text.draw("Venceu", (largura / 2) - 25, altura);
 		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
-		case Empatou:
+		case EMPATADO:
 		    text.draw("Empatou", (largura / 2) - 25, altura);
 		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
@@ -127,9 +128,14 @@ public class Tela //
 	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
     }
 
+    private void alterarEstado(Estado novoEstado) {
+	this.estado = novoEstado;
+	executarComportamentos = novoEstado == Estado.RODANDO;
+	render();
+    }
+
     private void reset() {
-	this.estado = Estado.Pausado;
-	this.executarComportamentos = false;
+	alterarEstado(Estado.PAUSADO);
 	this.mundo.removerTodosFilhos();
 	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto(gl, this.arena.bbox.getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
@@ -180,27 +186,25 @@ public class Tela //
 	//		break;
 
 	    case KeyEvent.VK_D:
-		this.moto1.addAngulo(direita);
+		moto1.addAngulo(direita);
 		break;
 	    case KeyEvent.VK_RIGHT:
-		this.moto2.addAngulo(direita);
+		moto2.addAngulo(direita);
 		break;
 	    case KeyEvent.VK_A:
-		this.moto1.addAngulo(esquerda);
+		moto1.addAngulo(esquerda);
 		break;
 	    case KeyEvent.VK_LEFT:
-		this.moto2.addAngulo(esquerda);
+		moto2.addAngulo(esquerda);
 		break;
 	    case KeyEvent.VK_R:
-		this.reset();
+		reset();
 		break;
 	    case KeyEvent.VK_SPACE:
-		if (executarComportamentos) {
-		    executarComportamentos = false;
-		    estado = Estado.Pausado;
+		if (estado == Estado.RODANDO) {
+		    alterarEstado(Estado.PAUSADO);
 		} else {
-		    executarComportamentos = true;
-		    estado = Estado.Rodando;
+		    alterarEstado(Estado.RODANDO);
 		}
 		reconheceu = false;
 		break;
@@ -226,11 +230,11 @@ public class Tela //
 	if (teveColisao1 || teveColisao2) {
 	    this.executarComportamentos = false;
 	    if (teveColisao1 && teveColisao2) {
-		this.estado = Estado.Empatou;
+		alterarEstado(Estado.EMPATADO);
 	    } else if (teveColisao1) {
-		this.estado = Estado.Perdeu;
+		alterarEstado(Estado.DERROTADO);
 	    } else {
-		this.estado = Estado.Venceu;
+		alterarEstado(Estado.VITORIOSO);
 	    }
 	}
     }
@@ -300,6 +304,15 @@ public class Tela //
 	gl.glEnd();
     }
 
+    public void render() {
+	// força que só execute quando o RenderLoop chegar no wait(), garantindo que 
+	// o comportamento vai terminar de executar antes de renderizar novamente
+	synchronized (renderLoop) {
+	    glDrawable.display();
+	    renderLoop.notify();
+	}
+    }
+
     private class RenderLoop extends Thread {
 
 	@Override
@@ -308,9 +321,13 @@ public class Tela //
 		try {
 		    if (executarComportamentos) {
 			executarComportamentos();
+			glDrawable.display();
+			Thread.sleep(50);
+		    } else {
+			synchronized (this) {
+			    wait();
+			}
 		    }
-		    glDrawable.display();
-		    Thread.sleep(50);
 		} catch (InterruptedException e) {
 		    e.printStackTrace();
 		}

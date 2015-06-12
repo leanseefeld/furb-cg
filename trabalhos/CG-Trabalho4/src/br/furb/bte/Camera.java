@@ -10,8 +10,10 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     private final Ponto mouse;
     private Transformacao $transformacao;
+    private final Tela tela;
 
     public Camera(Tela tela) {
+	this.tela = tela;
 	this.mouse = new Ponto(0, 0, 0);
 	tela.addMouseMotionListener(this);
 	tela.addMouseListener(this);
@@ -37,7 +39,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 			1 - (float) e.getWheelRotation() / 10, //
 			1 - (float) e.getWheelRotation() / 10, //
 			1 - (float) e.getWheelRotation() / 10)));
-	//	glDrawable.display();
+	tela.render();
     }
 
     @Override
@@ -76,8 +78,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
 	setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoY(qtdX)));
 	//	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoX(qtdY));
-	//	glDrawable.display();
-
+	tela.render();
     }
 
     @Override
