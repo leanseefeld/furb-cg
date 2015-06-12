@@ -50,7 +50,7 @@ public class Tela //
 	addMouseWheelListener(this);
 	setPreferredSize(new Dimension(largura, altura));
 
-	olho = new Ponto(100, 100, 500);
+	olho = new Ponto(500, 500, 1000);
 	para = new Ponto(0, 0, 0);
 	mouse = new Ponto(0, 0, 0);
 	transformacaoMundo = new Transformacao();
@@ -96,23 +96,23 @@ public class Tela //
 	    text.setColor(1, 1, 1, 1);
 	    switch (estado) {
 		case Pausado:
-		    text.draw("Pausado", 175, 200);
-		    text.draw("Espaço para continuar", 120, 180);
+		    text.draw("Pausado", (largura / 2) - 25, (altura / 2));
+		    text.draw("Espaço para continuar", largura / 2 - 80, (altura / 2) - 20);
 		    break;
 		case Perdeu:
-		    text.draw("Perdeu", 175, 200);
-		    text.draw("R para reiniciar", 150, 180);
+		    text.draw("Perdeu", (largura / 2) - 25, altura);
+		    text.draw("R para reiniciar", largura / 2 - 50, (altura / 2) - 20);
 		    break;
 		case Rodando:
-		    text.draw("Rodando", 0, 385);
+		    text.draw("Rodando", 0, altura - 25);
 		    break;
 		case Venceu:
-		    text.draw("Venceu", 175, 200);
-		    text.draw("R para reiniciar", 150, 180);
+		    text.draw("Venceu", (largura / 2) - 25, altura);
+		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
 		case Empatou:
-		    text.draw("Empatou", 175, 200);
-		    text.draw("R para reiniciar", 150, 180);
+		    text.draw("Empatou", (largura / 2) - 25, altura);
+		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
 	    }
 	}
@@ -165,7 +165,7 @@ public class Tela //
 	// TODO: talvez movimentar proporcionalmente um pouco a câmera...
 
 	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoY(qtdX));
-	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoX(qtdY));
+	//	transformacaoMundo = transformacaoMundo.transformMatrix(new Transformacao().atribuirRotacaoX(qtdY));
 	glDrawable.display();
 
     }
@@ -184,6 +184,8 @@ public class Tela //
     @Override
     public void keyPressed(KeyEvent e) {
 	boolean reconheceu = true;
+	int direita = -90;
+	int esquerda = 90;
 	switch (e.getKeyCode()) {
 	    case KeyEvent.VK_W:
 		this.moto1.setAngulo(Moto.CIMA);
@@ -209,9 +211,22 @@ public class Tela //
 	    case KeyEvent.VK_LEFT:
 		this.moto2.setAngulo(Moto.ESQUERDA);
 		break;
-	    case KeyEvent.VK_R:
-		this.reset();
-		break;
+
+	    //	    case KeyEvent.VK_D:
+	    //		this.moto1.setAngulo(Moto.DIREITA);
+	    //		break;
+	    //	    case KeyEvent.VK_RIGHT:
+	    //		this.moto2.setAngulo(Moto.DIREITA);
+	    //		break;
+	    //	    case KeyEvent.VK_A:
+	    //		this.moto1.setAngulo(Moto.ESQUERDA);
+	    //		break;
+	    //	    case KeyEvent.VK_LEFT:
+	    //		this.moto2.setAngulo(Moto.ESQUERDA);
+	    //		break;
+	    //	    case KeyEvent.VK_R:
+	    //		this.reset();
+	    //		break;
 	    case KeyEvent.VK_SPACE:
 		if (loopGame == null || !loopGame.isAlive()) {
 		    pararThread = false;
