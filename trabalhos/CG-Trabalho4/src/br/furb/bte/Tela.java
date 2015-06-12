@@ -184,49 +184,49 @@ public class Tela //
     @Override
     public void keyPressed(KeyEvent e) {
 	boolean reconheceu = true;
-	int direita = -90;
-	int esquerda = 90;
+	int direita = 90;
+	int esquerda = -90;
 	switch (e.getKeyCode()) {
-	    case KeyEvent.VK_W:
-		this.moto1.setAngulo(Moto.CIMA);
-		break;
-	    case KeyEvent.VK_UP:
-		this.moto2.setAngulo(Moto.CIMA);
-		break;
+	//	    case KeyEvent.VK_W:
+	//		this.moto1.setAngulo(Moto.CIMA);
+	//		break;
+	//	    case KeyEvent.VK_UP:
+	//		this.moto2.setAngulo(Moto.CIMA);
+	//		break;
+	//	    case KeyEvent.VK_D:
+	//		this.moto1.setAngulo(Moto.DIREITA);
+	//		break;
+	//	    case KeyEvent.VK_RIGHT:
+	//		this.moto2.setAngulo(Moto.DIREITA);
+	//		break;
+	//	    case KeyEvent.VK_S:
+	//		this.moto1.setAngulo(Moto.BAIXO);
+	//		break;
+	//	    case KeyEvent.VK_DOWN:
+	//		this.moto2.setAngulo(Moto.BAIXO);
+	//		break;
+	//	    case KeyEvent.VK_A:
+	//		this.moto1.setAngulo(Moto.ESQUERDA);
+	//		break;
+	//	    case KeyEvent.VK_LEFT:
+	//		this.moto2.setAngulo(Moto.ESQUERDA);
+	//		break;
+
 	    case KeyEvent.VK_D:
-		this.moto1.setAngulo(Moto.DIREITA);
+		this.moto1.addAngulo(direita);
 		break;
 	    case KeyEvent.VK_RIGHT:
-		this.moto2.setAngulo(Moto.DIREITA);
-		break;
-	    case KeyEvent.VK_S:
-		this.moto1.setAngulo(Moto.BAIXO);
-		break;
-	    case KeyEvent.VK_DOWN:
-		this.moto2.setAngulo(Moto.BAIXO);
+		this.moto2.addAngulo(direita);
 		break;
 	    case KeyEvent.VK_A:
-		this.moto1.setAngulo(Moto.ESQUERDA);
+		this.moto1.addAngulo(esquerda);
 		break;
 	    case KeyEvent.VK_LEFT:
-		this.moto2.setAngulo(Moto.ESQUERDA);
+		this.moto2.addAngulo(esquerda);
 		break;
-
-	    //	    case KeyEvent.VK_D:
-	    //		this.moto1.setAngulo(Moto.DIREITA);
-	    //		break;
-	    //	    case KeyEvent.VK_RIGHT:
-	    //		this.moto2.setAngulo(Moto.DIREITA);
-	    //		break;
-	    //	    case KeyEvent.VK_A:
-	    //		this.moto1.setAngulo(Moto.ESQUERDA);
-	    //		break;
-	    //	    case KeyEvent.VK_LEFT:
-	    //		this.moto2.setAngulo(Moto.ESQUERDA);
-	    //		break;
-	    //	    case KeyEvent.VK_R:
-	    //		this.reset();
-	    //		break;
+	    case KeyEvent.VK_R:
+		this.reset();
+		break;
 	    case KeyEvent.VK_SPACE:
 		if (loopGame == null || !loopGame.isAlive()) {
 		    pararThread = false;

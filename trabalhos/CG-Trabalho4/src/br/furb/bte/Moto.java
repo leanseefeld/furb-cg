@@ -153,6 +153,10 @@ public class Moto extends Poligono {
 	this.addRotacao(trans);
     }
 
+    public void addAngulo(int grausGirar) {
+	this.anguloProximo = this.angulo + grausGirar;
+    }
+
     public void setAngulo(int angulo) {
 	int grausGirar = angulo - this.angulo;
 	if (grausGirar < -180 || grausGirar > 180)
