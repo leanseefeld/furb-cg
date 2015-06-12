@@ -32,8 +32,8 @@ public class Tela //
     private Moto moto2;
     private Arena arena;
     private Transformacao transformacaoMundo;
-    private boolean pararComportamentos;
-    private Thread loopGame;
+    private boolean executarComportamentos;
+    private final RenderLoop renderLoop;
     private Estado estado;
     private final Camera camera;
 
@@ -48,6 +48,7 @@ public class Tela //
 	estado = Estado.Pausado;
 
 	camera = new Camera(this);
+	renderLoop = new RenderLoop();
     }
 
     @Override
@@ -66,6 +67,7 @@ public class Tela //
 	mundo = new Mundo(gl);
 
 	reset();
+	renderLoop.start();
     }
 
     @Override
@@ -127,7 +129,7 @@ public class Tela //
 
     private void reset() {
 	this.estado = Estado.Pausado;
-	this.pararComportamentos = true;
+	this.executarComportamentos = false;
 	this.mundo.removerTodosFilhos();
 	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto(gl, this.arena.bbox.getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
@@ -193,14 +195,12 @@ public class Tela //
 		this.reset();
 		break;
 	    case KeyEvent.VK_SPACE:
-		if (loopGame == null || !loopGame.isAlive()) {
-		    pararComportamentos = false;
-		    loopGame = new RenderLoop();
-		    loopGame.start();
-		    estado = Estado.Rodando;
-		} else if (loopGame != null && loopGame.isAlive()) {
+		if (executarComportamentos) {
+		    executarComportamentos = false;
 		    estado = Estado.Pausado;
-		    pararComportamentos = true;
+		} else {
+		    executarComportamentos = true;
+		    estado = Estado.Rodando;
 		}
 		reconheceu = false;
 		break;
@@ -224,7 +224,7 @@ public class Tela //
 	teveColisao1 = verificaColisaoMoto(moto1);
 	teveColisao2 = verificaColisaoMoto(moto2);
 	if (teveColisao1 || teveColisao2) {
-	    this.pararComportamentos = true;
+	    this.executarComportamentos = false;
 	    if (teveColisao1 && teveColisao2) {
 		this.estado = Estado.Empatou;
 	    } else if (teveColisao1) {
@@ -306,7 +306,7 @@ public class Tela //
 	public void run() {
 	    while (true) {
 		try {
-		    if (!pararComportamentos) {
+		    if (executarComportamentos) {
 			executarComportamentos();
 		    }
 		    glDrawable.display();
