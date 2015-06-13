@@ -48,8 +48,8 @@ public class Tela //
 
 	transformacaoMundo = new Transformacao();
 	estado = Estado.PAUSADO;
-	modoCamera = ModoCamera.SEGUE_MOTO;
-	camera = new Camera(this, modoCamera == ModoCamera.SEGUE_MOTO);
+	modoCamera = ModoCamera.VISAO_MAPA;
+	camera = new Camera(this, modoCamera == ModoCamera.VISAO_MAPA);
 
 	renderLoop = new RenderLoop();
 	addGLEventListener(this);
