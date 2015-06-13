@@ -12,46 +12,70 @@ import java.awt.event.MouseWheelListener;
 public class Camera implements MouseMotionListener, MouseListener, MouseWheelListener {
 
     private static final int TELEPORT_MARGIN = 5;
+    private static final double DISTANCIA = 700;
+    private static final double ALTURA = 500;
 
     private final Ponto oldMouse;
     private final Tela tela;
     private Robot robot;
-    private Transformacao $transformacao;
+    private Ponto para;
+    private float anguloCameraY = 0;
+    private int distancia = 0;
 
     public Camera(Tela tela) {
 	this.tela = tela;
 	this.oldMouse = new Ponto(0, 0, 0);
-	tela.addMouseMotionListener(this);
-	tela.addMouseListener(this);
-	tela.addMouseWheelListener(this);
 	try {
 	    robot = new Robot();
 	    robot.setAutoDelay(0);
 	} catch (AWTException e) {
 	    e.printStackTrace();
 	}
+	setPontoObservacao(new Ponto(0, 0, 0));
+	setAngulo(45);
+
+	tela.addMouseMotionListener(this);
+	tela.addMouseListener(this);
+	tela.addMouseWheelListener(this);
     }
 
-    private Transformacao getTransformacao() {
-	if ($transformacao == null) {
-	    $transformacao = new Transformacao();
-	}
-	return $transformacao;
+    public void setPontoObservacao(Ponto ponto) {
+	para = new Ponto(ponto.X, ponto.Y, ponto.Z);
     }
 
-    private Transformacao setTransformacao(Transformacao transformacao) {
-	$transformacao = transformacao;
-	return transformacao;
+    public void setAngulo(float angulo) {
+	anguloCameraY = angulo;
+    }
+
+    public void atualizaPosicaoCamera() {
+	//Calcula a rotação e aproximação em X
+	double novoX = (distancia + DISTANCIA) * Math.cos(Math.toRadians(anguloCameraY));
+	novoX += para.X;
+
+	//Calcula a rotação e aproximação em Z
+	double novoZ = (distancia + DISTANCIA) * Math.sin(Math.toRadians(anguloCameraY));
+	novoZ += para.Z;
+
+	//Calcula a altura e aproximação em Y
+	double catetoOposto = ALTURA - (double) para.Y;
+	double catetoAdjascente = ((DISTANCIA - (double) para.X) + (DISTANCIA - (double) para.Z)) / 2;
+	double tangente = catetoOposto / catetoAdjascente;
+	double anguloY = Math.atan(tangente);
+	double novoY = ((double) distancia / DISTANCIA * ALTURA + ALTURA) * Math.sin(anguloY);
+
+	tela.glu.gluLookAt(novoX, novoY, novoZ, para.X, para.Y, para.Z, 0, 1, 0);
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-	setTransformacao(getTransformacao().transformMatrix(//
+	distancia += e.getWheelRotation() * 20;
+	tela.render();
+	/*setTransformacao(getTransformacao().transformMatrix(//
 		new Transformacao().atribuirEscala(//
 			1 - (float) e.getWheelRotation() / 10, //
 			1 - (float) e.getWheelRotation() / 10, //
 			1 - (float) e.getWheelRotation() / 10)));
-	tela.render();
+	tela.render();*/
     }
 
     @Override
@@ -123,17 +147,20 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    }
 
 	    double offsetX = oldMouse.X - newMouse.getX();
-//	    double offsetY = oldMouse.Y - newMouse.getY();
+	    //	    double offsetY = oldMouse.Y - newMouse.getY();
 
 	    double scaleX = tela.getWidth() / 3;
-//	    double scaleY = tela.getHeight();
+	    //	    double scaleY = tela.getHeight();
 
 	    offsetX /= -scaleX;
-//	    offsetY /= scaleY;
+	    //	    offsetY /= scaleY;
 
 	    // TODO: talvez movimentar proporcionalmente um pouco a câmera...
 
-	    setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoY(offsetX)));
+	    anguloCameraY += offsetX * 50;
+	    //	    atualizaPosicaoCamera();
+
+	    //setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoY(offsetX)));
 	    //		setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoX(offsetY)));
 	    tela.render();
 	}
@@ -141,13 +168,13 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	oldMouse.Y = newMouse.getY();
     }
 
-    public Transformacao absorverTransformacao(final Transformacao transformacao) {
-	if ($transformacao != null) {
-	    Transformacao transformMatrix = transformacao.transformMatrix($transformacao);
-	    $transformacao = null;
-	    return transformMatrix;
-	}
-	return transformacao;
-    }
+    //    public Transformacao absorverTransformacao(final Transformacao transformacao) {
+    //	if ($transformacao != null) {
+    //	    Transformacao transformMatrix = transformacao.transformMatrix($transformacao);
+    //	    $transformacao = null;
+    //	    return transformMatrix;
+    //	}
+    //	return transformacao;
+    //    }
 
 }

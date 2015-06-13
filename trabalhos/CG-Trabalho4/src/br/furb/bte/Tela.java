@@ -10,6 +10,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
 
 public class Tela //
@@ -17,17 +18,17 @@ public class Tela //
 	implements GLEventListener, //
 	KeyListener {
 
+    private static final int NEAR = 1;
+    private static final int FAR = 2000;
     private static final Font FONT = new Font("SansSerif", Font.BOLD, 18);
     private static final long serialVersionUID = 1L;
     private static final int TAMANHO_ARENA = 500;
 
     private int largura = 800;
-    private int altura = 800;
+    private int altura = 600;
     private GL gl;
-    private GLU glu;
+    public GLU glu;
     private GLAutoDrawable glDrawable;
-    private Ponto olho;
-    private Ponto para;
     private Mundo mundo;
     private Moto moto1;
     private Moto moto2;
@@ -37,19 +38,20 @@ public class Tela //
     private final RenderLoop renderLoop;
     private Estado estado;
     private final Camera camera;
+    private boolean perspectiveMode = true;
+    private boolean atualizarVisualizacao = false;
+    private final float[] posicaoLuz = { 50, 50, 100, 0f };
 
     public Tela() {
-	addGLEventListener(this);
-	addKeyListener(this);
 	setPreferredSize(new Dimension(largura, altura));
 
-	olho = new Ponto(500, 500, 1000);
-	para = new Ponto(0, 0, 0);
 	transformacaoMundo = new Transformacao();
 	estado = Estado.PAUSADO;
-
 	camera = new Camera(this);
+
 	renderLoop = new RenderLoop();
+	addGLEventListener(this);
+	addKeyListener(this);
     }
 
     @Override
@@ -71,36 +73,70 @@ public class Tela //
 	renderLoop.start();
     }
 
-    @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    private void definirVisualizacao() {
 	gl.glMatrixMode(GL.GL_PROJECTION);
 	gl.glLoadIdentity();
-	float aspect = width / (float) height;
-	glu.gluPerspective(60, aspect, 1, 2000);
+	if (perspectiveMode) {
+	    float aspect = largura / (float) altura;
+	    glu.gluPerspective(60, aspect, NEAR, FAR);
+	} else {
+	    gl.glOrtho(-largura, largura, -altura, altura, NEAR, FAR);
+	}
 	gl.glMatrixMode(GL.GL_MODELVIEW);
 	gl.glLoadIdentity();
-	glu.gluLookAt(olho.X, olho.Y, olho.Z, para.X, para.Y, para.Z, 0, 1, 0);
+	
+	gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, posicaoLuz, 0);
+	gl.glEnable(GL.GL_LIGHT0);
+	gl.glEnable(GL.GL_LIGHTING);
+	//	gl.glShadeModel(GL.GL_SMOOTH);
+	gl.glShadeModel(GL.GL_FLAT);
+	//	gl.glEnable(GL.GL_COLOR_MATERIAL);
+	//	gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
+    }
 
+    @Override
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 	this.altura = height;
 	this.largura = width;
+	definirVisualizacao();
+    }
+
+    private void drawCube(float xS, float yS, float zS) {
+	float[] red = { 1f, 0f, 0f, 1f };
+	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
+
+	gl.glPushMatrix();
+	{
+	    gl.glScalef(xS, yS, zS);
+	    new GLUT().glutSolidCube(1.0f);
+	}
+	gl.glPopMatrix();
+
     }
 
     @Override
     public void display(GLAutoDrawable arg0) {
+	if (atualizarVisualizacao) {
+	    atualizarVisualizacao = false;
+	    definirVisualizacao();
+	}
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+	gl.glLoadIdentity();
+//	transformacaoMundo = camera.absorverTransformacao(transformacaoMundo);
+//	gl.glPushMatrix();
+//	{
+//	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
-	transformacaoMundo = camera.absorverTransformacao(transformacaoMundo);
-	gl.glPushMatrix();
-	{
-	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
+	camera.atualizaPosicaoCamera();
 	    mundo.desenhar();
+	    drawCube(30, 100, 30);
 	    SRU();
 	    //	    new GLUT().glutSolidCube(100);
 	    //	    gl.glFlush();
-	}
-	gl.glPopMatrix();
-
+//	}
+//	gl.glPopMatrix();
+//
 	TextRenderer text = new TextRenderer(FONT);
 	text.beginRendering(largura, altura);
 	{
@@ -111,18 +147,18 @@ public class Tela //
 		    text.draw("Espaço para continuar", largura / 2 - 80, (altura / 2) - 20);
 		    break;
 		case DERROTADO:
-		    text.draw("Perdeu", (largura / 2) - 25, altura);
+		    text.draw("Perdeu", (largura / 2) - 25, altura / 2);
 		    text.draw("R para reiniciar", largura / 2 - 50, (altura / 2) - 20);
 		    break;
 		case RODANDO:
 		    text.draw("Rodando", 0, altura - 25);
 		    break;
 		case VITORIOSO:
-		    text.draw("Venceu", (largura / 2) - 25, altura);
+		    text.draw("Venceu", (largura / 2) - 25, altura / 2);
 		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
 		case EMPATADO:
-		    text.draw("Empatou", (largura / 2) - 25, altura);
+		    text.draw("Empatou", (largura / 2) - 25, altura / 2);
 		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
 	    }
@@ -156,9 +192,7 @@ public class Tela //
 
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-	boolean reconheceu = true;
+    private void trataControleMotos(KeyEvent e) {
 	int direita = 90;
 	int esquerda = -90;
 	switch (e.getKeyCode()) {
@@ -186,7 +220,6 @@ public class Tela //
 	//	    case KeyEvent.VK_LEFT:
 	//		this.moto2.setAngulo(Moto.ESQUERDA);
 	//		break;
-
 	    case KeyEvent.VK_D:
 		moto1.addAngulo(direita);
 		break;
@@ -202,23 +235,42 @@ public class Tela //
 	    case KeyEvent.VK_R:
 		reset();
 		break;
+	    default:
+	}
+    }
+
+    private void trataControleJogo(KeyEvent e) {
+	switch (e.getKeyCode()) {
 	    case KeyEvent.VK_SPACE:
 		if (estado == Estado.RODANDO) {
 		    alterarEstado(Estado.PAUSADO);
 		} else {
 		    alterarEstado(Estado.RODANDO);
 		}
-		reconheceu = false;
 		break;
 	    case KeyEvent.VK_X:
 		executarComportamentos();
 		break;
 	    default:
-		reconheceu = false;
 	}
-	//	if (reconheceu) {
-	//	    glDrawable.display();
-	//	}
+    }
+
+    private void trataControleCenario(KeyEvent e) {
+	switch (e.getKeyCode()) {
+	    case KeyEvent.VK_1:
+		perspectiveMode = !perspectiveMode;
+		atualizarVisualizacao = true;
+		render();
+		//glDrawable.display();
+	    default:
+	}
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+	trataControleMotos(e);
+	trataControleJogo(e);
+	trataControleCenario(e);
     }
 
     private void executarComportamentos() {

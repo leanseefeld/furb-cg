@@ -55,7 +55,10 @@ public abstract class Poligono extends ObjetoGrafico {
 
     @Override
     public void desenhar() {
-	gl.glColor3f(cor.R, cor.G, cor.B);
+	float[] cor2 = { cor.R, cor.G, cor.B, 1f };
+	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
+
+//		gl.glColor3f(cor.R, cor.G, cor.B);
 
 	gl.glPushMatrix();
 	{
