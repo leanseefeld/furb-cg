@@ -41,13 +41,15 @@ public class Tela //
     private boolean perspectiveMode = true;
     private boolean atualizarVisualizacao = false;
     private final float[] posicaoLuz = { 50, 50, 100, 0f };
+    private ModoCamera modoCamera;
 
     public Tela() {
 	setPreferredSize(new Dimension(largura, altura));
 
 	transformacaoMundo = new Transformacao();
 	estado = Estado.PAUSADO;
-	camera = new Camera(this);
+	modoCamera = ModoCamera.SEGUE_MOTO;
+	camera = new Camera(this, modoCamera == ModoCamera.SEGUE_MOTO);
 
 	renderLoop = new RenderLoop();
 	addGLEventListener(this);
@@ -84,7 +86,7 @@ public class Tela //
 	}
 	gl.glMatrixMode(GL.GL_MODELVIEW);
 	gl.glLoadIdentity();
-	
+
 	gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, posicaoLuz, 0);
 	gl.glEnable(GL.GL_LIGHT0);
 	gl.glEnable(GL.GL_LIGHTING);
@@ -122,21 +124,26 @@ public class Tela //
 	}
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 	gl.glLoadIdentity();
-//	transformacaoMundo = camera.absorverTransformacao(transformacaoMundo);
-//	gl.glPushMatrix();
-//	{
-//	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
+	//	transformacaoMundo = camera.absorverTransformacao(transformacaoMundo);
+	//	gl.glPushMatrix();
+	//	{
+	//	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
-
+	if (modoCamera == ModoCamera.SEGUE_MOTO) {
+	    if (this.moto1 != null) {
+		camera.setPontoObservacao(this.moto1.getBBoxTransformada().getCentro());
+		camera.setAngulo(this.moto1.getAngulo() + 180);
+	    }
+	}
 	camera.atualizaPosicaoCamera();
-	    mundo.desenhar();
-	    drawCube(30, 100, 30);
-	    SRU();
-	    //	    new GLUT().glutSolidCube(100);
-	    //	    gl.glFlush();
-//	}
-//	gl.glPopMatrix();
-//
+	mundo.desenhar();
+	drawCube(30, 100, 30);
+	SRU();
+	//	    new GLUT().glutSolidCube(100);
+	//	    gl.glFlush();
+	//	}
+	//	gl.glPopMatrix();
+	//
 	TextRenderer text = new TextRenderer(FONT);
 	text.beginRendering(largura, altura);
 	{

@@ -36,6 +36,10 @@ public class Moto extends Poligono {
 	this.girar();
     }
 
+    public float getAngulo() {
+	return angulo;
+    }
+    
     public void setColisao() {
 	this.cor = this.corColisao;
     }

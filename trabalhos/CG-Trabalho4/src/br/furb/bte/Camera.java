@@ -11,6 +11,7 @@ import java.awt.event.MouseWheelListener;
 
 public class Camera implements MouseMotionListener, MouseListener, MouseWheelListener {
 
+    private static final int VELOCIDADE_ROTACAO = 15;
     private static final int TELEPORT_MARGIN = 5;
     private static final double DISTANCIA = 700;
     private static final double ALTURA = 500;
@@ -20,9 +21,15 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
     private Robot robot;
     private Ponto para;
     private float anguloCameraY = 0;
+    private float anguloCameraYProximo = 0;
     private int distancia = 0;
 
-    public Camera(Tela tela) {
+    /**
+     * @param tela
+     * @param permiteControlar
+     *            True caso o usuário possa controlar a camera com o mouse
+     */
+    public Camera(Tela tela, boolean permiteControlar) {
 	this.tela = tela;
 	this.oldMouse = new Ponto(0, 0, 0);
 	try {
@@ -34,20 +41,37 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	setPontoObservacao(new Ponto(0, 0, 0));
 	setAngulo(45);
 
-	tela.addMouseMotionListener(this);
-	tela.addMouseListener(this);
 	tela.addMouseWheelListener(this);
+
+	if (permiteControlar = true) {
+	    tela.addMouseMotionListener(this);
+	    tela.addMouseListener(this);
+	}
     }
 
     public void setPontoObservacao(Ponto ponto) {
-	para = new Ponto(ponto.X, ponto.Y, ponto.Z);
+	this.para = ponto;
     }
 
     public void setAngulo(float angulo) {
-	anguloCameraY = angulo;
+	anguloCameraYProximo = angulo;
     }
 
     public void atualizaPosicaoCamera() {
+	float diferencaAngulo = anguloCameraYProximo - anguloCameraY;
+	System.out.println("atualizaPosicaoCamera - anguloCameraY: " + anguloCameraY);
+	System.out.println("atualizaPosicaoCamera - anguloCameraYProximo: " + anguloCameraYProximo);
+	System.out.println("atualizaPosicaoCamera - Diferenca: " + diferencaAngulo);
+	if (diferencaAngulo != 0) {
+	    if (diferencaAngulo < VELOCIDADE_ROTACAO) {
+		anguloCameraY -= VELOCIDADE_ROTACAO;
+	    } else if (diferencaAngulo > VELOCIDADE_ROTACAO) {
+		anguloCameraY += VELOCIDADE_ROTACAO;
+	    } else {
+		anguloCameraY = anguloCameraYProximo;
+	    }
+	}
+
 	//Calcula a rotação e aproximação em X
 	double novoX = (distancia + DISTANCIA) * Math.cos(Math.toRadians(anguloCameraY));
 	novoX += para.X;
@@ -157,7 +181,8 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
 	    // TODO: talvez movimentar proporcionalmente um pouco a câmera...
 
-	    anguloCameraY += offsetX * 50;
+	    anguloCameraYProximo += offsetX * 50;
+	    System.out.println("mouseMoved: " + anguloCameraYProximo);
 	    //	    atualizaPosicaoCamera();
 
 	    //setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoY(offsetX)));
