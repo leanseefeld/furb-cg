@@ -43,7 +43,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
 	tela.addMouseWheelListener(this);
 
-	if (permiteControlar = true) {
+	if (permiteControlar) {
 	    tela.addMouseMotionListener(this);
 	    tela.addMouseListener(this);
 	}
@@ -63,11 +63,14 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	System.out.println("atualizaPosicaoCamera - anguloCameraYProximo: " + anguloCameraYProximo);
 	System.out.println("atualizaPosicaoCamera - Diferenca: " + diferencaAngulo);
 	if (diferencaAngulo != 0) {
-	    if (diferencaAngulo < VELOCIDADE_ROTACAO) {
+	    if (diferencaAngulo < -VELOCIDADE_ROTACAO) {
 		anguloCameraY -= VELOCIDADE_ROTACAO;
+		System.out.println("diferencaAngulo < VELOCIDADE_ROTACAO");
 	    } else if (diferencaAngulo > VELOCIDADE_ROTACAO) {
+		System.out.println("diferencaAngulo > VELOCIDADE_ROTACAO");
 		anguloCameraY += VELOCIDADE_ROTACAO;
 	    } else {
+		System.out.println("diferencaAngulo > 15 e < 15");
 		anguloCameraY = anguloCameraYProximo;
 	    }
 	}

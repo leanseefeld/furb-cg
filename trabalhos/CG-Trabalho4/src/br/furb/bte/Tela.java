@@ -2,6 +2,8 @@ package br.furb.bte;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.media.opengl.DebugGL;
@@ -33,7 +35,6 @@ public class Tela //
     private Moto moto1;
     private Moto moto2;
     private Arena arena;
-    private Transformacao transformacaoMundo;
     private boolean executarComportamentos;
     private final RenderLoop renderLoop;
     private Estado estado;
@@ -45,15 +46,19 @@ public class Tela //
 
     public Tela() {
 	setPreferredSize(new Dimension(largura, altura));
-
-	transformacaoMundo = new Transformacao();
 	estado = Estado.PAUSADO;
-	modoCamera = ModoCamera.SEGUE_MOTO;
-	camera = new Camera(this, modoCamera == ModoCamera.SEGUE_MOTO);
+	modoCamera = ModoCamera.VISAO_MAPA;
+	camera = new Camera(this, modoCamera == ModoCamera.VISAO_MAPA);
 
 	renderLoop = new RenderLoop();
 	addGLEventListener(this);
 	addKeyListener(this);
+	addComponentListener(new ComponentAdapter() {
+	    @Override
+	    public void componentResized(ComponentEvent e) {
+	        render();
+	    }
+	});
     }
 
     @Override
@@ -168,6 +173,9 @@ public class Tela //
 		    text.draw("Empatou", (largura / 2) - 25, altura / 2);
 		    text.draw("R para reiniciar", (largura / 2) - 50, (altura / 2) - 20);
 		    break;
+		default:
+		    System.err.println("Estado não mapeado: " + estado);
+		    break;
 	    }
 	}
 	text.endRendering();
@@ -263,13 +271,10 @@ public class Tela //
     }
 
     private void trataControleCenario(KeyEvent e) {
-	switch (e.getKeyCode()) {
-	    case KeyEvent.VK_1:
-		perspectiveMode = !perspectiveMode;
-		atualizarVisualizacao = true;
-		render();
-		//glDrawable.display();
-	    default:
+	if (e.getKeyCode() == KeyEvent.VK_1) {
+	    perspectiveMode = !perspectiveMode;
+	    atualizarVisualizacao = true;
+	    render();
 	}
     }
 
@@ -307,18 +312,16 @@ public class Tela //
 	teveColisao |= moto.estaColidindo(getEnemy(moto));
 	teveColisao |= !moto.estaSobre(arena);
 
-	if (teveColisao)
+	if (teveColisao) {
 	    moto.setColisao();
-	else
+	} else {
 	    moto.setNormal();
+	}
 	return teveColisao;
     }
 
     private Moto getEnemy(Moto moto) {
-	if (moto == this.moto1)
-	    return moto2;
-	else
-	    return moto1;
+	return moto == this.moto1 ? moto2 : moto1;
     }
 
     @Override
