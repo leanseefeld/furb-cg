@@ -6,34 +6,25 @@ import javax.media.opengl.GL;
 
 public class Moto extends Poligono {
 
-    /**
-     * Angulo atual da moto
-     */
     private int angulo;
-    /**
-     * indica qual será o angulo aplicado na proxima execução
-     */
-    private int anguloProximo;
     private Rastro rastro;
     private final Cor corColisao = new Cor(0, 0, 1);
     private final Cor corNormal;
     private static final int VELOCIDADE = 10;
-    private static final int MAX_ROTACAO = 90;
     public static final int CIMA = -90;
     public static final int DIREITA = 0;
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
 
-    public Moto(GL gl, int x, int z, int anguloInicial, Cor cor) {
+    public Moto(GL gl, int x, int z, Cor cor) {
 	super(gl);
 	this.primitiva = GL.GL_QUADS;
 	this.cor = cor;
 	this.corNormal = cor;
 	this.rastro = new Rastro(gl, cor);
-	this.setPosicao(x, z);
-	this.anguloProximo = anguloInicial;
-	this.setPontos(this.criarPontos());
-	this.girar();
+
+	setPosicao(x, z);
+	setPontos(criarPontos());
     }
 
     public float getAngulo() {
@@ -102,7 +93,6 @@ public class Moto extends Poligono {
     }
 
     public void mover() {
-	this.girar();
 	int moverX = (int) Math.cos(Math.toRadians(this.angulo)) * VELOCIDADE;
 	int moverZ = (int) Math.sin(Math.toRadians(this.angulo)) * VELOCIDADE;
 	Transformacao trans = new Transformacao();
@@ -145,24 +135,11 @@ public class Moto extends Poligono {
 	return bbox.estaSob(bbox2);
     }
 
-    public void girar() {
-	int graus = this.anguloProximo - this.angulo;
-	this.angulo = this.anguloProximo;
+    public void girar(int graus) {
+	this.angulo += graus;
 	Transformacao trans = new Transformacao();
 	trans.atribuirRotacaoY(Math.toRadians(graus));
 	this.addRotacao(trans);
     }
 
-    public void addAngulo(int grausGirar) {
-	this.anguloProximo = this.angulo + grausGirar;
-    }
-
-    public void setAngulo(int angulo) {
-	int grausGirar = angulo - this.angulo;
-	if (grausGirar < -180 || grausGirar > 180)
-	    grausGirar = -(grausGirar % 180);
-	if (grausGirar >= -MAX_ROTACAO && grausGirar <= MAX_ROTACAO) {
-	    this.anguloProximo = angulo;
-	}
-    }
 }

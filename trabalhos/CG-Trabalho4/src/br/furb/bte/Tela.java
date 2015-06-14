@@ -72,28 +72,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     public Tela() {
 	setPreferredSize(new Dimension(largura, altura));
-	camera = new Camera(this, true);
 	renderLoop = new RenderLoop();
 	addGLEventListener(this);
-
-	addKeyListener(new KeyAdapter() {
-
-	    @Override
-	    public void keyPressed(KeyEvent e) {
-		@SuppressWarnings("unused")
-		boolean reconheceu = trataControleMotos(e) || trataControleJogo(e) || trataControleCenario(e);
-	    }
-	});
-
-	addComponentListener(new ComponentAdapter() {
-
-	    @Override
-	    public void componentResized(ComponentEvent e) {
-		if (arena != null) {
-		    render();
-		}
-	    }
-	});
     }
 
     @Override
@@ -110,7 +90,26 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	mundo = new Mundo(gl);
 
+	camera = new Camera(this, true);
 	reset();
+
+	addKeyListener(new KeyAdapter() {
+
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		@SuppressWarnings("unused")
+		boolean reconheceu = trataControleMotos(e) || trataControleJogo(e) || trataControleCenario(e);
+	    }
+	});
+	addComponentListener(new ComponentAdapter() {
+
+	    @Override
+	    public void componentResized(ComponentEvent e) {
+		if (arena != null) {
+		    render();
+		}
+	    }
+	});
 	renderLoop.start();
     }
 
@@ -212,12 +211,13 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	alterarEstadoJogo(null);
 	mundo.removerTodosFilhos();
 	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
-	moto1 = new Moto(gl, arena.getBBox().getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
+	moto1 = new Moto(gl, arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0));
 	camera.seguirMoto(moto1);
 	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
 
-	moto2 = new Moto(gl, arena.getBBox().getMaiorX() - 50, 0, Moto.ESQUERDA, new Cor(0, 1, 0));
+	moto2 = new Moto(gl, arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0));
+	moto2.girar(180);
 	arena.addFilho(moto2);
 	arena.addFilho(moto2.getRastro());
 
@@ -253,16 +253,16 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	//		this.moto2.setAngulo(Moto.ESQUERDA);
 	//		break;
 	    case KeyEvent.VK_D:
-		moto1.addAngulo(direita);
+		moto1.girar(direita);
 		break;
 	    case KeyEvent.VK_RIGHT:
-		moto2.addAngulo(direita);
+		moto2.girar(direita);
 		break;
 	    case KeyEvent.VK_A:
-		moto1.addAngulo(esquerda);
+		moto1.girar(esquerda);
 		break;
 	    case KeyEvent.VK_LEFT:
-		moto2.addAngulo(esquerda);
+		moto2.girar(esquerda);
 		break;
 	    case KeyEvent.VK_R:
 		reset();

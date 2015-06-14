@@ -60,18 +60,12 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	float anguloCameraYProximo = moto == null ? incAnguloY : moto.getAngulo() + 180;
 
 	float diferencaAngulo = anguloCameraYProximo - anguloCameraY;
-	System.out.println("atualizaPosicaoCamera - anguloCameraY: " + anguloCameraY);
-	System.out.println("atualizaPosicaoCamera - anguloCameraYProximo: " + anguloCameraYProximo);
-	System.out.println("atualizaPosicaoCamera - Diferenca: " + diferencaAngulo);
 	if (diferencaAngulo != 0) {
 	    if (diferencaAngulo < -VELOCIDADE_ROTACAO) {
 		anguloCameraY -= VELOCIDADE_ROTACAO;
-		System.out.println("diferencaAngulo < VELOCIDADE_ROTACAO");
 	    } else if (diferencaAngulo > VELOCIDADE_ROTACAO) {
-		System.out.println("diferencaAngulo > VELOCIDADE_ROTACAO");
 		anguloCameraY += VELOCIDADE_ROTACAO;
 	    } else {
-		System.out.println("diferencaAngulo > 15 e < 15");
 		anguloCameraY = anguloCameraYProximo;
 	    }
 	}
@@ -178,7 +172,6 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    //	    offsetY /= scaleY;
 
 	    incAnguloY += offsetX * 50;
-	    System.out.println("mouseMoved: " + incAnguloY);
 	    //	    atualizaPosicaoCamera();
 
 	    tela.render();

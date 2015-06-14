@@ -21,7 +21,6 @@ public class Arena extends Poligono {
 
     @Override
     protected List<Ponto> criarPontos() {
-	System.out.println(largura);
 	List<Ponto> pontos = new ArrayList<>(4);
 	pontos.add(new Ponto(+largura, 0, -altura));
 	pontos.add(new Ponto(-largura, 0, -altura));
