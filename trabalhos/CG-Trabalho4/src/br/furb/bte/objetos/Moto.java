@@ -1,4 +1,4 @@
-package br.furb.bte;
+package br.furb.bte.objetos;
 
 import java.util.ArrayList;
 import java.util.List;

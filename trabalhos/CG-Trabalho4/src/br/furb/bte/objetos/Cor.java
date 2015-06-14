@@ -1,10 +1,12 @@
-package br.furb.bte;
+package br.furb.bte.objetos;
 
 public class Cor {
 
-    public float R;
-    public float G;
-    public float B;
+    public static final int R = 0;
+    public static final int G = 1;
+    public static final int B = 2;
+
+    private final float[] componentes;
 
     /**
      * @param r
@@ -15,32 +17,31 @@ public class Cor {
      *            Blue
      */
     public Cor(float r, float g, float b) {
-	R = r;
-	G = g;
-	B = b;
+	componentes = new float[] { r, g, b };
     }
 
     public float getR() {
-	return R;
+	return componentes[R];
     }
 
     public void setR(float r) {
-	R = r;
+	componentes[R] = r;
     }
 
     public float getG() {
-	return G;
+	return componentes[G];
     }
 
     public void setG(float g) {
-	G = g;
+	componentes[G] = g;
     }
 
     public float getB() {
-	return B;
+	return componentes[B];
     }
 
     public void setB(float b) {
-	B = b;
+	componentes[B] = b;
     }
+
 }

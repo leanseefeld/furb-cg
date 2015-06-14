@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import br.furb.bte.objetos.Ponto;
 
 public class Camera implements MouseMotionListener, MouseListener, MouseWheelListener {
 

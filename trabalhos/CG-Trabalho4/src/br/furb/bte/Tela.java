@@ -11,6 +11,10 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.glu.GLU;
+import br.furb.bte.objetos.Arena;
+import br.furb.bte.objetos.Cor;
+import br.furb.bte.objetos.Moto;
+import br.furb.bte.objetos.Mundo;
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
 
@@ -216,11 +220,11 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	alterarEstadoJogo(null);
 	mundo.removerTodosFilhos();
 	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
-	moto1 = new Moto(gl, this.arena.bbox.getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
+	moto1 = new Moto(gl, arena.getBBox().getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
 	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
 
-	moto2 = new Moto(gl, this.arena.bbox.getMaiorX() - 50, 0, Moto.ESQUERDA, new Cor(0, 1, 0));
+	moto2 = new Moto(gl, arena.getBBox().getMaiorX() - 50, 0, Moto.ESQUERDA, new Cor(0, 1, 0));
 	arena.addFilho(moto2);
 	arena.addFilho(moto2.getRastro());
 

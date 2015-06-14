@@ -1,4 +1,4 @@
-package br.furb.bte;
+package br.furb.bte.objetos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +135,11 @@ public abstract class Poligono extends ObjetoGrafico {
 
     public Transformacao getTransformacao() {
 	return transformacao;
+    }
+    
+    
+    public BBox getBBox() {
+	return bbox;
     }
 
 }
