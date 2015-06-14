@@ -61,14 +61,14 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	private boolean atualizarVisualizacao;
 	private boolean perspectiveMode = true;
 	private final float[] posicaoLuz = { 50, 50, 100, 0 };
-	// ========== OBJETOS GRÁFICOS ==========
+	// ========== OBJETOS GRÃ�FICOS ==========
 	private Mundo mundo;
 	private Moto moto1;
 	private Moto moto2;
 	private Arena arena;
 	private Camera camera;
 
-	// ========== CONTROLES DE EXECUÇÃO ==========
+	// ========== CONTROLES DE EXECUÃ‡ÃƒO ==========
 	private EstadoJogo estadoJogo;
 	private boolean jogando;
 	private boolean animando = true;
@@ -189,7 +189,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 					TEXT_RENDERER.draw("Rodando", 0, altura - 25);
 				} else {
 					TEXT_RENDERER.draw("Pausado", meioLargura - 25, meioAltura);
-					TEXT_RENDERER.draw("Espaço para continuar",
+					TEXT_RENDERER.draw("EspaÃ§o para continuar",
 							meioLargura - 80, meioAltura - 20);
 				}
 			}
@@ -361,7 +361,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	public void render() {
 		System.out.println("Tela.render()");
-		// força que só execute quando o RenderLoop chegar no wait(), garantindo
+		// forÃ§a que sÃ³ execute quando o RenderLoop chegar no wait(), garantindo
 		// que
 		// o comportamento vai terminar de executar antes de renderizar
 		// novamente
@@ -380,7 +380,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	}
 
 	/**
-	 * Desenha os eixos do Sistema de Referência Universal
+	 * Desenha os eixos do Sistema de ReferÃªncia Universal
 	 */
 	public static void desenhaSRU(GL gl) {
 		gl.glLineWidth(1.0f);
