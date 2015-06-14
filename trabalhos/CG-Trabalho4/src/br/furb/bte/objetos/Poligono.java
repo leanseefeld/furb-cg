@@ -55,7 +55,7 @@ public abstract class Poligono extends ObjetoGrafico {
 
     @Override
     public void desenhar() {
-	float[] cor2 = { cor.R, cor.G, cor.B, 1f };
+	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
 	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
 
 //		gl.glColor3f(cor.R, cor.G, cor.B);
@@ -67,7 +67,7 @@ public abstract class Poligono extends ObjetoGrafico {
 	    gl.glBegin(primitiva);
 	    {
 		for (Ponto ponto : pontos) {
-		    gl.glVertex3d(ponto.X, ponto.Y, ponto.Z);
+		    gl.glVertex3d(ponto.x, ponto.y, ponto.z);
 		}
 	    }
 	    gl.glEnd();

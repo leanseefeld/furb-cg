@@ -2,34 +2,34 @@ package br.furb.bte.objetos;
 
 public class Ponto {
 
-    public int W = 1;
-    public int X;
-    public int Y;
-    public int Z;
+    public int w = 1;
+    public int x;
+    public int y;
+    public int z;
 
     public Ponto(int x, int y, int z) {
-	this.X = x;
-	this.Y = y;
-	this.Z = z;
+	this.x = x;
+	this.y = y;
+	this.z = z;
     }
 
     public Ponto(double x, double y, double z) {
-	this.X = (int) x;
-	this.Y = (int) y;
-	this.Z = (int) z;
+	this.x = (int) x;
+	this.y = (int) y;
+	this.z = (int) z;
     }
 
     @Override
     public Ponto clone() {
-	return new Ponto(this.X, this.Y, this.Z);
+	return new Ponto(this.x, this.y, this.z);
     }
 
     @Override
     public String toString() {
-	return "X: " + this.X + " Y:" + this.Y + " Z:" + this.Z;
+	return "X: " + this.x + " Y:" + this.y + " Z:" + this.z;
     }
 
     public boolean mesmaPosicao(Ponto ponto) {
-	return this.X == ponto.X && this.Y == ponto.Y && this.Z == ponto.Z;
+	return this.x == ponto.x && this.y == ponto.y && this.z == ponto.z;
     }
 }

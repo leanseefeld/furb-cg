@@ -33,7 +33,7 @@ public class Rastro extends Poligono {
 
     @Override
     public void desenhar() {
-	gl.glColor3d(cor.R - 0.2, cor.G - 0.2, cor.B - 0.2);
+	gl.glColor3d(cor.r - 0.2, cor.g - 0.2, cor.b - 0.2);
 
 	gl.glPushMatrix();
 	{
@@ -43,8 +43,8 @@ public class Rastro extends Poligono {
 	    gl.glBegin(primitiva);
 	    {
 		for (int i = 0; i < this.getPontos().size(); i++) {
-		    gl.glVertex3d(this.getPontos().get(i).X, PONTO_MAIS_BAIXO, this.getPontos().get(i).Z);
-		    gl.glVertex3d(this.getPontos().get(i).X, PONTO_MAIS_ALTO, this.getPontos().get(i).Z);
+		    gl.glVertex3d(this.getPontos().get(i).x, PONTO_MAIS_BAIXO, this.getPontos().get(i).z);
+		    gl.glVertex3d(this.getPontos().get(i).x, PONTO_MAIS_ALTO, this.getPontos().get(i).z);
 		}
 	    }
 	    gl.glEnd();
@@ -63,15 +63,15 @@ public class Rastro extends Poligono {
 	    Ponto pontoA = pontos.get(i);
 	    Ponto pontoB = pontos.get(++i);
 
-	    int diferenaX = pontoA.X - pontoB.X;
-	    int diferenaZ = pontoA.Z - pontoB.Z;
+	    int diferenaX = pontoA.x - pontoB.x;
+	    int diferenaZ = pontoA.z - pontoB.z;
 
 	    //Busca o ultimo ponto da reta
 	    Ponto pontoC;
 	    i++;
 	    while (i < pontos.size() - numeroMinimoPontos) {
 		pontoC = pontos.get(i);
-		if ((pontoB.X - pontoC.X) != diferenaX || (pontoB.Z - pontoC.Z) != diferenaZ) {
+		if ((pontoB.x - pontoC.x) != diferenaX || (pontoB.z - pontoC.z) != diferenaZ) {
 		    break;
 		}
 		pontoB = pontoC;

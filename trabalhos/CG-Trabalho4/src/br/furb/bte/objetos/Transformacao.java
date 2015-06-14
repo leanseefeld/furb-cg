@@ -112,9 +112,9 @@ public class Transformacao {
     
     public Ponto transformPoint(Ponto point) {
 	Ponto pointResult = new Ponto(//
-		matriz[0] * point.X + matriz[4] * point.Y + matriz[8] * point.Z + matriz[12] * point.W, //
-		matriz[1] * point.X + matriz[5] * point.Y + matriz[9] * point.Z + matriz[13] * point.W,
-		matriz[2] * point.X + matriz[6] * point.Y + matriz[10] * point.Z + matriz[14] * point.W );
+		matriz[0] * point.x + matriz[4] * point.y + matriz[8] * point.z + matriz[12] * point.w, //
+		matriz[1] * point.x + matriz[5] * point.y + matriz[9] * point.z + matriz[13] * point.w,
+		matriz[2] * point.x + matriz[6] * point.y + matriz[10] * point.z + matriz[14] * point.w );
 	return pointResult;
     }
 
@@ -129,15 +129,15 @@ public class Transformacao {
 
 	// Diminiu o ponto para tamnho de origem
 	if (matriz[12] != 0) {
-	    pointResult.X -= (matriz[12] * pointResult.W);
+	    pointResult.x -= (matriz[12] * pointResult.w);
 	}
 	if (matriz[13] != 0) {
-	    pointResult.Y -= (matriz[13] * pointResult.W);
+	    pointResult.y -= (matriz[13] * pointResult.w);
 	}
 
 	// Move o ponto para local de origem
-	pointResult.X = (int) (pointResult.X / matriz[0]);
-	pointResult.Y = (int) (pointResult.Y / matriz[5]);
+	pointResult.x = (int) (pointResult.x / matriz[0]);
+	pointResult.y = (int) (pointResult.y / matriz[5]);
 
 	//TODO: Tratar a rotação
 	/*pointResult.X += (matriz[4] == 0d ? 0d : pointResult.Y) / matriz[4];

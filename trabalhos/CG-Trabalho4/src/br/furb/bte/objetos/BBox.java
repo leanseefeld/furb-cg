@@ -33,67 +33,67 @@ public class BBox {
 	this.setMaiorZ(Integer.MIN_VALUE);
 	this.setMenorZ(Integer.MAX_VALUE);
 	for (Ponto ponto : pontos) {
-	    if (ponto.X > this.getMaiorX())
-		this.setMaiorX(ponto.X);
-	    if (ponto.X < this.getMenorX())
-		this.setMenorX(ponto.X);
-	    if (ponto.Y > this.getMaiorY())
-		this.setMaiorY(ponto.Y);
-	    if (ponto.Y < this.getMenorY())
-		this.setMenorY(ponto.Y);
-	    if (ponto.Z > this.getMaiorZ())
-		this.setMaiorZ(ponto.Z);
-	    if (ponto.Z < this.getMenorZ())
-		this.setMenorZ(ponto.Z);
+	    if (ponto.x > this.getMaiorX())
+		this.setMaiorX(ponto.x);
+	    if (ponto.x < this.getMenorX())
+		this.setMenorX(ponto.x);
+	    if (ponto.y > this.getMaiorY())
+		this.setMaiorY(ponto.y);
+	    if (ponto.y < this.getMenorY())
+		this.setMenorY(ponto.y);
+	    if (ponto.z > this.getMaiorZ())
+		this.setMaiorZ(ponto.z);
+	    if (ponto.z < this.getMenorZ())
+		this.setMenorZ(ponto.z);
 	}
     }
 
     public int getMaiorX() {
-	return maior.X;
+	return maior.x;
     }
 
     public int getMenorX() {
-	return menor.X;
+	return menor.x;
     }
 
     public int getMaiorY() {
-	return maior.Y;
+	return maior.y;
     }
 
     public int getMenorY() {
-	return menor.Y;
+	return menor.y;
     }
 
     public int getMaiorZ() {
-	return maior.Z;
+	return maior.z;
     }
 
     public int getMenorZ() {
-	return menor.Z;
+	return menor.z;
     }
 
     public void setMaiorX(int maiorX) {
-	this.maior.X = maiorX;
+	this.maior.x = maiorX;
     }
 
     public void setMenorX(int menorX) {
-	this.menor.X = menorX;
+	this.menor.x = menorX;
     }
 
     public void setMaiorY(int maiorY) {
-	this.maior.Y = maiorY;
+	this.maior.y = maiorY;
     }
 
     public void setMenorY(int menorY) {
-	this.menor.Y = menorY;
+	this.menor.y = menorY;
     }
 
     public void setMaiorZ(int maiorZ) {
-	this.maior.Z = maiorZ;
+	this.maior.z = maiorZ;
     }
 
     public void setMenorZ(int menorZ) {
-	this.menor.Z = menorZ;
+	this.menor.z = menorZ;
     }
 
     /**
@@ -103,9 +103,9 @@ public class BBox {
      * @return
      */
     public boolean estaDentro(Ponto ponto) {
-	if (ponto.X > this.menor.X && ponto.X < this.maior.X //
-		&& ponto.Y > this.menor.Y && ponto.Y < this.maior.Y// 
-		&& ponto.Z > this.menor.Z && ponto.Z < this.maior.Z) {
+	if (ponto.x > this.menor.x && ponto.x < this.maior.x //
+		&& ponto.y > this.menor.y && ponto.y < this.maior.y// 
+		&& ponto.z > this.menor.z && ponto.z < this.maior.z) {
 	    return true;
 	}
 	return false;
