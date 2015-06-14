@@ -7,7 +7,7 @@ import javax.media.opengl.GL;
 public abstract class ObjetoGrafico {
 
     protected List<ObjetoGrafico> objetosGraficos;
-    protected GL gl;
+
     /**
      * Objeto pai
      */
@@ -31,23 +31,31 @@ public abstract class ObjetoGrafico {
 	poligono.setParent(this);
     }
 
-    public ObjetoGrafico(GL gl) {
-	super();
+    public ObjetoGrafico() {
 	this.objetosGraficos = new ArrayList<ObjetoGrafico>();
-	this.gl = gl;
     }
 
     /**
-     * Desenha o objeto
+     * Renderiza este objeto no {@code drawable} informado, tendo como retorno a indicação se será
+     * necessário renderizar este objeto novamente no futuro (como quando há uma animação
+     * ocorrendo).
+     * 
+     * @param gl
+     *            {@link GL gl} para renderizar este objeto.
+     * @return {@code true} se este objeto precisará ser renderizado novamente nos próximos quadros
+     *         (como quando está sendo animado).
      */
-    public void desenhar() {
-	desenharFilhos();
+    public boolean renderizar(GL gl) {
+	renderizarFilhos(gl);
+	return false;
     }
-    
-    protected void desenharFilhos() {
+
+    protected boolean renderizarFilhos(GL gl) {
+	boolean mustRenderAgain = false;
 	for (ObjetoGrafico objetoGrafico : objetosGraficos) {
-	    objetoGrafico.desenhar();
+	    mustRenderAgain |= objetoGrafico.renderizar(gl);
 	}
+	return mustRenderAgain;
     }
 
     public void removerFilho(ObjetoGrafico objeto) {

@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.Arrays;
 import javax.media.opengl.glu.GLU;
 import br.furb.bte.objetos.Moto;
 import br.furb.bte.objetos.Poligono;
@@ -27,6 +28,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
     private float anguloCameraY;
     private int distancia = 0;
     private Moto moto;
+    private double[] antigaConfig;
 
     public Camera(Tela tela, boolean permiteControlar) {
 	this.tela = tela;
@@ -37,11 +39,12 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	} catch (AWTException e) {
 	    e.printStackTrace();
 	}
-//	incAnguloY = 45;
+	//	incAnguloY = 45;
 
 	tela.addMouseWheelListener(this);
 
 	if (permiteControlar) {
+	    tela.addMouseMotionListener(this);
 	    tela.addMouseMotionListener(this);
 	    tela.addMouseListener(this);
 	}
@@ -51,10 +54,18 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	this.moto = moto;
     }
 
-    public void atualizar(GLU glu) {
+    /**
+     * Atualiza as configurações da câmera no GLU.
+     * 
+     * @param glu
+     *            GLU a ser configurado de acordo com as configurações desta câmera.
+     * @return se a câmera pode precisar ser ajustada no próximo quadro (como quando está sendo
+     *         animada).
+     */
+    public boolean atualizar(GLU glu) {
 	final Poligono objObservado = moto == null ? tela.getArena() : moto;
 	if (objObservado == null) {
-	    return;
+	    return false;
 	}
 	final Ponto pontoObservado = objObservado.getBBoxTransformada().getCentro();
 	float anguloCameraYProximo = moto == null ? incAnguloY : moto.getAngulo() + 180;
@@ -86,6 +97,10 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	double novoY = (distancia / DISTANCIA * ALTURA + ALTURA) * Math.sin(anguloY);
 
 	glu.gluLookAt(novoX, novoY, novoZ, pontoObservado.x, pontoObservado.y, pontoObservado.z, 0, 1, 0);
+	double[] novaConfig = { novoX, novoY, novoZ, pontoObservado.x, pontoObservado.y, pontoObservado.z, 0, 1, 0 };
+	boolean renderizarNovamente = !Arrays.equals(novaConfig, antigaConfig);
+	antigaConfig = novaConfig;
+	return renderizarNovamente;
     }
 
     @Override

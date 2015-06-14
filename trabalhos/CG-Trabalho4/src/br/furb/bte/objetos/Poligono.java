@@ -6,14 +6,13 @@ import javax.media.opengl.GL;
 
 public abstract class Poligono extends ObjetoGrafico {
 
-    private List<Ponto> pontos;
+    private ListaPontos pontos;
     protected int primitiva;
     protected Cor cor;
     protected BBox bbox;
     protected Transformacao transformacao;
 
-    public Poligono(GL gl) {
-	super(gl);
+    public Poligono() {
 	this.transformacao = new Transformacao();
 	this.cor = new Cor(0f, 0f, 0f);
     }
@@ -21,20 +20,20 @@ public abstract class Poligono extends ObjetoGrafico {
     protected abstract List<Ponto> criarPontos();
 
     public void setPontos(List<Ponto> pontos) {
-	this.pontos = pontos;
-	this.bbox = new BBox(this.pontos);
+	this.pontos = new ListaPontos(pontos);
+	this.bbox = new BBox(pontos);
     }
 
     public void addPonto(Ponto ponto) {
 	this.pontos.add(ponto);
     }
 
-    public List<Ponto> getPontos() {
+    public ListaPontos getPontos() {
 	return this.pontos;
     }
 
     public int getNumeroPontos() {
-	return this.pontos.size();
+	return pontos.tamanho();
     }
 
     public Cor getCor() {
@@ -54,11 +53,11 @@ public abstract class Poligono extends ObjetoGrafico {
     }
 
     @Override
-    public void desenhar() {
+    public boolean renderizar(GL gl) {
 	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
 	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
 
-//		gl.glColor3f(cor.R, cor.G, cor.B);
+	//		gl.glColor3f(cor.R, cor.G, cor.B);
 
 	gl.glPushMatrix();
 	{
@@ -72,21 +71,17 @@ public abstract class Poligono extends ObjetoGrafico {
 	    }
 	    gl.glEnd();
 
-	    super.desenhar();
 	}
 	gl.glPopMatrix();
+	return super.renderizar(gl);
     }
 
     public boolean temPontos() {
-	return this.pontos.size() > 0;
-    }
-
-    public void removerPonto(Ponto ponto) {
-	this.pontos.remove(ponto);
+	return !this.pontos.vazio();
     }
 
     public void removerPonto(int index) {
-	this.pontos.remove(index);
+	this.pontos.remover(index);
     }
 
     /**
@@ -136,8 +131,7 @@ public abstract class Poligono extends ObjetoGrafico {
     public Transformacao getTransformacao() {
 	return transformacao;
     }
-    
-    
+
     public BBox getBBox() {
 	return bbox;
     }

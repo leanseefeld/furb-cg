@@ -26,8 +26,11 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	public void run() {
 	    while (true) {
 		try {
-		    if (executando) {
-			executarComportamentos();
+		    if (animando || jogando || executandoPasso) {
+			System.out.println("Tela.RenderLoop.run()");
+			if (jogando) {
+			    executarComportamentos();
+			}
 			glDrawable.display();
 			Thread.sleep(50);
 		    } else {
@@ -66,7 +69,9 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     // ========== CONTROLES DE EXECUÇÃO ==========
     private EstadoJogo estadoJogo;
-    private boolean executando;
+    private boolean jogando;
+    private boolean animando = true;
+    private boolean executandoPasso;
 
     private final RenderLoop renderLoop;
 
@@ -88,17 +93,18 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	glDrawable.setGL(new DebugGL(gl));
 	gl.glClearColor(0f, 0f, 0f, 1.0f);
 
-	mundo = new Mundo(gl);
+	mundo = new Mundo();
 
-	camera = new Camera(this, true);
+	camera = new Camera(this, false);
 	reset();
 
 	addKeyListener(new KeyAdapter() {
 
 	    @Override
 	    public void keyPressed(KeyEvent e) {
-		@SuppressWarnings("unused")
-		boolean reconheceu = trataControleMotos(e) || trataControleJogo(e) || trataControleCenario(e);
+		if (trataControleMotos(e) || trataControleJogo(e) || trataControleCenario(e)) {
+		    render();
+		}
 	    }
 	});
 	addComponentListener(new ComponentAdapter() {
@@ -155,8 +161,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	//	{
 	//	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
-	camera.atualizar(glu);
-	mundo.desenhar();
+	animando = camera.atualizar(glu);
+	animando |= mundo.renderizar(gl);
 	drawCube(30, 100, 30);
 	desenhaSRU(gl);
 	//	    new GLUT().glutSolidCube(100);
@@ -169,11 +175,11 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    TEXT_RENDERER.setColor(1, 1, 1, 1);
 	    int meioLargura = largura / 2;
 	    int meioAltura = altura / 2;
-	    if (estadoJogo != null) {
+	    if (estadoJogo != null && !jogando) {
 		TEXT_RENDERER.draw(estadoJogo.getMensagemFimDeJogo(), meioLargura - 25, meioAltura);
 		TEXT_RENDERER.draw("R para reiniciar", meioLargura - 50, meioAltura - 20);
 	    } else {
-		if (executando) {
+		if (jogando) {
 		    TEXT_RENDERER.draw("Rodando", 0, altura - 25);
 		} else {
 		    TEXT_RENDERER.draw("Pausado", meioLargura - 25, meioAltura);
@@ -202,29 +208,37 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     private void alterarExecucao(boolean executar) {
-	this.executando = executar;
+	this.jogando = executar;
 	render();
     }
 
     private void reset() {
-	alterarExecucao(false);
-	alterarEstadoJogo(null);
+	animando = false;
+
 	mundo.removerTodosFilhos();
-	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
-	moto1 = new Moto(gl, arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0));
+	arena = new Arena(TAMANHO_ARENA, TAMANHO_ARENA);
+	moto1 = new Moto(arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0));
 	camera.seguirMoto(moto1);
 	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
 
-	moto2 = new Moto(gl, arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0));
+	moto2 = new Moto(arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0));
 	moto2.girar(180);
 	arena.addFilho(moto2);
 	arena.addFilho(moto2.getRastro());
 
 	mundo.addFilho(arena);
+	jogando = false;
+	estadoJogo = null;
+
+	animando = true;
+	render();
     }
 
     private boolean trataControleMotos(KeyEvent e) {
+	if (!jogando && !e.isControlDown()) {
+	    return false;
+	}
 	int direita = 90;
 	int esquerda = -90;
 	switch (e.getKeyCode()) {
@@ -264,9 +278,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    case KeyEvent.VK_LEFT:
 		moto2.girar(esquerda);
 		break;
-	    case KeyEvent.VK_R:
-		reset();
-		break;
 	    default:
 		return false;
 	}
@@ -276,13 +287,15 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private boolean trataControleJogo(KeyEvent e) {
 	switch (e.getKeyCode()) {
 	    case KeyEvent.VK_SPACE:
-		if (estadoJogo == null) {
-		    alterarExecucao(!executando);
+		if (!jogando && e.isControlDown()) {
+		    executarComportamentos();
+		    executandoPasso = true;
+		} else if (estadoJogo == null) {
+		    alterarExecucao(!jogando);
 		}
 		break;
-	    case KeyEvent.VK_X:
-		executarComportamentos();
-		render();
+	    case KeyEvent.VK_R:
+		reset();
 		break;
 	    default:
 		return false;
@@ -294,7 +307,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	if (e.getKeyCode() == KeyEvent.VK_1) {
 	    perspectiveMode = !perspectiveMode;
 	    atualizarVisualizacao = true;
-	    render();
 	    return true;
 	}
 	return false;
@@ -335,6 +347,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     public void render() {
+	System.out.println("Tela.render()");
 	// força que só execute quando o RenderLoop chegar no wait(), garantindo que 
 	// o comportamento vai terminar de executar antes de renderizar novamente
 	synchronized (renderLoop) {

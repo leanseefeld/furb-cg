@@ -177,6 +177,7 @@ public class Transformacao {
 	System.out.println("|" + matriz[3] + " | " + matriz[7] + " | " + matriz[11] + " | " + matriz[15]);
     }
 
+    @Override
     public String toString() {
 	String saida = "";
 	saida += "______________________\r\n";

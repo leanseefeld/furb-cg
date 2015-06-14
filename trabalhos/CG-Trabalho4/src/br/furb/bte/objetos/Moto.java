@@ -16,12 +16,11 @@ public class Moto extends Poligono {
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
 
-    public Moto(GL gl, int x, int z, Cor cor) {
-	super(gl);
+    public Moto(int x, int z, Cor cor) {
 	this.primitiva = GL.GL_QUADS;
 	this.cor = cor;
 	this.corNormal = cor;
-	this.rastro = new Rastro(gl, cor);
+	this.rastro = new Rastro(cor);
 
 	setPosicao(x, z);
 	setPontos(criarPontos());

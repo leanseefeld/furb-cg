@@ -10,8 +10,7 @@ public class Arena extends Poligono {
     private int largura;
     private int altura;
     
-    public Arena(GL gl, int largura, int altura) {
-	super(gl);
+    public Arena(int largura, int altura) {
 	this.primitiva = GL.GL_QUADS;
 	this.cor = new Cor(0.1f, 0.5f, 0.5f);
 	this.largura = largura;

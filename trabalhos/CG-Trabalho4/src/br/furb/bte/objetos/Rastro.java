@@ -11,8 +11,7 @@ public class Rastro extends Poligono {
     private static final int PONTO_MAIS_ALTO = 10;
     private static final int PONTO_MAIS_BAIXO = 0;
 
-    public Rastro(GL gl, Cor cor) {
-	super(gl);
+    public Rastro(Cor cor) {
 	this.cor = cor;
 	this.primitiva = GL.GL_QUAD_STRIP;
 	this.setPontos(this.criarPontos());
@@ -32,7 +31,7 @@ public class Rastro extends Poligono {
     }
 
     @Override
-    public void desenhar() {
+    public boolean renderizar(GL gl) {
 	gl.glColor3d(cor.r - 0.2, cor.g - 0.2, cor.b - 0.2);
 
 	gl.glPushMatrix();
@@ -42,24 +41,25 @@ public class Rastro extends Poligono {
 	    gl.glDisable(GL.GL_CULL_FACE);
 	    gl.glBegin(primitiva);
 	    {
-		for (int i = 0; i < this.getPontos().size(); i++) {
-		    gl.glVertex3d(this.getPontos().get(i).x, PONTO_MAIS_BAIXO, this.getPontos().get(i).z);
-		    gl.glVertex3d(this.getPontos().get(i).x, PONTO_MAIS_ALTO, this.getPontos().get(i).z);
+		for (Ponto ponto : getPontos()) {
+		    gl.glVertex3d(ponto.x, PONTO_MAIS_BAIXO, ponto.z);
+		    gl.glVertex3d(ponto.x, PONTO_MAIS_ALTO, ponto.z);
 		}
 	    }
 	    gl.glEnd();
 	    gl.glEnable(GL.GL_CULL_FACE);
 
-	    desenharFilhos();
+	    renderizarFilhos(gl);
 	}
 	gl.glPopMatrix();
+	return false;
     }
 
     public List<BBox> getBBoxes() {
-	List<Ponto> pontos = this.getPontos();
+	ListaPontos pontos = getPontos();
 	List<BBox> bboxes = new ArrayList<BBox>();
 	int numeroMinimoPontos = 2;
-	for (int i = 0; i < pontos.size() - numeroMinimoPontos; i++) {
+	for (int i = 0; i < pontos.tamanho() - numeroMinimoPontos; i++) {
 	    Ponto pontoA = pontos.get(i);
 	    Ponto pontoB = pontos.get(++i);
 
@@ -69,7 +69,7 @@ public class Rastro extends Poligono {
 	    //Busca o ultimo ponto da reta
 	    Ponto pontoC;
 	    i++;
-	    while (i < pontos.size() - numeroMinimoPontos) {
+	    while (i < pontos.tamanho() - numeroMinimoPontos) {
 		pontoC = pontos.get(i);
 		if ((pontoB.x - pontoC.x) != diferenaX || (pontoB.z - pontoC.z) != diferenaZ) {
 		    break;
