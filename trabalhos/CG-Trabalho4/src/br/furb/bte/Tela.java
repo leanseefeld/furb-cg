@@ -276,7 +276,9 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private boolean trataControleJogo(KeyEvent e) {
 	switch (e.getKeyCode()) {
 	    case KeyEvent.VK_SPACE:
-		alterarExecucao(!executando);
+		if (estadoJogo == null) {
+		    alterarExecucao(!executando);
+		}
 		break;
 	    case KeyEvent.VK_X:
 		executarComportamentos();
@@ -298,8 +300,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     private void executarComportamentos() {
-	this.moto1.mover();
-	this.moto2.mover();
+	moto1.mover();
+	moto2.mover();
 
 	boolean teveColisao1 = false;
 	boolean teveColisao2 = false;
