@@ -26,12 +26,12 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	public void run() {
 	    while (true) {
 		try {
-		    if (animando || jogando) {
+					if (animando || jogando || executandoPasso) {
+						System.out.println("Tela.RenderLoop.run()");
 			if (jogando) {
 			    executarComportamentos();
 			}
 			glDrawable.display();
-			System.out.println("Tela.RenderLoop.run()");
 			Thread.sleep(50);
 		    } else {
 			synchronized (this) {
@@ -48,7 +48,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private static final long serialVersionUID = 1L;
     private static final int NEAR = 1;
     private static final int FAR = 2000;
-    private static final TextRenderer TEXT_RENDERER = new TextRenderer(new Font("SansSerif", Font.BOLD, 18));
+	private static final TextRenderer TEXT_RENDERER = new TextRenderer(
+			new Font("SansSerif", Font.BOLD, 18));
     private static final int TAMANHO_ARENA = 500;
 
     // ========== RECURSOS DO CANVAS ==========
@@ -71,6 +72,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private EstadoJogo estadoJogo;
     private boolean jogando;
     private boolean animando = true;
+	private boolean executandoPasso;
 
     private final RenderLoop renderLoop;
 
@@ -94,14 +96,15 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	mundo = new Mundo();
 
-	camera = new Camera(this);
+		camera = new Camera(this, false);
 	reset();
 
 	addKeyListener(new KeyAdapter() {
 
 	    @Override
 	    public void keyPressed(KeyEvent e) {
-		if (trataControleMotos(e) || trataControleJogo(e) || trataControleCenario(e)) {
+				if (trataControleMotos(e) || trataControleJogo(e)
+						|| trataControleCenario(e)) {
 		    render();
 		}
 	    }
@@ -140,7 +143,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
+			int height) {
 	this.altura = height;
 	this.largura = width;
 	setPreferredSize(new Dimension(largura, altura));
@@ -155,7 +159,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	}
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 	gl.glLoadIdentity();
-	//	transformacaoMundo = camera.absorverTransformacao(transformacaoMundo);
+		// transformacaoMundo =
+		// camera.absorverTransformacao(transformacaoMundo);
 	//	gl.glPushMatrix();
 	//	{
 	//	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
@@ -175,14 +180,17 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    int meioLargura = largura / 2;
 	    int meioAltura = altura / 2;
 	    if (estadoJogo != null && !jogando) {
-		TEXT_RENDERER.draw(estadoJogo.getMensagemFimDeJogo(), meioLargura - 25, meioAltura);
-		TEXT_RENDERER.draw("R para reiniciar", meioLargura - 50, meioAltura - 20);
+				TEXT_RENDERER.draw(estadoJogo.getMensagemFimDeJogo(),
+						meioLargura - 25, meioAltura);
+				TEXT_RENDERER.draw("R para reiniciar", meioLargura - 50,
+						meioAltura - 20);
 	    } else {
 		if (jogando) {
 		    TEXT_RENDERER.draw("Rodando", 0, altura - 25);
 		} else {
 		    TEXT_RENDERER.draw("Pausado", meioLargura - 25, meioAltura);
-		    TEXT_RENDERER.draw("Espaço para continuar", meioLargura - 80, meioAltura - 20);
+					TEXT_RENDERER.draw("Espaço para continuar",
+							meioLargura - 80, meioAltura - 20);
 		}
 	    }
 	}
@@ -208,7 +216,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     private void alterarExecucao(boolean executar) {
 	this.jogando = executar;
-	camera.seguirMoto(executar ? moto1 : null);
 	render();
     }
 
@@ -217,12 +224,14 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	mundo.removerTodosFilhos();
 	arena = new Arena(TAMANHO_ARENA, TAMANHO_ARENA);
-	moto1 = new Moto(arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0));
+		moto1 = new Moto(arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0),
+				gl);
 	camera.seguirMoto(moto1);
 	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
 
-	moto2 = new Moto(arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0));
+		moto2 = new Moto(arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0),
+				gl);
 	moto2.girar(180);
 	arena.addFilho(moto2);
 	arena.addFilho(moto2.getRastro());
@@ -289,7 +298,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    case KeyEvent.VK_SPACE:
 		if (!jogando && e.isControlDown()) {
 		    executarComportamentos();
-		    //		    executandoPasso = true;
+				executandoPasso = true;
 		} else if (estadoJogo == null) {
 		    alterarExecucao(!jogando);
 		}
@@ -347,8 +356,11 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     public void render() {
-	// força que só execute quando o RenderLoop chegar no wait(), garantindo que 
-	// o comportamento vai terminar de executar antes de renderizar novamente
+		// força que só execute quando o RenderLoop chegar no wait(), garantindo
+		// que
+		// o comportamento vai terminar de executar antes de renderizar
+		// novamente
+		System.out.println("Tela.render()");
 	synchronized (renderLoop) {
 	    glDrawable.display();
 	    renderLoop.notify();

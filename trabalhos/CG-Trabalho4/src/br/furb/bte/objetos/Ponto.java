@@ -1,5 +1,7 @@
 package br.furb.bte.objetos;
 
+import object.Tuple3;
+
 public class Ponto {
 
     public int w = 1;
@@ -32,4 +34,8 @@ public class Ponto {
     public boolean mesmaPosicao(Ponto ponto) {
 	return this.x == ponto.x && this.y == ponto.y && this.z == ponto.z;
     }
+
+	public static Ponto Tuple3toPoint(Tuple3 tup) {
+		return new Ponto(tup.getX(), tup.getY(), tup.getZ());
+	}
 }

@@ -16,8 +16,6 @@ Information about the model is printed to stdout.
 import java.io.*;
 import java.util.*;
 import javax.media.opengl.*;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
 
 
 public class OBJModel {
@@ -51,6 +49,10 @@ public class OBJModel {
         }
     } // end of OBJModel()
 
+    public List<Tuple3> getVerts(){
+    	return this.verts;
+    }
+    
     private void initModelData(String modelNm) {
         verts = new ArrayList<Tuple3>();
         normals = new ArrayList<Tuple3>();
