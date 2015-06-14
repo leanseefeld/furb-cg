@@ -282,6 +282,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		break;
 	    case KeyEvent.VK_X:
 		executarComportamentos();
+		render();
 		break;
 	    default:
 		return false;
