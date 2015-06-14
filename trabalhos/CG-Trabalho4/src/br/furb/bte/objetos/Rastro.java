@@ -41,7 +41,7 @@ public class Rastro extends Poligono {
 	    gl.glDisable(GL.GL_CULL_FACE);
 	    gl.glBegin(primitiva);
 	    {
-		for (Ponto ponto : getPontos()) {
+		for (Ponto ponto : this.getPontos()) {
 		    gl.glVertex3d(ponto.x, PONTO_MAIS_BAIXO, ponto.z);
 		    gl.glVertex3d(ponto.x, PONTO_MAIS_ALTO, ponto.z);
 		}
@@ -56,22 +56,23 @@ public class Rastro extends Poligono {
     }
 
     public List<BBox> getBBoxes() {
-	ListaPontos pontos = getPontos();
+	List<Ponto> pontos = this.getPontos();
 	List<BBox> bboxes = new ArrayList<BBox>();
 	int numeroMinimoPontos = 2;
-	for (int i = 0; i < pontos.tamanho() - numeroMinimoPontos; i++) {
+	int limite = pontos.size() - numeroMinimoPontos;
+	for (int i = 0; i < limite; i++) {
 	    Ponto pontoA = pontos.get(i);
 	    Ponto pontoB = pontos.get(++i);
 
-	    int diferenaX = pontoA.x - pontoB.x;
+	    int diferencaX = pontoA.x - pontoB.x;
 	    int diferenaZ = pontoA.z - pontoB.z;
 
 	    //Busca o ultimo ponto da reta
 	    Ponto pontoC;
 	    i++;
-	    while (i < pontos.tamanho() - numeroMinimoPontos) {
+	    while (i < limite) {
 		pontoC = pontos.get(i);
-		if ((pontoB.x - pontoC.x) != diferenaX || (pontoB.z - pontoC.z) != diferenaZ) {
+		if ((pontoB.x - pontoC.x) != diferencaX || (pontoB.z - pontoC.z) != diferenaZ) {
 		    break;
 		}
 		pontoB = pontoC;

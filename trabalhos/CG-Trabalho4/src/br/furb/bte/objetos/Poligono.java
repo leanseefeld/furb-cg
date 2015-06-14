@@ -6,7 +6,7 @@ import javax.media.opengl.GL;
 
 public abstract class Poligono extends ObjetoGrafico {
 
-    private ListaPontos pontos;
+    private List<Ponto> pontos;
     protected int primitiva;
     protected Cor cor;
     protected BBox bbox;
@@ -20,20 +20,20 @@ public abstract class Poligono extends ObjetoGrafico {
     protected abstract List<Ponto> criarPontos();
 
     public void setPontos(List<Ponto> pontos) {
-	this.pontos = new ListaPontos(pontos);
-	this.bbox = new BBox(pontos);
+	this.pontos = pontos;
+	this.bbox = new BBox(this.pontos);
     }
 
     public void addPonto(Ponto ponto) {
 	this.pontos.add(ponto);
     }
 
-    public ListaPontos getPontos() {
+    public List<Ponto> getPontos() {
 	return this.pontos;
     }
 
     public int getNumeroPontos() {
-	return pontos.tamanho();
+	return this.pontos.size();
     }
 
     public Cor getCor() {
@@ -77,11 +77,11 @@ public abstract class Poligono extends ObjetoGrafico {
     }
 
     public boolean temPontos() {
-	return !this.pontos.vazio();
+	return this.pontos.size() > 0;
     }
 
     public void removerPonto(int index) {
-	this.pontos.remover(index);
+	this.pontos.remove(index);
     }
 
     /**
