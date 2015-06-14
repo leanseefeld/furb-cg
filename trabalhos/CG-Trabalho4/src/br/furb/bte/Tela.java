@@ -26,12 +26,12 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	public void run() {
 	    while (true) {
 		try {
-		    if (animando || jogando || executandoPasso) {
-			System.out.println("Tela.RenderLoop.run()");
+		    if (animando || jogando) {
 			if (jogando) {
 			    executarComportamentos();
 			}
 			glDrawable.display();
+			System.out.println("Tela.RenderLoop.run()");
 			Thread.sleep(50);
 		    } else {
 			synchronized (this) {
@@ -71,7 +71,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private EstadoJogo estadoJogo;
     private boolean jogando;
     private boolean animando = true;
-    private boolean executandoPasso;
 
     private final RenderLoop renderLoop;
 
@@ -95,7 +94,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	mundo = new Mundo();
 
-	camera = new Camera(this, false);
+	camera = new Camera(this);
 	reset();
 
 	addKeyListener(new KeyAdapter() {
@@ -209,6 +208,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     private void alterarExecucao(boolean executar) {
 	this.jogando = executar;
+	camera.seguirMoto(executar ? moto1 : null);
 	render();
     }
 
@@ -289,7 +289,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    case KeyEvent.VK_SPACE:
 		if (!jogando && e.isControlDown()) {
 		    executarComportamentos();
-		    executandoPasso = true;
+		    //		    executandoPasso = true;
 		} else if (estadoJogo == null) {
 		    alterarExecucao(!jogando);
 		}
@@ -347,7 +347,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     public void render() {
-	System.out.println("Tela.render()");
 	// força que só execute quando o RenderLoop chegar no wait(), garantindo que 
 	// o comportamento vai terminar de executar antes de renderizar novamente
 	synchronized (renderLoop) {

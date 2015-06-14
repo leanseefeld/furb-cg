@@ -30,7 +30,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
     private Moto moto;
     private double[] antigaConfig;
 
-    public Camera(Tela tela, boolean permiteControlar) {
+    public Camera(Tela tela) {
 	this.tela = tela;
 	this.oldMouse = new Ponto(0, 0, 0);
 	try {
@@ -42,12 +42,9 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	//	incAnguloY = 45;
 
 	tela.addMouseWheelListener(this);
-
-	if (permiteControlar) {
-	    tela.addMouseMotionListener(this);
-	    tela.addMouseMotionListener(this);
-	    tela.addMouseListener(this);
-	}
+	tela.addMouseMotionListener(this);
+	tela.addMouseMotionListener(this);
+	tela.addMouseListener(this);
     }
 
     public void seguirMoto(Moto moto) {
@@ -115,13 +112,15 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     @Override
     public void mouseEntered(MouseEvent e) {
-	oldMouse.x = e.getX();
-	oldMouse.y = e.getY();
+	if (moto == null) {
+	    oldMouse.x = e.getX();
+	    oldMouse.y = e.getY();
+	}
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-	if (!e.isControlDown()) {
+	if (moto == null && !e.isControlDown()) {
 	    teleportMouse(e);
 	}
     }
@@ -172,7 +171,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     @Override
     public void mouseMoved(MouseEvent newMouse) {
-	if (!newMouse.isControlDown()) {
+	if (moto == null && !newMouse.isControlDown()) {
 	    if (teleportMouse(newMouse)) {
 		return;
 	    }
