@@ -24,14 +24,14 @@ public class Moto extends Poligono {
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
 
-    public Moto(GL gl, int x, int z, int anguloIncial, Cor cor) {
+    public Moto(GL gl, int x, int z, int anguloInicial, Cor cor) {
 	super(gl);
 	this.primitiva = GL.GL_QUADS;
 	this.cor = cor;
 	this.corNormal = cor;
 	this.rastro = new Rastro(gl, cor);
 	this.setPosicao(x, z);
-	this.anguloProximo = anguloIncial;
+	this.anguloProximo = anguloInicial;
 	this.setPontos(this.criarPontos());
 	this.girar();
     }
@@ -39,13 +39,9 @@ public class Moto extends Poligono {
     public float getAngulo() {
 	return angulo;
     }
-    
-    public void setColisao() {
-	this.cor = this.corColisao;
-    }
 
-    public void setNormal() {
-	this.cor = this.corNormal;
+    public void setColidido(boolean isColidido) {
+	this.cor = isColidido ? this.corColisao : this.corNormal;
     }
 
     private void setPosicao(int x, int z) {
