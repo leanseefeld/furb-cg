@@ -8,6 +8,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import javax.media.opengl.glu.GLU;
+import br.furb.bte.objetos.Moto;
+import br.furb.bte.objetos.Poligono;
 import br.furb.bte.objetos.Ponto;
 
 public class Camera implements MouseMotionListener, MouseListener, MouseWheelListener {
@@ -20,16 +23,11 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
     private final Ponto oldMouse;
     private final Tela tela;
     private Robot robot;
-    private Ponto para;
-    private float anguloCameraY = 0;
-    private float anguloCameraYProximo = 0;
+    private float incAnguloY;
+    private float anguloCameraY;
     private int distancia = 0;
+    private Moto moto;
 
-    /**
-     * @param tela
-     * @param permiteControlar
-     *            True caso o usuário possa controlar a camera com o mouse
-     */
     public Camera(Tela tela, boolean permiteControlar) {
 	this.tela = tela;
 	this.oldMouse = new Ponto(0, 0, 0);
@@ -39,8 +37,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	} catch (AWTException e) {
 	    e.printStackTrace();
 	}
-	setPontoObservacao(new Ponto(0, 0, 0));
-	setAngulo(45);
+//	incAnguloY = 45;
 
 	tela.addMouseWheelListener(this);
 
@@ -50,15 +47,18 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	}
     }
 
-    public void setPontoObservacao(Ponto ponto) {
-	this.para = ponto;
+    public void seguirMoto(Moto moto) {
+	this.moto = moto;
     }
 
-    public void setAngulo(float angulo) {
-	anguloCameraYProximo = angulo;
-    }
+    public void atualizar(GLU glu) {
+	final Poligono objObservado = moto == null ? tela.getArena() : moto;
+	if (objObservado == null) {
+	    return;
+	}
+	final Ponto pontoObservado = objObservado.getBBoxTransformada().getCentro();
+	float anguloCameraYProximo = moto == null ? incAnguloY : moto.getAngulo() + 180;
 
-    public void atualizaPosicaoCamera() {
 	float diferencaAngulo = anguloCameraYProximo - anguloCameraY;
 	System.out.println("atualizaPosicaoCamera - anguloCameraY: " + anguloCameraY);
 	System.out.println("atualizaPosicaoCamera - anguloCameraYProximo: " + anguloCameraYProximo);
@@ -78,32 +78,26 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
 	//Calcula a rotação e aproximação em X
 	double novoX = (distancia + DISTANCIA) * Math.cos(Math.toRadians(anguloCameraY));
-	novoX += para.X;
+	novoX += pontoObservado.x;
 
 	//Calcula a rotação e aproximação em Z
 	double novoZ = (distancia + DISTANCIA) * Math.sin(Math.toRadians(anguloCameraY));
-	novoZ += para.Z;
+	novoZ += pontoObservado.z;
 
 	//Calcula a altura e aproximação em Y
-	double catetoOposto = ALTURA - (double) para.Y;
-	double catetoAdjascente = ((DISTANCIA - (double) para.X) + (DISTANCIA - (double) para.Z)) / 2;
+	double catetoOposto = ALTURA - pontoObservado.y;
+	double catetoAdjascente = ((DISTANCIA - pontoObservado.x) + (DISTANCIA - pontoObservado.z)) / 2;
 	double tangente = catetoOposto / catetoAdjascente;
 	double anguloY = Math.atan(tangente);
-	double novoY = ((double) distancia / DISTANCIA * ALTURA + ALTURA) * Math.sin(anguloY);
+	double novoY = (distancia / DISTANCIA * ALTURA + ALTURA) * Math.sin(anguloY);
 
-	tela.glu.gluLookAt(novoX, novoY, novoZ, para.X, para.Y, para.Z, 0, 1, 0);
+	glu.gluLookAt(novoX, novoY, novoZ, pontoObservado.x, pontoObservado.y, pontoObservado.z, 0, 1, 0);
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
 	distancia += e.getWheelRotation() * 20;
 	tela.render();
-	/*setTransformacao(getTransformacao().transformMatrix(//
-		new Transformacao().atribuirEscala(//
-			1 - (float) e.getWheelRotation() / 10, //
-			1 - (float) e.getWheelRotation() / 10, //
-			1 - (float) e.getWheelRotation() / 10)));
-	tela.render();*/
     }
 
     @Override
@@ -112,8 +106,8 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     @Override
     public void mouseEntered(MouseEvent e) {
-	oldMouse.X = e.getX();
-	oldMouse.Y = e.getY();
+	oldMouse.x = e.getX();
+	oldMouse.y = e.getY();
     }
 
     @Override
@@ -149,8 +143,8 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    }
 	}
 	robot.mouseMove(newMouse.x, newMouse.y);
-	oldMouse.X = newMouse.x - screenLocation.x;
-	oldMouse.Y = newMouse.y - screenLocation.y;
+	oldMouse.x = newMouse.x - screenLocation.x;
+	oldMouse.y = newMouse.y - screenLocation.y;
 	return true;
     }
 
@@ -174,7 +168,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 		return;
 	    }
 
-	    double offsetX = oldMouse.X - newMouse.getX();
+	    double offsetX = oldMouse.x - newMouse.getX();
 	    //	    double offsetY = oldMouse.Y - newMouse.getY();
 
 	    double scaleX = tela.getWidth() / 3;
@@ -183,27 +177,14 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    offsetX /= -scaleX;
 	    //	    offsetY /= scaleY;
 
-	    // TODO: talvez movimentar proporcionalmente um pouco a câmera...
-
-	    anguloCameraYProximo += offsetX * 50;
-	    System.out.println("mouseMoved: " + anguloCameraYProximo);
+	    incAnguloY += offsetX * 50;
+	    System.out.println("mouseMoved: " + incAnguloY);
 	    //	    atualizaPosicaoCamera();
 
-	    //setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoY(offsetX)));
-	    //		setTransformacao(getTransformacao().transformMatrix(new Transformacao().atribuirRotacaoX(offsetY)));
 	    tela.render();
 	}
-	oldMouse.X = newMouse.getX();
-	oldMouse.Y = newMouse.getY();
+	oldMouse.x = newMouse.getX();
+	oldMouse.y = newMouse.getY();
     }
-
-    //    public Transformacao absorverTransformacao(final Transformacao transformacao) {
-    //	if ($transformacao != null) {
-    //	    Transformacao transformMatrix = transformacao.transformMatrix($transformacao);
-    //	    $transformacao = null;
-    //	    return transformMatrix;
-    //	}
-    //	return transformacao;
-    //    }
 
 }

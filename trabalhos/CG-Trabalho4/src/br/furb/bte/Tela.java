@@ -52,7 +52,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private int largura = 800;
     private int altura = 600;
     private GL gl;
-    public GLU glu;
+    private GLU glu;
     private GLAutoDrawable glDrawable;
     private boolean atualizarVisualizacao;
     private boolean perspectiveMode = true;
@@ -64,8 +64,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private Arena arena;
     private Camera camera;
 
-    private ModoCamera modoCamera;
-
     // ========== CONTROLES DE EXECUÇÃO ==========
     private EstadoJogo estadoJogo;
     private boolean executando;
@@ -74,9 +72,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     public Tela() {
 	setPreferredSize(new Dimension(largura, altura));
-	modoCamera = ModoCamera.SEGUE_MOTO;
-	camera = new Camera(this, modoCamera == ModoCamera.VISAO_MAPA);
-
+	camera = new Camera(this, true);
 	renderLoop = new RenderLoop();
 	addGLEventListener(this);
 
@@ -93,7 +89,9 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	    @Override
 	    public void componentResized(ComponentEvent e) {
-		render();
+		if (arena != null) {
+		    render();
+		}
 	    }
 	});
     }
@@ -158,13 +156,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	//	{
 	//	    gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
-	if (modoCamera == ModoCamera.SEGUE_MOTO) {
-	    if (this.moto1 != null) {
-		camera.setPontoObservacao(this.moto1.getBBoxTransformada().getCentro());
-		camera.setAngulo(this.moto1.getAngulo() + 180);
-	    }
-	}
-	camera.atualizaPosicaoCamera();
+	camera.atualizar(glu);
 	mundo.desenhar();
 	drawCube(30, 100, 30);
 	desenhaSRU(gl);
@@ -221,6 +213,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	mundo.removerTodosFilhos();
 	arena = new Arena(gl, TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto(gl, arena.getBBox().getMenorX() + 50, 0, Moto.DIREITA, new Cor(1, 0, 0));
+	camera.seguirMoto(moto1);
 	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
 
@@ -345,6 +338,14 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    glDrawable.display();
 	    renderLoop.notify();
 	}
+    }
+
+    public Camera getCamera() {
+	return camera;
+    }
+
+    public Arena getArena() {
+	return arena;
     }
 
     /**
