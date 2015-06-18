@@ -19,6 +19,7 @@ public class Moto extends Poligono {
 	public static final int DIREITA = 0;
 	public static final int BAIXO = 90;
 	public static final int ESQUERDA = 180;
+	public static boolean teste = true;
 
 	private OBJModel moto;
 
@@ -27,9 +28,10 @@ public class Moto extends Poligono {
 		this.cor = cor;
 		this.corNormal = cor;
 		this.rastro = new Rastro(cor);
-		moto = new OBJModel("data/porsche", 1.5f, gl, true);
+		moto = new OBJModel("data/moto", 100f, gl, true);
 		setPosicao(x, z);
 		setPontos(criarPontos());
+		//corrigiMoto();
 	}
 
 	public float getAngulo() {
@@ -45,6 +47,12 @@ public class Moto extends Poligono {
 		transTranslacao.atribuirTranslacao(x, 0, z);
 		this.addMovimentacao(transTranslacao);
 	}
+	
+	private void corrigiMoto(){
+		Transformacao transTranslacao = new Transformacao();
+		transTranslacao.atribuirTranslacao(0, 90, 0);
+		this.addMovimentacao(transTranslacao);
+	}
 
 	public void setRastro(Rastro rastro) {
 		this.rastro = rastro;
@@ -57,48 +65,47 @@ public class Moto extends Poligono {
 	@Override
 	protected List<Ponto> criarPontos() {
 		List<Ponto> pontos = new ArrayList<>();
-
-		for(Tuple3 tup : moto.getVerts()){
-			Ponto p = Ponto.Tuple3toPoint(tup);
-			pontos.add(p);
-		}
 		
-//		// Cima
-//		pontos.add(new Ponto(+17, +10, +4));
-//		pontos.add(new Ponto(+17, +10, -4));
-//		pontos.add(new Ponto(-19, +10, -6));
-//		pontos.add(new Ponto(-19, +10, +6));
-//
-//		// Baixo
-//		pontos.add(new Ponto(-19, +0, +6));
-//		pontos.add(new Ponto(-19, +0, -6));
-//		pontos.add(new Ponto(+17, +0, -4));
-//		pontos.add(new Ponto(+17, +0, +4));
-//
-//		// Frente
-//		pontos.add(new Ponto(-19, +10, -6));
-//		pontos.add(new Ponto(-19, +0, -6));
-//		pontos.add(new Ponto(-19, +0, +6));
-//		pontos.add(new Ponto(-19, +10, +6));
-//
-//		// Traz
-//		pontos.add(new Ponto(+17, +10, +4));
-//		pontos.add(new Ponto(+17, +0, +4));
-//		pontos.add(new Ponto(+17, +0, -4));
-//		pontos.add(new Ponto(+17, +10, -4));
-//
-//		// Lateral Esquerda
-//		pontos.add(new Ponto(+17, +10, +4));
-//		pontos.add(new Ponto(-19, +10, +6));
-//		pontos.add(new Ponto(-19, +0, +6));
-//		pontos.add(new Ponto(+17, +0, +4));
-//
-//		// Lateral Direita
-//		pontos.add(new Ponto(+17, +0, -4));
-//		pontos.add(new Ponto(-19, +0, -6));
-//		pontos.add(new Ponto(-19, +10, -6));
-//		pontos.add(new Ponto(+17, +10, -4));
-
+			for(Tuple3 tup : moto.getVerts()){
+				pontos.add(new Ponto(tup.getX(), tup.getY(), tup.getZ()));
+			}
+//		}else{
+//			// Cima
+//			pontos.add(new Ponto(+17, +10, +4));
+//			pontos.add(new Ponto(+17, +10, -4));
+//			pontos.add(new Ponto(-19, +10, -6));
+//			pontos.add(new Ponto(-19, +10, +6));
+//	
+//			// Baixo
+//			pontos.add(new Ponto(-19, +0, +6));
+//			pontos.add(new Ponto(-19, +0, -6));
+//			pontos.add(new Ponto(+17, +0, -4));
+//			pontos.add(new Ponto(+17, +0, +4));
+//	
+//			// Frente
+//			pontos.add(new Ponto(-19, +10, -6));
+//			pontos.add(new Ponto(-19, +0, -6));
+//			pontos.add(new Ponto(-19, +0, +6));
+//			pontos.add(new Ponto(-19, +10, +6));
+//	
+//			// Traz
+//			pontos.add(new Ponto(+17, +10, +4));
+//			pontos.add(new Ponto(+17, +0, +4));
+//			pontos.add(new Ponto(+17, +0, -4));
+//			pontos.add(new Ponto(+17, +10, -4));
+//	
+//			// Lateral Esquerda
+//			pontos.add(new Ponto(+17, +10, +4));
+//			pontos.add(new Ponto(-19, +10, +6));
+//			pontos.add(new Ponto(-19, +0, +6));
+//			pontos.add(new Ponto(+17, +0, +4));
+//	
+//			// Lateral Direita
+//			pontos.add(new Ponto(+17, +0, -4));
+//			pontos.add(new Ponto(-19, +0, -6));
+//			pontos.add(new Ponto(-19, +10, -6));
+//			pontos.add(new Ponto(+17, +10, -4));
+//		}
 		return pontos;
 	}
 
@@ -165,14 +172,20 @@ public class Moto extends Poligono {
 
 			gl.glBegin(primitiva);
 			{
-				for (Ponto ponto : getPontos()) {
-					gl.glVertex3d(ponto.x, ponto.y, ponto.z);
+				if(teste){
+					System.out.println("Testando2 2 2 2 2");
 				}
+				for (Ponto ponto : getPontos()) {
+					gl.glVertex3d(ponto.x , ponto.y , ponto.z );
+				}
+				
+				//moto.draw(gl);
 			}
 			gl.glEnd();
 		}
 		gl.glPopMatrix();
 		// return super.renderizar(gl);
+		teste = !teste;
 		return true;
 	}
 
