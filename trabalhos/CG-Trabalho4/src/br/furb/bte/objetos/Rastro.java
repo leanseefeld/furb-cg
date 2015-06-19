@@ -1,9 +1,11 @@
 package br.furb.bte.objetos;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.media.opengl.GL;
+import javax.naming.OperationNotSupportedException;
 import br.furb.bte.Parametros;
 
 public class Rastro extends Poligono {
@@ -22,6 +24,7 @@ public class Rastro extends Poligono {
 
     /**
      * Aumenta o rastro para a uma novação posição
+     * 
      * @param novaPosicao
      */
     public void arrastar(Ponto novaPosicao) {
@@ -37,7 +40,7 @@ public class Rastro extends Poligono {
 
 	gl.glPushMatrix();
 	{
-	    gl.glMultMatrixd(transformacao.getMatriz(), 0);
+//	    gl.glMultMatrixd(transformacao.getMatriz(), 0);
 
 	    gl.glDisable(GL.GL_CULL_FACE);
 	    gl.glBegin(primitiva);
@@ -49,9 +52,8 @@ public class Rastro extends Poligono {
 	    }
 	    gl.glEnd();
 	    gl.glEnable(GL.GL_CULL_FACE);
-	    
-	    if(Parametros.DESENHAR_BBOX)
-	    {
+
+	    if (Parametros.DESENHAR_BBOX) {
 		List<BBox> bboxes = this.getBBoxes();
 		for (BBox bBox : bboxes) {
 		    bBox.draw(gl);
@@ -63,9 +65,10 @@ public class Rastro extends Poligono {
 	gl.glPopMatrix();
 	return false;
     }
-
+    
     /**
      * Retorna a BBox de cada reta do rastro
+     * 
      * @return
      */
     public List<BBox> getBBoxes() {
@@ -91,11 +94,31 @@ public class Rastro extends Poligono {
 		i++;
 	    }
 	    i--;
+	    
+	    Ponto pontoATop = pontoA.clone();
+	    pontoATop.y = PONTO_MAIS_ALTO;
+	    Ponto pontoADown = pontoA.clone();
+	    pontoADown.y = PONTO_MAIS_BAIXO;
+	    
+	    Ponto pontoBTop = pontoB.clone();
+	    pontoBTop.y = PONTO_MAIS_ALTO;
+	    Ponto pontoBDown = pontoB.clone();
+	    pontoBDown.y = PONTO_MAIS_BAIXO;
 
-	    BBox bbox = new BBox(Arrays.asList(pontoA, pontoB));
+	    BBox bbox = new BBox(Arrays.asList(pontoATop, pontoBTop, pontoADown, pontoBDown));
 	    bboxes.add(bbox);
 
 	}
 	return bboxes;
+    }
+    
+    @Override
+    public BBox getBBox() {
+        return null;
+    }
+    
+    @Override
+    public BBox getBBoxTransformada() {
+        return null;
     }
 }

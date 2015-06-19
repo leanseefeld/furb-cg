@@ -46,7 +46,7 @@ public class CanvasScreen extends Canvas{
         loader[4] = new OBJModel("data/flowers", 1.5f, gl, true);
         loader[5] = new OBJModel("data/porsche", 1.5f, gl, true);
         loader[6] = new OBJModel("data/rose+vase", 1.5f, gl, true);
-        loader[7] = new OBJModel("data/moto", 1.5f, gl, true);
+        loader[7] = new OBJModel("data/moto2", 1.5f, gl, true);
         
         //altera flag informando que jah carregou tudo que precisava
 //        frame.getCommand().setFirstDisplay(1);

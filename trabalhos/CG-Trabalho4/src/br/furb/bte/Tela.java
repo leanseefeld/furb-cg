@@ -27,12 +27,12 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    while (true) {
 		try {
 		    if (animando || jogando || executandoPasso) {
-			System.out.println("Tela.RenderLoop.run()");
+//			System.out.println("Tela.RenderLoop.run()");
 			if (jogando) {
 			    executarComportamentos();
 			}
 			glDrawable.display();
-			Thread.sleep(50);
+			Thread.sleep(30);
 		    } else {
 			synchronized (this) {
 			    wait();
@@ -219,13 +219,12 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	mundo.removerTodosFilhos();
 	arena = new Arena(TAMANHO_ARENA, TAMANHO_ARENA);
-	moto1 = new Moto(arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0), gl);
+	moto1 = new Moto("Player 1", arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0), gl);
 //	camera.seguirMoto(moto1);
-	camera.seguirMoto(null);
-	arena.addFilho(moto1);
+	arena.addFilho(moto1);  
 	arena.addFilho(moto1.getRastro());
 
-	moto2 = new Moto(arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0), gl);
+	moto2 = new Moto("Player 2", arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0), gl);
 	moto2.girar(180);
 	arena.addFilho(moto2);
 	arena.addFilho(moto2.getRastro());

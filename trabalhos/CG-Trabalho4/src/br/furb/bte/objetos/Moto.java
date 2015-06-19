@@ -3,8 +3,8 @@ package br.furb.bte.objetos;
 import java.util.ArrayList;
 import java.util.List;
 import javax.media.opengl.GL;
-import object.OBJModel;
-import object.Tuple3;
+import br.furb.bte.LeitorObjeto.OBJModel;
+import br.furb.bte.LeitorObjeto.Tuple3;
 
 public class Moto extends Poligono {
 
@@ -12,26 +12,30 @@ public class Moto extends Poligono {
     private Rastro rastro;
     private final Cor corColisao = new Cor(0, 0, 1);
     private final Cor corNormal;
+    private final BBox bbox;
+    private final OBJModel moto;
+    private final Transformacao ajuste;
+    private final String nome;
+
     private static final int TAMANHO_RASTRO = 300;
-    private static final int VELOCIDADE = 10;
+    private static final int VELOCIDADE = 5;
+
     public static final int CIMA = -90;
     public static final int DIREITA = 0;
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
-    public BBox bbox;
 
-    private OBJModel moto;
-    private Transformacao ajuste;
-
-    public Moto(int x, int z, Cor cor, GL gl) {
-	//	this.primitiva = GL.GL_QUADS;
+    public Moto(String nome, int x, int z, Cor cor, GL gl) {
+	this.nome = nome;
 	this.cor = cor;
 	this.corNormal = cor;
 	this.rastro = new Rastro(cor, TAMANHO_RASTRO);
-	moto = new OBJModel("data/moto", 30f, gl, true);
+	this.ajuste = getTransformacaoDeAjuste();
 	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 7, 0));
-	colocarMotoDePe();
+	getTransformacaoDeAjuste();
 	setPosicao(x, z);
+
+	this.moto = new OBJModel("data/moto", 30f, gl, true);
 	bbox = new BBox(tupla3ToPonto(moto.getVerts()));
 
 	//	bbox = new BBox(25, -25, 50, -50, 50, -50);
@@ -43,6 +47,10 @@ public class Moto extends Poligono {
 	    pontos.add(new Ponto(tuple3.getX(), tuple3.getY(), tuple3.getZ()));
 	}
 	return pontos;
+    }
+
+    public String getNome() {
+	return nome;
     }
 
     public float getAngulo() {
@@ -59,12 +67,12 @@ public class Moto extends Poligono {
 	this.addMovimentacao(transTranslacao);
     }
 
-    private void colocarMotoDePe() {
+    private Transformacao getTransformacaoDeAjuste() {
 	Transformacao transTranslacao = new Transformacao();
 	transTranslacao.atribuirRotacaoX(Math.toRadians(90));
 	//	this.transformacao = this.transformacao.transformMatrix(transTranslacao);
 	//	ajusteMoto = transTranslacao;
-	this.ajuste = transTranslacao;
+	return transTranslacao;
 	//	this.addMovimentacao(transTranslacao);
     }
 
@@ -167,7 +175,7 @@ public class Moto extends Poligono {
 	for (int i = 0; i < bboxes.size() - qtdIgnorar; i++) {
 	    if (bboxTransformado.estaColidindo(bboxes.get(i))) {
 		existeColisao = true;
-		System.out.println("BBox nº " + i);
+		System.out.println("Moto " + this.getNome() + " colidiu com o BBox nº " + i);
 		break;
 	    }
 	}
@@ -188,7 +196,7 @@ public class Moto extends Poligono {
     public void girar(int graus) {
 	this.angulo += graus;
 	Transformacao trans = new Transformacao();
-	trans.atribuirRotacaoY(Math.toRadians(graus));
+	trans.atribuirRotacaoY(Math.toRadians(-graus));
 	this.addRotacao(trans);
     }
 

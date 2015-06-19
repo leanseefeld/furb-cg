@@ -1,4 +1,4 @@
-package object;
+package br.furb.bte.LeitorObjeto;
 
 // OBJModel.java
 /* Load the OBJ model, centering and scaling it. The scale comes from the sz argument in the
@@ -7,9 +7,14 @@ package object;
  * for rendering the model are stored in a display list (modelDispList), which is drawn by calls to
  * draw(). Information about the model is printed to stdout. */
 
-import java.io.*;
-import java.util.*;
-import javax.media.opengl.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import javax.media.opengl.GL;
 
 public class OBJModel {
 

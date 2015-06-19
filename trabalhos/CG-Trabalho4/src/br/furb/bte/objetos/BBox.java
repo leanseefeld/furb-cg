@@ -180,19 +180,23 @@ public class BBox {
 
 	gl.glDisable(GL.GL_LIGHTING);
 	gl.glColor3d(1, 1, 1);
-	gl.glLineWidth(1);
+	gl.glLineWidth(2);
 
 	gl.glPushMatrix();
 	{
-	    GLUT glut = new GLUT();
- 	    gl.glScaled(getMaiorX() - getMenorX(), getMaiorY() - getMenorY(), getMaiorZ() - getMenorZ());
-	    glut.glutWireCube(1);
-	    //	    gl.glBegin(GL.GL_LINE);
-	    //	    {
-	    //		gl.glVertex3d(getMaiorX(), getMaiorY(), getMaiorZ());
-	    //		gl.glVertex3d(getMenorX(), getMenorY(), getMenorZ());
-	    //	    }
-	    //	    gl.glEnd();
+	    //	    GLUT glut = new GLUT();
+	    // 	    gl.glScaled(getMaiorX() - getMenorX(), getMaiorY() - getMenorY(), getMaiorZ() - getMenorZ());
+	    // 	    gl.glTranslated((getMaiorX() - getMenorX())/2, (getMaiorY() + getMenorY())/2, (getMaiorZ() + getMenorZ()) / 2);
+	    //	    glut.glutWireCube(1);
+	    gl.glBegin(GL.GL_LINE_LOOP);
+	    {
+		gl.glVertex3d(getMaiorX(), getMaiorY(), getMaiorZ());
+		gl.glVertex3d(getMenorX(), getMenorY(), getMenorZ());
+		
+//		gl.glVertex3d(getMaiorZ(), getMenorY(), getMenorZ());
+//		gl.glVertex3d(getMenorX(), getMaiorY(), getMaiorZ());
+	    }
+	    gl.glEnd();
 	}
 	gl.glPopMatrix();
 
