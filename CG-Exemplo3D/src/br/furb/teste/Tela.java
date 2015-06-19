@@ -69,6 +69,9 @@ public class Tela //
 //	gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, posicao, 0);
 //	gl.glEnable(GL.GL_LIGHTING);
 //	gl.glEnable(GL.GL_LIGHT7);
+	
+	
+	desenharCubo(0);
     }
 
     @Override
@@ -104,13 +107,20 @@ public class Tela //
     }
 
     private void desenharCubo(float rotacao) {
+	
 	gl.glPushMatrix();
 	{
-	    //	    gl.glLoadIdentity();
 	    gl.glColor3d(1, 1, 1);
-	    //	    gl.glTranslatef(40f, 40f, 40f);
-	    //	    gl.glRotated(rotacao, 1, 1, 1);
-	    gl.glScaled(100, 100, 100);
+	    
+	    Transformacao trans = new Transformacao();
+	    trans.atribuirRotacaoX(Math.toRadians(90));
+	    Transformacao trans2 = new Transformacao();
+	    trans2.atribuirRotacaoY(Math.toRadians(45));
+	    
+	    trans = trans.transformMatrix(trans2);
+	    
+	    gl.glMultMatrixd(trans.getMatriz(), 0);
+	    gl.glScaled(10, 100, 10);
 	    glut.glutWireCube(1);
 	}
 	gl.glPopMatrix();
