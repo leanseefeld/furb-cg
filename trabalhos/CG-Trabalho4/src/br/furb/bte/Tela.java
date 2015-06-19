@@ -185,7 +185,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		    TEXT_RENDERER.draw("Rodando", 0, altura - 25);
 		} else {
 		    TEXT_RENDERER.draw("Pausado", meioLargura - 25, meioAltura);
-		    TEXT_RENDERER.draw("EspaÃ§o para continuar", meioLargura - 80, meioAltura - 20);
+		    TEXT_RENDERER.draw("Espaço para continuar", meioLargura - 80, meioAltura - 20);
 		}
 	    }
 	}

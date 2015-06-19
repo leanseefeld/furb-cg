@@ -28,8 +28,8 @@ public class Moto extends Poligono {
 	this.cor = cor;
 	this.corNormal = cor;
 	this.rastro = new Rastro(cor, TAMANHO_RASTRO);
-	moto = new OBJModel("data/moto", 100f, gl, true);
-	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 20, 0));
+	moto = new OBJModel("data/moto", 30f, gl, true);
+	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 7, 0));
 	colocarMotoDePe();
 	setPosicao(x, z);
 	bbox = new BBox(tupla3ToPonto(moto.getVerts()));
@@ -80,7 +80,6 @@ public class Moto extends Poligono {
     public boolean renderizar(GL gl) {
 	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
 	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
-	//gl.glColor3f(cor.R, cor.G, cor.B);
 	gl.glPushMatrix();
 	{
 	    Transformacao trans = new Transformacao();
@@ -90,9 +89,7 @@ public class Moto extends Poligono {
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
 	    this.moto.draw(gl);
 
-	    System.out.println(bbox.toString());
 	    this.bbox.draw(gl);
-
 	}
 	gl.glPopMatrix();
 	return false;

@@ -8,7 +8,7 @@ import br.furb.bte.Parametros;
 
 public class Rastro extends Poligono {
 
-    private static final int PONTO_MAIS_ALTO = 40;
+    private static final int PONTO_MAIS_ALTO = 10;
     private static final int PONTO_MAIS_BAIXO = 0;
     private List<Ponto> rastro;
     private int tamanhoRastro;
