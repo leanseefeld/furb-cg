@@ -206,10 +206,14 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	render();
     }
 
-    private void alterarExecucao(boolean executar) {
+    public void alterarExecucao(boolean executar) {
 	this.jogando = executar;
 	camera.seguirMoto(executar ? moto1 : null);
 	render();
+    }
+
+    public boolean isExecutando() {
+	return jogando;
     }
 
     private void reset() {
