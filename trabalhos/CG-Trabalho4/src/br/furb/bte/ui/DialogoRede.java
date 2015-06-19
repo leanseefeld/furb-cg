@@ -61,6 +61,7 @@ public class DialogoRede extends JDialog {
 		    setBloqueado(false);
 		    break;
 		case SUCESSO:
+		    showStatus("Conectado!");
 		    setBloqueado(false);
 		    launcher.launchRemoto(controleRemoto);
 		    break;
@@ -259,7 +260,7 @@ public class DialogoRede extends JDialog {
 		panelConectar.add(txtPortaConectar, gbc_txtPortaConectar);
 		txtPortaConectar.setBackground(new Color(220, 220, 220));
 		txtPortaConectar.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtPortaConectar.setText("42158");
+		txtPortaConectar.setValue(42158);
 		txtPortaConectar.setColumns(5);
 	    }
 	    {
@@ -304,7 +305,7 @@ public class DialogoRede extends JDialog {
 	    {
 		txtPortaAguardar = new JFormattedTextField(NumberFormat.getIntegerInstance());
 		txtPortaAguardar.setHorizontalAlignment(SwingConstants.CENTER);
-		txtPortaAguardar.setText("42158");
+		txtPortaAguardar.setValue(42158);
 		txtPortaAguardar.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtPortaAguardar.setColumns(5);
 		txtPortaAguardar.setBackground(new Color(220, 220, 220));

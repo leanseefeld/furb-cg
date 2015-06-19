@@ -12,6 +12,7 @@ public class ControladorRemoto extends Controlador {
 
     public ControladorRemoto() {
 	executor = new ExecutorTarefaRemota();
+	executor.start();
 	tarefaConectar = new TarefaConectar();
 	tarefaEspera = new TarefaEsperar();
     }
@@ -66,13 +67,11 @@ public class ControladorRemoto extends Controlador {
     }
 
     private void cancelar(TarefaConexaoRemota tarefa) {
-	synchronized (executor) {
-	    if (executor.getTarefaAtual() != tarefa) {
-		return;
-	    }
-	    // interrompe a thread, que eventualmente vai disparar evento de cancelamento
-	    executor.interrupt();
+	if (executor.getTarefaAtual() != tarefa) {
+	    return;
 	}
+	// interrompe a thread, que eventualmente vai disparar evento de cancelamento
+	executor.cancelar();
     }
 
     public String getEnderecoConexao() {

@@ -22,5 +22,7 @@ public abstract class TarefaConexaoRemota {
     public Socket getSocket() {
 	return socket;
     }
+    
+    public abstract void cancelar();
 
 }

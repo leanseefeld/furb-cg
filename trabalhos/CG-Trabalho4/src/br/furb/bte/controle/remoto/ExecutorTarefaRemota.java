@@ -6,6 +6,10 @@ public class ExecutorTarefaRemota extends Thread {
     private boolean terminado;
     private ConexaoRemotaListener callback;
 
+    public ExecutorTarefaRemota() {
+	super("ExecutorRemoto");
+    }
+
     @Override
     public final void run() {
 	synchronized (this) {
@@ -47,5 +51,11 @@ public class ExecutorTarefaRemota extends Thread {
 
     public void setCallback(ConexaoRemotaListener callback) {
 	this.callback = callback;
+    }
+
+    public void cancelar() {
+	if (tarefaAtual != null) {
+	    tarefaAtual.cancelar();
+	}
     }
 }

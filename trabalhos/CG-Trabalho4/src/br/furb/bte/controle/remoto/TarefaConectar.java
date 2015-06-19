@@ -1,6 +1,7 @@
 package br.furb.bte.controle.remoto;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class TarefaConectar extends TarefaConexaoRemota {
@@ -10,11 +11,9 @@ public class TarefaConectar extends TarefaConexaoRemota {
 
     @Override
     public ConexaoRemotaEvent doExecutaTarefa() throws IOException, InterruptedException {
-	this.socket = null;
-	try (Socket socket = new Socket(host, porta)) {
-	    this.socket = socket;
-	    return new ConexaoRemotaEvent(this, ResultadoConexaoRemota.SUCESSO);
-	}
+	socket = new Socket();
+	socket.connect(new InetSocketAddress(host, porta));
+	return new ConexaoRemotaEvent(this, ResultadoConexaoRemota.SUCESSO);
     }
 
     public void setHost(String host) {
@@ -37,6 +36,17 @@ public class TarefaConectar extends TarefaConexaoRemota {
 
     private int getPort() {
 	return porta;
+    }
+
+    @Override
+    public void cancelar() {
+	if (socket != null) {
+	    try {
+		socket.close();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	}
     }
 
 }
