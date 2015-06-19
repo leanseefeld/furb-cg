@@ -15,7 +15,7 @@ public class Arena extends Poligono {
 	this.cor = new Cor(0.1f, 0.5f, 0.5f);
 	this.largura = largura;
 	this.altura = altura;
-	this.setPontos(this.criarPontos());
+	carregarPontos();
     }
 
     @Override

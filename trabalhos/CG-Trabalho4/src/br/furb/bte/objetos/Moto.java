@@ -12,24 +12,37 @@ public class Moto extends Poligono {
     private Rastro rastro;
     private final Cor corColisao = new Cor(0, 0, 1);
     private final Cor corNormal;
+    private static final int TAMANHO_RASTRO = 300;
     private static final int VELOCIDADE = 10;
     public static final int CIMA = -90;
     public static final int DIREITA = 0;
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
-    public static boolean teste = true;
+    public BBox bbox;
 
     private OBJModel moto;
+    private Transformacao ajuste;
 
     public Moto(int x, int z, Cor cor, GL gl) {
-	this.primitiva = GL.GL_QUADS;
+	//	this.primitiva = GL.GL_QUADS;
 	this.cor = cor;
 	this.corNormal = cor;
-	this.rastro = new Rastro(cor);
+	this.rastro = new Rastro(cor, TAMANHO_RASTRO);
 	moto = new OBJModel("data/moto", 100f, gl, true);
+	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 20, 0));
+	colocarMotoDePe();
 	setPosicao(x, z);
-	setPontos(criarPontos());
-	//corrigiMoto();
+	bbox = new BBox(tupla3ToPonto(moto.getVerts()));
+
+	//	bbox = new BBox(25, -25, 50, -50, 50, -50);
+    }
+
+    public List<Ponto> tupla3ToPonto(List<Tuple3> tuplas) {
+	List<Ponto> pontos = new ArrayList<Ponto>();
+	for (Tuple3 tuple3 : tuplas) {
+	    pontos.add(new Ponto(tuple3.getX(), tuple3.getY(), tuple3.getZ()));
+	}
+	return pontos;
     }
 
     public float getAngulo() {
@@ -46,10 +59,13 @@ public class Moto extends Poligono {
 	this.addMovimentacao(transTranslacao);
     }
 
-    private void corrigiMoto() {
+    private void colocarMotoDePe() {
 	Transformacao transTranslacao = new Transformacao();
-	transTranslacao.atribuirTranslacao(0, 90, 0);
-	this.addMovimentacao(transTranslacao);
+	transTranslacao.atribuirRotacaoX(Math.toRadians(90));
+	//	this.transformacao = this.transformacao.transformMatrix(transTranslacao);
+	//	ajusteMoto = transTranslacao;
+	this.ajuste = transTranslacao;
+	//	this.addMovimentacao(transTranslacao);
     }
 
     public void setRastro(Rastro rastro) {
@@ -64,25 +80,31 @@ public class Moto extends Poligono {
     public boolean renderizar(GL gl) {
 	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
 	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
-
 	//gl.glColor3f(cor.R, cor.G, cor.B);
-
 	gl.glPushMatrix();
 	{
-	    gl.glMultMatrixd(transformacao.getMatriz(), 0);
+	    Transformacao trans = new Transformacao();
+	    trans.setMatriz(transformacao.getMatriz());
+	    trans = trans.transformMatrix(ajuste);
+
+	    gl.glMultMatrixd(trans.getMatriz(), 0);
 	    this.moto.draw(gl);
+
+	    System.out.println(bbox.toString());
+	    this.bbox.draw(gl);
+
 	}
 	gl.glPopMatrix();
-	return super.renderizar(gl);
+	return false;
     }
 
     @Override
     protected List<Ponto> criarPontos() {
 	List<Ponto> pontos = new ArrayList<>();
 
-	for (Tuple3 tup : moto.getVerts()) {
-	    pontos.add(new Ponto(tup.getX(), tup.getY(), tup.getZ()));
-	}
+	//	for (Tuple3 tup : moto.getVerts()) {
+	//	    pontos.add(new Ponto(tup.getX(), tup.getY(), tup.getZ()));
+	//	}
 	//		}else{
 	//			// Cima
 	//			pontos.add(new Ponto(+17, +10, +4));
@@ -173,6 +195,15 @@ public class Moto extends Poligono {
 	this.addRotacao(trans);
     }
 
+    @Override
+    public BBox getBBox() {
+	return this.bbox;
+    }
+
+    @Override
+    public BBox getBBoxTransformada() {
+	return this.bbox.getTransformado(this.transformacao);
+    }
     //    public boolean renderizar(GL gl) {
     //	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
     //	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
@@ -202,17 +233,17 @@ public class Moto extends Poligono {
     //	return true;
     //    }
 
-    @Override
-    public BBox getBBoxTransformada() {
-	// TODO: Ver forma mais performática de fazer a colisão
-	List<Ponto> pontosTrans = new ArrayList<Ponto>();
-	for (Ponto ponto : getPontos()) {
-	    pontosTrans.add(this.transformacao.transformPoint(ponto));
-	}
-	BBox bbox = new BBox(pontosTrans);
-
-	// return this.bbox.transformar(this.transformacao);
-	return bbox;
-    }
+    //    @Override
+    //    public BBox getBBoxTransformada() {
+    //	// TODO: Ver forma mais performática de fazer a colisão
+    //	List<Ponto> pontosTrans = new ArrayList<Ponto>();
+    //	for (Ponto ponto : getPontos()) {
+    //	    pontosTrans.add(this.transformacao.transformPoint(ponto));
+    //	}
+    //	BBox bbox = new BBox(pontosTrans);
+    //
+    //	// return this.bbox.transformar(this.transformacao);
+    //	return bbox;
+    //    }
 
 }

@@ -2,6 +2,9 @@ package br.furb.bte.objetos;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.media.opengl.GL;
+import br.furb.bte.Parametros;
+import com.sun.opengl.util.GLUT;
 
 public class BBox {
 
@@ -165,17 +168,39 @@ public class BBox {
 	return estaColidindo;
     }
 
-    public Ponto getMaior() {
-	return this.maior;
-    }
-
-    public Ponto getMenor() {
-	return this.menor;
-    }
-
-    public BBox transformar(Transformacao transformacao) {
+    public BBox getTransformado(Transformacao transformacao) {
 	Ponto maiorTrans = transformacao.transformPoint(this.maior);
 	Ponto menorTrans = transformacao.transformPoint(this.menor);
 	return new BBox(maiorTrans, menorTrans);
+    }
+
+    public void draw(GL gl) {
+	if (!Parametros.DESENHAR_BBOX)
+	    return;
+
+	gl.glDisable(GL.GL_LIGHTING);
+	gl.glColor3d(1, 1, 1);
+	gl.glLineWidth(1);
+
+	gl.glPushMatrix();
+	{
+	    GLUT glut = new GLUT();
+ 	    gl.glScaled(getMaiorX() - getMenorX(), getMaiorY() - getMenorY(), getMaiorZ() - getMenorZ());
+	    glut.glutWireCube(1);
+	    //	    gl.glBegin(GL.GL_LINE);
+	    //	    {
+	    //		gl.glVertex3d(getMaiorX(), getMaiorY(), getMaiorZ());
+	    //		gl.glVertex3d(getMenorX(), getMenorY(), getMenorZ());
+	    //	    }
+	    //	    gl.glEnd();
+	}
+	gl.glPopMatrix();
+
+	gl.glEnable(GL.GL_LIGHTING);
+    }
+
+    @Override
+    public String toString() {
+	return "Maior: " + this.maior.toString() + "\r\nMenor: " + this.menor.toString();
     }
 }

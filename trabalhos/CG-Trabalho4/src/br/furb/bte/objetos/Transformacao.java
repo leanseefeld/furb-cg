@@ -28,11 +28,12 @@ public class Transformacao {
     /**
      * Atribui os valores de uma matriz Identidade a matriz de Transformacao.
      */
-    public void atribuirIdentidade() {
+    public Transformacao atribuirIdentidade() {
 	for (int i = 0; i < 16; ++i) {
 	    matriz[i] = 0d;
 	}
 	matriz[0] = matriz[5] = matriz[10] = matriz[15] = 1.0;
+	return this;
     }
 
     /**
@@ -42,11 +43,12 @@ public class Transformacao {
      * @param y
      * @param z
      */
-    public void atribuirTranslacao(double x, double y, double z) {
+    public Transformacao atribuirTranslacao(double x, double y, double z) {
 	atribuirIdentidade();
 	matriz[12] = x;
 	matriz[13] = y;
 	matriz[14] = z;
+	return this;
     }
 
     /**
