@@ -2,6 +2,7 @@ package br.furb.bte.controle.remoto;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import br.furb.bte.Tela;
 import br.furb.bte.controle.Controlador;
 
 public class ControladorRemoto extends Controlador {
@@ -75,11 +76,16 @@ public class ControladorRemoto extends Controlador {
     }
 
     public String getEnderecoConexao() {
-	// TODO Auto-generated method stub
-	// sem dar lock, verifica se a thread tá executando conexão
-	// se tiver, monta e retorna o endereço
-	// se não, retorna null
 	return tarefaConectar.getEndereco();
+    }
+
+    public void encerrarConexao() {
+	executor.terminar();
+    }
+
+    @Override
+    public void associarTela(Tela tela) {
+	// TODO Auto-generated method stub
     }
 
 }

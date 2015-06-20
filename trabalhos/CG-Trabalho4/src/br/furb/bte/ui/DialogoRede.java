@@ -404,5 +404,11 @@ public class DialogoRede extends JDialog {
     private void clearStatus() {
 	showStatus("");
     }
+    
+    @Override
+    public void dispose() {
+	controleRemoto.encerrarConexao();
+        super.dispose();
+    }
 
 }

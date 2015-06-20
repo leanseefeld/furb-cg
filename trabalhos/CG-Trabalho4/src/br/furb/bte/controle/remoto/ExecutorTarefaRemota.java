@@ -8,6 +8,7 @@ public class ExecutorTarefaRemota extends Thread {
 
     public ExecutorTarefaRemota() {
 	super("ExecutorRemoto");
+	setDaemon(true);
     }
 
     @Override
@@ -56,6 +57,7 @@ public class ExecutorTarefaRemota extends Thread {
     public void cancelar() {
 	if (tarefaAtual != null) {
 	    tarefaAtual.cancelar();
+	    tarefaAtual = null;
 	}
     }
 }
