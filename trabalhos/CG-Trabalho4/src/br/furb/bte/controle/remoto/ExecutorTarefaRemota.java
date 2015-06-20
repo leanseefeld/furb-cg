@@ -8,6 +8,7 @@ public class ExecutorTarefaRemota extends Thread {
 
     public ExecutorTarefaRemota() {
 	super("ExecutorRemoto");
+	setDaemon(true);
     }
 
     @Override
