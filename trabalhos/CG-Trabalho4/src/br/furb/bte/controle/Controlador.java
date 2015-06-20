@@ -1,8 +1,9 @@
 package br.furb.bte.controle;
 
+import br.furb.bte.Tela;
 import br.furb.bte.objetos.Moto;
 
-public class Controlador {
+public abstract class Controlador {
 
     private Moto moto;
 
@@ -24,5 +25,17 @@ public class Controlador {
     public Moto getMotoAssociada() {
 	return moto;
     }
+
+    /**
+     * Vincula este controlador a tela.
+     * <p>
+     * A partir deste momento os comandos tratados por este controlador serão aplicados na tela
+     * configurada.
+     * </p>
+     * 
+     * @param tela
+     *            tela a ser controlada.
+     */
+    public abstract void associarTela(Tela tela);
 
 }

@@ -9,7 +9,7 @@ import javax.media.opengl.GL;
 // TODO: por enquanto extende de Polígono só pra poder desenhar algo na tela
 public class Arena extends Poligono {
     
-    private static short idProxMoto = 100;
+    private short idProxMoto = 1;
     private int largura;
     private int altura;
     private final Map<Short, Moto> motos;
@@ -35,7 +35,12 @@ public class Arena extends Poligono {
     
     public void addMoto(Moto moto) {
 	addFilho(moto);
+	addFilho(moto.getRastro());
 	motos.put(idProxMoto++, moto);
+    }
+    
+    public Moto getMoto(short id) {
+	return motos.get(id);
     }
     
 }

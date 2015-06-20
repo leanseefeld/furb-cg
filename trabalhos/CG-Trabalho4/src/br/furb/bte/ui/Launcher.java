@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
+import br.furb.bte.controle.ControladorLocal;
 import br.furb.bte.controle.remoto.ControladorRemoto;
 import br.furb.bte.ui.UIUtils.SupportedLookAndFeel;
 
@@ -66,7 +67,7 @@ public class Launcher extends JDialog {
 	btnLocal.addActionListener(event -> {
 	    setVisible(false);
 
-	    CanvasFrame frame = new CanvasFrame(getTitle());
+	    CanvasFrame frame = new CanvasFrame(getTitle(), new ControladorLocal());
 	    UIUtils.centerOnScreen(frame);
 	    frame.setVisible(true);
 
@@ -152,11 +153,11 @@ public class Launcher extends JDialog {
 
     public void launchRemoto(ControladorRemoto controleRemoto) {
 	setVisible(false);
-	CanvasFrame frame = new CanvasFrame(getTitle());
+	CanvasFrame frame = new CanvasFrame(getTitle(), controleRemoto);
 	// TODO: definir o contrador remoto
 	UIUtils.centerOnScreen(frame);
 	frame.setVisible(true);
-	
+
 	dispose();
     }
 

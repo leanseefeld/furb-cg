@@ -4,12 +4,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Consumer;
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.glu.GLU;
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Cor;
@@ -31,7 +33,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 			    executarComportamentos();
 			}
 			glDrawable.display();
-			System.out.println("Tela.RenderLoop.run()");
 			Thread.sleep(50);
 		    } else {
 			synchronized (this) {
@@ -44,6 +45,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    }
 	}
     }
+
+    private final Collection<GameplayListener> listeners;
 
     private static final long serialVersionUID = 1L;
     private static final int NEAR = 1;
@@ -74,19 +77,36 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     private final RenderLoop renderLoop;
 
-    public Tela() {
+    public Tela(GLCapabilities capabilities) {
+	super(capabilities);
 	setPreferredSize(new Dimension(largura, altura));
 	renderLoop = new RenderLoop();
+	listeners = new ArrayList<>();
 	addGLEventListener(this);
+    }
+
+    public void addGameplayListener(GameplayListener l) {
+	listeners.add(l);
+    }
+
+    public void removeGameplayListener(GameplayListener l) {
+	listeners.remove(l);
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
 	glDrawable = drawable;
 	gl = drawable.getGL();
-
 	gl.glEnable(GL.GL_DEPTH_TEST);
 	gl.glEnable(GL.GL_CULL_FACE);
+
+	gl.glEnable(GL.GL_POINT_SMOOTH);
+	gl.glEnable(GL.GL_POLYGON_SMOOTH);
+	gl.glEnable(GL.GL_LINE_SMOOTH);
+
+	gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+	gl.glHint(GL.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
+	gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
 
 	glu = new GLU();
 	glDrawable.setGL(new DebugGL(gl));
@@ -95,17 +115,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	mundo = new Mundo();
 
 	camera = new Camera(this);
-	reset();
 
-	addKeyListener(new KeyAdapter() {
-
-	    @Override
-	    public void keyPressed(KeyEvent e) {
-		if (trataControleMotos(e) || trataControleJogo(e) || trataControleCenario(e)) {
-		    render();
-		}
-	    }
-	});
 	addComponentListener(new ComponentAdapter() {
 
 	    @Override
@@ -115,7 +125,16 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		}
 	    }
 	});
+	fireGameplayEvent(l -> l.afterInit());
+
+	reset();
 	renderLoop.start();
+    }
+
+    private void fireGameplayEvent(Consumer<GameplayListener> consumer) {
+	for (GameplayListener l : listeners) {
+	    consumer.accept(l);
+	}
     }
 
     private void configurarCanvas() {
@@ -209,6 +228,12 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     public void alterarExecucao(boolean executar) {
 	this.jogando = executar;
 	camera.seguirMoto(executar ? moto1 : null);
+
+	if (executar) {
+	    fireGameplayEvent(l -> l.onResume());
+	} else {
+	    fireGameplayEvent(l -> l.onPause());
+	}
 	render();
     }
 
@@ -216,107 +241,31 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	return jogando;
     }
 
-    private void reset() {
+    public void reset() {
 	animando = false;
 
 	mundo.removerTodosFilhos();
 	arena = new Arena(TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto(arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0));
 	camera.seguirMoto(moto1);
-	arena.addFilho(moto1);
-	arena.addFilho(moto1.getRastro());
+	arena.addMoto(moto1);
 
 	moto2 = new Moto(arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0));
 	moto2.girar(180);
-	arena.addFilho(moto2);
-	arena.addFilho(moto2.getRastro());
+	arena.addMoto(moto2);
 
 	mundo.addFilho(arena);
 	jogando = false;
 	estadoJogo = null;
 
 	animando = true;
+
+	fireGameplayEvent(l -> l.onReset());
+
 	render();
     }
 
-    private boolean trataControleMotos(KeyEvent e) {
-	if (!jogando && !e.isControlDown()) {
-	    return false;
-	}
-	int direita = 90;
-	int esquerda = -90;
-	switch (e.getKeyCode()) {
-	//	    case KeyEvent.VK_W:
-	//		this.moto1.setAngulo(Moto.CIMA);
-	//		break;
-	//	    case KeyEvent.VK_UP:
-	//		this.moto2.setAngulo(Moto.CIMA);
-	//		break;
-	//	    case KeyEvent.VK_D:
-	//		this.moto1.setAngulo(Moto.DIREITA);
-	//		break;
-	//	    case KeyEvent.VK_RIGHT:
-	//		this.moto2.setAngulo(Moto.DIREITA);
-	//		break;
-	//	    case KeyEvent.VK_S:
-	//		this.moto1.setAngulo(Moto.BAIXO);
-	//		break;
-	//	    case KeyEvent.VK_DOWN:
-	//		this.moto2.setAngulo(Moto.BAIXO);
-	//		break;
-	//	    case KeyEvent.VK_A:
-	//		this.moto1.setAngulo(Moto.ESQUERDA);
-	//		break;
-	//	    case KeyEvent.VK_LEFT:
-	//		this.moto2.setAngulo(Moto.ESQUERDA);
-	//		break;
-	    case KeyEvent.VK_D:
-		moto1.girar(direita);
-		break;
-	    case KeyEvent.VK_RIGHT:
-		moto2.girar(direita);
-		break;
-	    case KeyEvent.VK_A:
-		moto1.girar(esquerda);
-		break;
-	    case KeyEvent.VK_LEFT:
-		moto2.girar(esquerda);
-		break;
-	    default:
-		return false;
-	}
-	return true;
-    }
-
-    private boolean trataControleJogo(KeyEvent e) {
-	switch (e.getKeyCode()) {
-	    case KeyEvent.VK_SPACE:
-		if (!jogando && e.isControlDown()) {
-		    executarComportamentos();
-		    //		    executandoPasso = true;
-		} else if (estadoJogo == null) {
-		    alterarExecucao(!jogando);
-		}
-		break;
-	    case KeyEvent.VK_R:
-		reset();
-		break;
-	    default:
-		return false;
-	}
-	return true;
-    }
-
-    private boolean trataControleCenario(KeyEvent e) {
-	if (e.getKeyCode() == KeyEvent.VK_1) {
-	    perspectiveMode = !perspectiveMode;
-	    atualizarVisualizacao = true;
-	    return true;
-	}
-	return false;
-    }
-
-    private void executarComportamentos() {
+    public void executarComportamentos() {
 	moto1.mover();
 	moto2.mover();
 
@@ -334,6 +283,18 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		alterarEstadoJogo(EstadoJogo.VITORIOSO);
 	    }
 	}
+    }
+
+    /**
+     * Alterna o modo de visualização entre perspectiva e ortogonal.
+     * 
+     * @return {@code true} se passou para o modo de perspectiva; {@code false} se passou para o
+     *         modo ortogonal
+     */
+    public boolean alternarPerspectiva() {
+	perspectiveMode = !perspectiveMode;
+	atualizarVisualizacao = true;
+	return perspectiveMode;
     }
 
     private boolean verificaColisaoMoto(Moto moto) {
@@ -365,6 +326,10 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     public Arena getArena() {
 	return arena;
+    }
+
+    public boolean isGameOver() {
+	return estadoJogo != null;
     }
 
     /**
