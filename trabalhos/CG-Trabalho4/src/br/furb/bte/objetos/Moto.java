@@ -35,7 +35,7 @@ public class Moto extends Poligono {
 	getTransformacaoDeAjuste();
 	setPosicao(x, z);
 
-	this.moto = new OBJModel("data/moto", 30f, gl, true);
+	this.moto = new OBJModel("data/lightcycle-med", 30f, gl, true);
 	bbox = new BBox(tupla3ToPonto(moto.getVerts()));
 
 	//	bbox = new BBox(25, -25, 50, -50, 50, -50);
@@ -70,6 +70,8 @@ public class Moto extends Poligono {
     private Transformacao getTransformacaoDeAjuste() {
 	Transformacao transTranslacao = new Transformacao();
 	transTranslacao.atribuirRotacaoX(Math.toRadians(90));
+//	Transformacao transTranslacao2 = new Transformacao();
+//	transTranslacao2 = transTranslacao2.transformMatrix(transTranslacao2.atribuirRotacaoX(Math.toRadians(90)));
 	//	this.transformacao = this.transformacao.transformMatrix(transTranslacao);
 	//	ajusteMoto = transTranslacao;
 	return transTranslacao;

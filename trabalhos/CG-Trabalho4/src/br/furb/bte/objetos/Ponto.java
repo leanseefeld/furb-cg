@@ -1,6 +1,6 @@
 package br.furb.bte.objetos;
 
-import object.Tuple3;
+import br.furb.bte.LeitorObjeto.Tuple3;
 
 public class Ponto {
 
