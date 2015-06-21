@@ -42,7 +42,7 @@ public class ExecutorTarefaRemota extends Thread {
 
     void disparaEvento(ConexaoRemotaEvent event) {
 	if (callback != null) {
-	    new Thread() {
+	    new Thread("ExecutorRemoto-dispatcher") {
 
 		@Override
 		public void run() {

@@ -24,6 +24,10 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     private class RenderLoop extends Thread {
 
+	public RenderLoop() {
+	    super("RenderLoop");
+	}
+
 	@Override
 	public void run() {
 	    while (true) {
@@ -51,7 +55,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private static final long serialVersionUID = 1L;
     private static final int NEAR = 1;
     private static final int FAR = 2000;
-    private static final TextRenderer TEXT_RENDERER = new TextRenderer(new Font("SansSerif", Font.BOLD, 18), true, false);
+    private static final TextRenderer TEXT_RENDERER = new TextRenderer(new Font("SansSerif", Font.BOLD, 18), true,
+	    false);
     private static final int TAMANHO_ARENA = 500;
 
     // ========== RECURSOS DO CANVAS ==========
