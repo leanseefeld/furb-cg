@@ -6,6 +6,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
@@ -72,6 +73,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private Mundo mundo;
     private Moto moto1;
     private Moto moto2;
+    private Optional<Moto> motoJogador = Optional.empty();
     private Arena arena;
     private Camera camera;
 
@@ -232,7 +234,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     public void alterarExecucao(boolean executar) {
 	this.jogando = executar;
-	camera.seguirMoto(executar ? moto1 : null);
+	camera.seguirMoto(executar ? motoJogador.orElse(moto1) : null);
 
 	if (executar) {
 	    fireGameplayEvent(l -> l.onResume());
@@ -270,14 +272,25 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	render();
     }
 
+    public void setMotoJogador(Moto moto) {
+	if (moto == null || moto != moto1 && moto != moto2) {
+	    throw new IllegalArgumentException("a moto informada não faz parte do jogo");
+	}
+	this.motoJogador = Optional.ofNullable(moto);
+    }
+    
     public void executarComportamentos() {
 	moto1.mover();
 	moto2.mover();
 
 	boolean teveColisao1 = false;
 	boolean teveColisao2 = false;
-	teveColisao1 = verificaColisaoMoto(moto1);
-	teveColisao2 = verificaColisaoMoto(moto2);
+	
+	Moto motoJogadorReal = motoJogador.orElse(moto1);
+	Moto inimigo = getInimigo(motoJogadorReal);
+	
+	teveColisao1 = verificaColisaoMoto(motoJogadorReal);
+	teveColisao2 = verificaColisaoMoto(inimigo);
 	if (teveColisao1 || teveColisao2) {
 	    alterarExecucao(false);
 	    if (teveColisao1 && teveColisao2) {

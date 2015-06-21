@@ -250,6 +250,7 @@ public class ControladorRemoto extends Controlador {
 	    }
 	    moto1Input.associarMoto(motoLocal);
 	    remoteListener.associarMoto(motoRemota);
+	    tela.setMotoJogador(motoLocal);
 	}
     }
 
