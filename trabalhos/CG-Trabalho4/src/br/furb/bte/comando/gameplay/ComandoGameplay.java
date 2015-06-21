@@ -6,11 +6,8 @@ import br.furb.bte.comando.TipoComando;
 
 public abstract class ComandoGameplay extends ComandoAbstrato<Tela> {
 
-    public ComandoGameplay(TipoComando tipoComando) {
-	super(tipoComando);
+    public ComandoGameplay(TipoComando tipoComando, Tela tela) {
+	super(tipoComando, tela);
     }
-
-    @Override
-    public abstract void executar(Tela tela);
 
 }

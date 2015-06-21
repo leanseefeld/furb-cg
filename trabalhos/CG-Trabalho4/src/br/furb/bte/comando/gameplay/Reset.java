@@ -5,13 +5,13 @@ import br.furb.bte.comando.TipoComando;
 
 public class Reset extends ComandoGameplay {
 
-    public Reset() {
-	super(TipoComando.RESET);
+    public Reset(Tela tela) {
+	super(TipoComando.RESET, tela);
     }
 
     @Override
-    public void executar(Tela tela) {
-	tela.reset();
+    public void executar() {
+	alvo.reset();
     }
 
 }

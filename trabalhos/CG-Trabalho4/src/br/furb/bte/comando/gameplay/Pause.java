@@ -5,13 +5,13 @@ import br.furb.bte.comando.TipoComando;
 
 public class Pause extends ComandoGameplay {
 
-    public Pause() {
-	super(TipoComando.PAUSE);
+    public Pause(Tela tela) {
+	super(TipoComando.PAUSE, tela);
     }
 
     @Override
-    public void executar(Tela tela) {
-	tela.alterarExecucao(false);
+    public void executar() {
+	alvo.alterarExecucao(false);
     }
 
 }

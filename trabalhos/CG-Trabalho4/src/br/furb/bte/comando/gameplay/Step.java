@@ -5,13 +5,13 @@ import br.furb.bte.comando.TipoComando;
 
 public class Step extends ComandoGameplay {
 
-    public Step() {
-	super(TipoComando.STEP);
+    public Step(Tela tela) {
+	super(TipoComando.STEP, tela);
     }
 
     @Override
-    public void executar(Tela tela) {
-	tela.executarComportamentos();
+    public void executar() {
+	alvo.executarComportamentos();
     }
 
 }

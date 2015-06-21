@@ -6,12 +6,14 @@ import br.furb.bte.objetos.Moto;
 
 public class VirarEsquerda extends ComandoAbstrato<Moto> {
 
-    public VirarEsquerda() {
-	super(TipoComando.ESQUERDA);
+    private static final TipoComando TIPO_COMANDO = TipoComando.ESQUERDA;
+
+    public VirarEsquerda(Moto moto) {
+	super(TIPO_COMANDO, moto);
     }
 
     @Override
-    public void executar(Moto alvo) {
+    public void executar() {
 	alvo.girar(-90);
     }
 
