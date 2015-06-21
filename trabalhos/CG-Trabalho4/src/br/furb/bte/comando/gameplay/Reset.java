@@ -3,15 +3,15 @@ package br.furb.bte.comando.gameplay;
 import br.furb.bte.Tela;
 import br.furb.bte.comando.TipoComando;
 
-public class Pause extends ComandoGameplay {
+public class Reset extends ComandoGameplay {
 
-    public Pause() {
-	super(TipoComando.PAUSE);
+    public Reset() {
+	super(TipoComando.RESET);
     }
 
     @Override
     public void executar(Tela tela) {
-	tela.alterarExecucao(false);
+	tela.reset();
     }
 
 }

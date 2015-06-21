@@ -154,7 +154,6 @@ public class Launcher extends JDialog {
     public void launchRemoto(ControladorRemoto controleRemoto) {
 	setVisible(false);
 	CanvasFrame frame = new CanvasFrame(getTitle(), controleRemoto);
-	// TODO: definir o contrador remoto
 	UIUtils.centerOnScreen(frame);
 	frame.setVisible(true);
 

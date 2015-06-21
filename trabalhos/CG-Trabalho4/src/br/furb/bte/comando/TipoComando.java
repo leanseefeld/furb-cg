@@ -8,10 +8,14 @@ public enum TipoComando {
     CONFIG_MOTO,
     READY,
     PAUSE,
+    RESUME,
+    STEP,
+    RESET,
+    TOGGLE_PERSPECTIVE,
     // ===== COMANDOS REMOTOS =====
     HELLO,
     BYE;
-    
+
     public short getCodigo() {
 	return (short) ordinal();
     }

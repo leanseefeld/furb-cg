@@ -5,6 +5,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import br.furb.bte.GameplayListener;
 import br.furb.bte.Tela;
+import br.furb.bte.comando.gameplay.Pause;
+import br.furb.bte.comando.gameplay.Reset;
+import br.furb.bte.comando.gameplay.Resume;
+import br.furb.bte.comando.gameplay.Step;
+import br.furb.bte.comando.gameplay.TogglePerspective;
+import br.furb.bte.comando.moto.VirarDireita;
+import br.furb.bte.comando.moto.VirarEsquerda;
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Moto;
 
@@ -27,6 +34,24 @@ public class ControladorLocal extends Controlador implements GameplayListener {
     private boolean jogando;
     private Moto moto2;
 
+    private final VirarDireita virarDireita;
+    private final VirarEsquerda virarEsquerda;
+    private final Pause pause;
+    private final Resume resume;
+    private final Step step;
+    private final Reset reset;
+    private final TogglePerspective togglePerspective;
+
+    public ControladorLocal() {
+	virarDireita = new VirarDireita();
+	virarEsquerda = new VirarEsquerda();
+	pause = new Pause();
+	resume = new Resume();
+	step = new Step();
+	togglePerspective = new TogglePerspective();
+	reset = new Reset();
+    }
+
     @Override
     public void associarTela(Tela tela) {
 	this.tela = tela;
@@ -36,12 +61,10 @@ public class ControladorLocal extends Controlador implements GameplayListener {
 
     @Override
     public void afterInit() {
-	System.out.println("ControladorLocal.afterInit()");
     }
 
     @Override
     public void onReset() {
-	System.out.println("ControladorLocal.onReset()");
 	if (tela != null) {
 	    Arena arena = tela.getArena();
 	    moto1 = arena.getMoto((short) 1);
@@ -51,13 +74,11 @@ public class ControladorLocal extends Controlador implements GameplayListener {
 
     @Override
     public void onPause() {
-	System.out.println("ControladorLocal.onPause()");
 	jogando = false;
     }
 
     @Override
     public void onResume() {
-	System.out.println("ControladorLocal.onResume()");
 	jogando = true;
     }
 
@@ -65,44 +86,18 @@ public class ControladorLocal extends Controlador implements GameplayListener {
 	if (!jogando && !e.isControlDown()) {
 	    return false;
 	}
-	int direita = 90;
-	int esquerda = -90;
 	switch (e.getKeyCode()) {
-	//	    case KeyEvent.VK_W:
-	//		this.moto1.setAngulo(Moto.CIMA);
-	//		break;
-	//	    case KeyEvent.VK_UP:
-	//		this.moto2.setAngulo(Moto.CIMA);
-	//		break;
-	//	    case KeyEvent.VK_D:
-	//		this.moto1.setAngulo(Moto.DIREITA);
-	//		break;
-	//	    case KeyEvent.VK_RIGHT:
-	//		this.moto2.setAngulo(Moto.DIREITA);
-	//		break;
-	//	    case KeyEvent.VK_S:
-	//		this.moto1.setAngulo(Moto.BAIXO);
-	//		break;
-	//	    case KeyEvent.VK_DOWN:
-	//		this.moto2.setAngulo(Moto.BAIXO);
-	//		break;
-	//	    case KeyEvent.VK_A:
-	//		this.moto1.setAngulo(Moto.ESQUERDA);
-	//		break;
-	//	    case KeyEvent.VK_LEFT:
-	//		this.moto2.setAngulo(Moto.ESQUERDA);
-	//		break;
 	    case KeyEvent.VK_D:
-		moto1.girar(direita);
+		virarDireita.executar(moto1);
 		break;
 	    case KeyEvent.VK_RIGHT:
-		moto2.girar(direita);
+		virarDireita.executar(moto2);
 		break;
 	    case KeyEvent.VK_A:
-		moto1.girar(esquerda);
+		virarEsquerda.executar(moto1);
 		break;
 	    case KeyEvent.VK_LEFT:
-		moto2.girar(esquerda);
+		virarEsquerda.executar(moto2);
 		break;
 	    default:
 		return false;
@@ -114,13 +109,17 @@ public class ControladorLocal extends Controlador implements GameplayListener {
 	switch (e.getKeyCode()) {
 	    case KeyEvent.VK_SPACE:
 		if (!jogando && e.isControlDown()) {
-		    tela.executarComportamentos();
+		    step.executar(tela);
 		} else if (!tela.isGameOver()) {
-		    tela.alterarExecucao(!jogando);
+		    if (jogando) {
+			pause.executar(tela);
+		    } else {
+			resume.executar(tela);
+		    }
 		}
 		break;
 	    case KeyEvent.VK_R:
-		tela.reset();
+		reset.executar(tela);
 		break;
 	    default:
 		return false;
@@ -129,15 +128,10 @@ public class ControladorLocal extends Controlador implements GameplayListener {
     }
 
     private boolean trataControleCenario(KeyEvent e) {
-	switch (e.getKeyCode()) {
-	    case KeyEvent.VK_1:
-		tela.alternarPerspectiva();
-		break;
-	    default:
-		return false;
-	}
 	if (e.getKeyCode() == KeyEvent.VK_1) {
+	    togglePerspective.executar(tela);
+	    return true;
 	}
-	return true;
+	return false;
     }
 }
