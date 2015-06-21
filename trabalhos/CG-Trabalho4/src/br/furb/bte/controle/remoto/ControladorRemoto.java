@@ -1,91 +1,152 @@
 package br.furb.bte.controle.remoto;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.net.SocketException;
+import javax.swing.JFrame;
 import br.furb.bte.Tela;
+import br.furb.bte.comando.TipoComando;
 import br.furb.bte.controle.Controlador;
 
 public class ControladorRemoto extends Controlador {
 
-    private final ExecutorTarefaRemota executor;
-    private final TarefaConectar tarefaConectar;
-    private final TarefaEsperar tarefaEspera;
+    private class RemoteListener extends Thread {
 
-    public ControladorRemoto() {
-	executor = new ExecutorTarefaRemota();
-	executor.start();
-	tarefaConectar = new TarefaConectar();
-	tarefaEspera = new TarefaEsperar();
-    }
+	private boolean running = true;
+	private boolean handShaked = false;
 
-    public void conectar(String host, int porta, ConexaoRemotaListener callback) {
-	synchronized (executor) {
-	    executor.setTarefaAtual(tarefaConectar);
-	    tarefaConectar.setHost(host);
-	    tarefaConectar.setPort(porta);
-	    executor.setCallback(callback);
-	    executor.notify();
+	@Override
+	public void run() {
+	    try {
+		InputStream is = socket.getInputStream();
+		BufferedInputStream bis = new BufferedInputStream(is);
+		InputStreamReader isr = new InputStreamReader(bis);
+		BufferedReader reader = new BufferedReader(isr);
+		while (running) {
+		    String command = reader.readLine();
+		    processCommand(command);
+		}
+	    } catch (SocketException e) {
+		if (e.getMessage().contains("reset")) {
+		    // TODO: perda de conexão
+		}
+	    } catch (IOException e) {
+		throw new RuntimeException(e);
+	    }
 	}
-    }
 
-    public void aguardarConexao(int porta, ConexaoRemotaListener callback) {
-	synchronized (executor) {
-	    // verifica se o executor tá livre; lança exceção se não tiver
-	    // configura o executor pra abrir ServerSocket
-	    executor.setTarefaAtual(tarefaEspera);
-	    // altera a porta apenas se a tarefa tiver sido aceita
-	    tarefaEspera.setPort(porta);
-	    executor.setCallback(callback);
-	    executor.notify();
+	private void processCommand(String receivedCommand) throws IOException {
+	    String[] splitCommand = receivedCommand.split("\\s+");
+	    TipoComando tipoComando = TipoComando.valueOf(splitCommand[0]);
+	    if (!handShaked) {
+		if (tipoComando != TipoComando.HELLO) {
+		    reply(TipoComando.BYE);
+		    throw new RuntimeException("A conexão remota não soube cumprimentar; recebido: " + receivedCommand);
+		} else {
+		    handShaked = true;
+		}
+	    } else {
+		switch (tipoComando) {
+		    case CONFIG_MOTO:
+			// TODO
+			break;
+		    case READY:
+			// TODO
+			break;
+		    case RESUME:
+			// TODO
+			break;
+		    case PAUSE:
+			// TODO
+			break;
+		    case RESET:
+			// TODO
+			break;
+		    case DIREITA:
+			// TODO
+			break;
+		    case ESQUERDA:
+			// TODO
+			break;
+		    case COLISAO:
+			// TODO
+			break;
+		    case ESTADO_MOTO:
+			// TODO
+			break;
+		    case BYE:
+			// TODO
+			running = false;
+			break;
+		    default:
+			reply(TipoComando.BYE);
+			throw new RuntimeException("Comando inesperado: " + receivedCommand);
+		}
+	    }
 	}
+
     }
 
-    public String getHostLocal() {
-	String hostAddress;
-	try {
-	    hostAddress = InetAddress.getLocalHost().getHostAddress();
-	} catch (UnknownHostException e) {
-	    e.printStackTrace();
-	    hostAddress = "<desconhecido>";
-	}
-	return hostAddress + ':' + tarefaEspera.getPort();
+    private final boolean isServer;
+    private final Socket socket;
+    private final RemoteListener remoteListener;
+    private final BufferedWriter writer;
+
+    public ControladorRemoto(boolean isServer, Socket socket) throws IOException {
+	this.isServer = isServer;
+	this.socket = socket;
+	OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream());
+	this.writer = new BufferedWriter(osw);
+	this.remoteListener = new RemoteListener();
+	this.remoteListener.start();
+	reply(TipoComando.HELLO);
     }
 
-    public boolean isAguardando() {
-	return executor.getTarefaAtual() == tarefaEspera;
+    protected void reply(TipoComando comando) throws IOException {
+	reply(comando.toString());
     }
 
-    public void cancelarEspera() {
-	cancelar(tarefaEspera);
-    }
-
-    public boolean isConectando() {
-	return executor.getTarefaAtual() == tarefaConectar;
-    }
-
-    public void cancelarConexao() {
-	cancelar(tarefaConectar);
-    }
-
-    private void cancelar(TarefaConexaoRemota tarefa) {
-	if (executor.getTarefaAtual() != tarefa) {
-	    return;
-	}
-	// interrompe a thread, que eventualmente vai disparar evento de cancelamento
-	executor.cancelar();
-    }
-
-    public String getEnderecoConexao() {
-	return tarefaConectar.getEndereco();
-    }
-
-    public void encerrarConexao() {
-	executor.terminar();
+    protected void reply(String comando) throws IOException {
+	writer.write(comando);
+	writer.flush();
     }
 
     @Override
     public void associarTela(Tela tela) {
+	JFrame frame = ((JFrame) tela.getParent().getParent().getParent().getParent());
+	frame.setTitle(frame.getTitle() + (isServer ? " (server)" : " (client)"));
 	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void afterInit() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onReset() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onPause() {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onResume() {
+	// TODO Auto-generated method stub
+
     }
 
 }

@@ -13,6 +13,7 @@ public enum TipoComando {
     RESET,
     TOGGLE_PERSPECTIVE,
     // ===== COMANDOS REMOTOS =====
+    ESTADO_MOTO,
     HELLO,
     BYE;
 

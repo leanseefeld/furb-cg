@@ -24,8 +24,8 @@ public class CanvasFrame extends JFrame {
 	glCaps.setAlphaBits(8);
 	glCaps.setSampleBuffers(true);
 	canvas = new Tela(glCaps);
-	controlador.associarTela(canvas);
 	add(canvas, BorderLayout.CENTER);
+	controlador.associarTela(canvas);
 	pack();
     }
 
