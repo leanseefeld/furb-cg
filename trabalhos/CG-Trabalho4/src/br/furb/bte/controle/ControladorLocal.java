@@ -58,10 +58,6 @@ public class ControladorLocal extends Controlador {
     }
 
     @Override
-    public void afterInit() {
-    }
-
-    @Override
     public void onReset() {
 	if (tela != null) {
 	    Arena arena = tela.getArena();
@@ -70,11 +66,4 @@ public class ControladorLocal extends Controlador {
 	}
     }
 
-    @Override
-    public void onPause() {
-    }
-
-    @Override
-    public void onResume() {
-    }
 }
