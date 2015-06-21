@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.EventObject;
 import javax.swing.JButton;
@@ -25,9 +26,9 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
+import br.furb.bte.controle.remoto.ConectorRemoto;
 import br.furb.bte.controle.remoto.ConexaoRemotaEvent;
 import br.furb.bte.controle.remoto.ConexaoRemotaListener;
-import br.furb.bte.controle.remoto.ControladorRemoto;
 
 @SuppressWarnings("serial")
 public class DialogoRede extends JDialog {
@@ -47,7 +48,7 @@ public class DialogoRede extends JDialog {
     private JButton btnAguardar;
     private JButton btnVoltar;
     private Launcher launcher;
-    private final ControladorRemoto controleRemoto;
+    private final ConectorRemoto conectorRemoto;
     private JTextPane txtpnStatus;
 
     private ConexaoRemotaListener callbackPadrao = new ConexaoRemotaListener() {
@@ -63,7 +64,12 @@ public class DialogoRede extends JDialog {
 		case SUCESSO:
 		    showStatus("Conectado!");
 		    setBloqueado(false);
-		    launcher.launchRemoto(controleRemoto);
+		    try {
+			launcher.launch(conectorRemoto.montarControlador());
+		    } catch (IOException e) {
+			e.printStackTrace();
+			showError(e.toString());
+		    }
 		    break;
 		default:
 		    setBloqueado(false);
@@ -85,7 +91,7 @@ public class DialogoRede extends JDialog {
     public DialogoRede(Launcher launcher) {
 	this.launcher = launcher;
 	build();
-	this.controleRemoto = new ControladorRemoto();
+	this.conectorRemoto = new ConectorRemoto();
 	assignEvents();
     }
 
@@ -102,9 +108,9 @@ public class DialogoRede extends JDialog {
 	btnAguardar.addActionListener(event -> {
 	    clearStatus();
 	    try {
-		controleRemoto.aguardarConexao(getPortaAguardar(), callbackPadrao);
+		conectorRemoto.aguardarConexao(getPortaAguardar(), callbackPadrao);
 		setBloqueado(true);
-		showStatus("Aguardando conexão em " + controleRemoto.getHostLocal() + "...");
+		showStatus("Aguardando conexão em " + conectorRemoto.getHostLocal() + "...");
 	    } catch (Exception ex) {
 		ex.printStackTrace();
 		showError(ex.getMessage());
@@ -114,9 +120,9 @@ public class DialogoRede extends JDialog {
 	btnConectar.addActionListener(event -> {
 	    clearStatus();
 	    try {
-		controleRemoto.conectar(getHost(), getPortaConectar(), callbackPadrao);
+		conectorRemoto.conectar(getHost(), getPortaConectar(), callbackPadrao);
 		setBloqueado(true);
-		showStatus("Conectando à " + controleRemoto.getEnderecoConexao() + "...");
+		showStatus("Conectando à " + conectorRemoto.getEnderecoConexao() + "...");
 	    } catch (Exception ex) {
 		ex.printStackTrace();
 		showError(ex.getMessage());
@@ -152,20 +158,20 @@ public class DialogoRede extends JDialog {
     }
 
     private boolean cancelOperations() {
-	if (controleRemoto == null) {
+	if (conectorRemoto == null) {
 	    return true;
 	}
-	if (controleRemoto.isAguardando()) {
+	if (conectorRemoto.isAguardando()) {
 	    if (JOptionPane.showConfirmDialog(this, "Isso irá cancelar a espera. Tem certeza?", "Aguardando conexão",
 		    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-		controleRemoto.cancelarEspera();
+		conectorRemoto.cancelarEspera();
 		return true;
 	    }
 	    return false;
-	} else if (controleRemoto.isConectando()) {
+	} else if (conectorRemoto.isConectando()) {
 	    if (JOptionPane.showConfirmDialog(this, "Isso irá cancelar a conexão. Tem certeza?", "Tentando conexão",
 		    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-		controleRemoto.cancelarConexao();
+		conectorRemoto.cancelarConexao();
 		return true;
 	    }
 	    return false;
@@ -404,11 +410,11 @@ public class DialogoRede extends JDialog {
     private void clearStatus() {
 	showStatus("");
     }
-    
+
     @Override
     public void dispose() {
-	controleRemoto.encerrarConexao();
-        super.dispose();
+	conectorRemoto.encerrarConexao();
+	super.dispose();
     }
 
 }

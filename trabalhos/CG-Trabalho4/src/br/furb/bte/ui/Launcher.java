@@ -15,8 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
+import br.furb.bte.controle.Controlador;
 import br.furb.bte.controle.ControladorLocal;
-import br.furb.bte.controle.remoto.ControladorRemoto;
 import br.furb.bte.ui.UIUtils.SupportedLookAndFeel;
 
 @SuppressWarnings("serial")
@@ -65,13 +65,7 @@ public class Launcher extends JDialog {
 	});
 
 	btnLocal.addActionListener(event -> {
-	    setVisible(false);
-
-	    CanvasFrame frame = new CanvasFrame(getTitle(), new ControladorLocal());
-	    UIUtils.centerOnScreen(frame);
-	    frame.setVisible(true);
-
-	    dispose();
+	    launch(new ControladorLocal());
 	});
 
 	btnComandos.addActionListener(event -> {
@@ -151,9 +145,10 @@ public class Launcher extends JDialog {
 	}
     }
 
-    public void launchRemoto(ControladorRemoto controleRemoto) {
+    public void launch(Controlador controlador) {
 	setVisible(false);
-	CanvasFrame frame = new CanvasFrame(getTitle(), controleRemoto);
+
+	CanvasFrame frame = new CanvasFrame(getTitle(), controlador);
 	UIUtils.centerOnScreen(frame);
 	frame.setVisible(true);
 

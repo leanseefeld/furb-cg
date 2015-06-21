@@ -16,11 +16,18 @@ public class ExecutorTarefaRemota extends Thread {
 	synchronized (this) {
 	    while (!terminado) {
 		if (tarefaAtual != null) {
+		    tarefaAtual.setConcluida(false);
 		    tarefaAtual.executaTarefa(this);
-		    tarefaAtual = null;
+		    // pode ter sido cancelada
+		    if (tarefaAtual != null) {
+			tarefaAtual.setConcluida(true);
+			tarefaAtual = null;
+		    }
 		}
 		try {
-		    wait();
+		    if (!terminado) {
+			wait();
+		    }
 		} catch (InterruptedException e) {
 		}
 	    }
@@ -35,7 +42,16 @@ public class ExecutorTarefaRemota extends Thread {
 
     void disparaEvento(ConexaoRemotaEvent event) {
 	if (callback != null) {
-	    callback.onFinish(event);
+	    new Thread() {
+
+		@Override
+		public void run() {
+		    // executa o callback apenas depois de dormir ou sair do while
+		    synchronized (ExecutorTarefaRemota.this) {
+			callback.onFinish(event);
+		    }
+		}
+	    }.start();
 	}
     }
 
