@@ -31,7 +31,7 @@ public class Moto extends Poligono {
 	this.corNormal = cor;
 	this.rastro = new Rastro(cor, TAMANHO_RASTRO);
 	this.ajuste = getTransformacaoDeAjuste();
-	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 7, 0));
+	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 5, 0)).transformMatrix(new Transformacao().atribuirRotacaoY(Math.toRadians(90)));
 	getTransformacaoDeAjuste();
 	setPosicao(x, z);
 
