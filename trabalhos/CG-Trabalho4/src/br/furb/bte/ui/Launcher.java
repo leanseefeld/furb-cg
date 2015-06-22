@@ -9,7 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -20,7 +20,7 @@ import br.furb.bte.controle.ControladorLocal;
 import br.furb.bte.ui.UIUtils.SupportedLookAndFeel;
 
 @SuppressWarnings("serial")
-public class Launcher extends JDialog {
+public class Launcher extends JFrame {
 
     private static final Font FONT_HIGH = new Font("Tahoma", Font.BOLD, 15);
     private JButton btnRede;
@@ -36,7 +36,7 @@ public class Launcher extends JDialog {
 	UIUtils.changeLookAndFeelIfPossible(SupportedLookAndFeel.SYSTEM_DEFAULT);
 	try {
 	    Launcher launcher = new Launcher();
-	    launcher.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	    launcher.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	    UIUtils.centerOnScreen(launcher);
 	    launcher.setVisible(true);
 	} catch (Exception e) {
