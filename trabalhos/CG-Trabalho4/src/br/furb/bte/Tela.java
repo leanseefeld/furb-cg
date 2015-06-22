@@ -196,6 +196,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	// }
 	// gl.glPopMatrix();
 	//
+	drawWalls();
+	
 	TEXT_RENDERER.beginRendering(largura, altura);
 	{
 	    TEXT_RENDERER.setColor(1, 1, 1, 1);
@@ -227,6 +229,152 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	}
 	gl.glPopMatrix();
     }
+    
+    private void drawWalls() {
+		// Desenha um cubo no qual a textura é aplicada
+		gl.glEnable(GL.GL_TEXTURE_2D);	// Primeiro habilita uso de textura
+		gl.glColor3f(0.0f, 1.0f, 0.0f);
+		gl.glPushMatrix();
+			gl.glBegin(GL.GL_QUADS);
+				gl.glVertex3f(-500, 0f, +500);
+				gl.glVertex3f(-500, 0f, +550f);
+				gl.glVertex3f(+500, 0f, +550f);
+				gl.glVertex3f(+500, 0f, +500);
+				// face de cima
+				gl.glVertex3f(-500, 50f, +500);
+				gl.glVertex3f(-500, 50f, +550f);
+				gl.glVertex3f(+500, 50f, +550f);
+				gl.glVertex3f(+500, 50f, +500);
+				// face da frente
+				gl.glVertex3f(-500, 0f, +500);
+				gl.glVertex3f(-500, 50f, +500);
+				gl.glVertex3f(+500, 50f, +500);
+				gl.glVertex3f(+500, 0f, +500);
+				// face da traz
+				gl.glVertex3f(-500, 0f, +550f);
+				gl.glVertex3f(-500, 50f, +550f);
+				gl.glVertex3f(+500, 50f, +550f);
+				gl.glVertex3f(+500, 0f, +550f);
+				// face lateral esquerda
+				gl.glVertex3f(-500, 0f, +500);
+				gl.glVertex3f(-500, 50f, +500);
+				gl.glVertex3f(-500, 50f, +550f);
+				gl.glVertex3f(-500, 0f, +550f);
+				// face lateral direita
+				gl.glVertex3f(+500, 0f, +500);
+				gl.glVertex3f(+500, 50f, +500);
+				gl.glVertex3f(+500, 50f, +550f);
+				gl.glVertex3f(+500, 0f, +550f);
+		
+				/**
+				 * Segundo MURO
+				 */
+				gl.glVertex3f(-500, 0f, -500);
+				gl.glVertex3f(-500, 0f, -550f);
+				gl.glVertex3f(+500, 0f, -550f);
+				gl.glVertex3f(+500, 0f, -500);
+				// face de cima
+				gl.glVertex3f(-500, 50f, -500);
+				gl.glVertex3f(-500, 50f, -550f);
+				gl.glVertex3f(+500, 50f, -550f);
+				gl.glVertex3f(+500, 50f, -500);
+				// face da frente
+				gl.glVertex3f(-500, 0f, -500);
+				gl.glVertex3f(-500, 50f, -500);
+				gl.glVertex3f(+500, 50f, -500);
+				gl.glVertex3f(+500, 0f, -500);
+				// face da traz
+				gl.glVertex3f(-500, 0f, -550f);
+				gl.glVertex3f(-500, 50f, -550f);
+				gl.glVertex3f(+500, 50f, -550f);
+				gl.glVertex3f(+500, 0f, -550f);
+				// face lateral esquerda
+				gl.glVertex3f(-500, 0f, -500);
+				gl.glVertex3f(-500, 50f, -500);
+				gl.glVertex3f(-500, 50f, -550f);
+				gl.glVertex3f(-500, 0f, -550f);
+				// face lateral direita
+				gl.glVertex3f(+500, 0f, -500);
+				gl.glVertex3f(+500, 50f, -500);
+				gl.glVertex3f(+500, 50f, -550f);
+				gl.glVertex3f(+500, 0f, -550f);
+	
+			/**
+			 * Terceiro Muro
+			 */
+				gl.glVertex3f(-500, 0f, +500);
+				gl.glVertex3f(-550f, 0f, -500);
+				gl.glVertex3f(-550f, 0f, +500);
+				gl.glVertex3f(-500, 0f, -500);
+				// face de cima
+				gl.glVertex3f(-500, 50f, -500);
+				gl.glVertex3f(-500, 50f, -550f);
+				gl.glVertex3f(+500, 50f, -550f);
+				gl.glVertex3f(+500, 50f, -500);
+				// face da frente
+				gl.glVertex3f(-500, 0f, +500);
+				gl.glVertex3f(-500, 50f, +500);
+				gl.glVertex3f(-500, 50f,-500);
+				gl.glVertex3f(-500, 0f, -500);
+				// face da traz
+				gl.glVertex3f(-550f, 0f, +500);
+				gl.glVertex3f(-550f, 50f,+500);
+				gl.glVertex3f(-550f, 50f,-500);
+				gl.glVertex3f(-550f, 0f, -500);
+				// face lateral esquerda
+				gl.glVertex3f(-500, 0f, +500);
+				gl.glVertex3f(-500, 50f,+500);
+				gl.glVertex3f(-550f, 50f,-500);
+				gl.glVertex3f(-550f, 0f, -500);
+				// face lateral direita
+				gl.glVertex3f(-500, 0f, -500);
+				gl.glVertex3f(-500, 50f,-500);
+				gl.glVertex3f(-550f, 50f,-500);
+				gl.glVertex3f(-550f, 0f, -500);
+				
+				/**
+				 * Quarto Muro
+				 */
+				gl.glVertex3f(+500, 0f, +500);
+				gl.glVertex3f(+550f, 0f, +500);
+				gl.glVertex3f(+550f, 0f, -500);
+				gl.glVertex3f(+500, 0f, -500);
+				// face de cima
+				gl.glVertex3f(+500, 50f, +500);
+				gl.glVertex3f(+550f, 50f, +500);
+				gl.glVertex3f(+550f, 50f, -500);
+				gl.glVertex3f(+500, 50f, -500);
+				// face da frente
+				gl.glVertex3f(+500, 0f, +500);
+				gl.glVertex3f(+500, 50f,+500);
+				gl.glVertex3f(+500, 50f,-500);
+				gl.glVertex3f(+500, 0f, -500);
+				// face da traz
+				gl.glVertex3f(+550f, 0f, +500);
+				gl.glVertex3f(+550f, 50f,+500);
+				gl.glVertex3f(+550f, 50f,-500);
+				gl.glVertex3f(+550f, 0f, -500);
+				// face lateral esquerda
+				gl.glVertex3f(+500, 0f, -500);
+				gl.glVertex3f(+500, 50f,-500);
+				gl.glVertex3f(+550f, 50f,-500);
+				gl.glVertex3f(+550f, 0f, -500);
+				// face lateral direita
+				gl.glVertex3f(+500, 0f, +500);
+				gl.glVertex3f(+500, 50f,+500);
+				gl.glVertex3f(+550f, 50f,+500);
+				gl.glVertex3f(+550f, 0f, +500);
+				
+				
+			gl.glEnd();
+		gl.glPopMatrix();
+		gl.glDisable(GL.GL_TEXTURE_2D);	//	Desabilita uso de textura
+		// gl.glColor3f(0.0f, 1.0f, 0.0f);
+		// gl.glPushMatrix();
+		// gl.glBegin(GL.GL_QUADS );
+		// gl.glEnd();
+		// gl.glPopMatrix();
+	}
 
     private void alterarEstadoJogo(EstadoJogo novoEstado) {
 	this.estadoJogo = novoEstado;
