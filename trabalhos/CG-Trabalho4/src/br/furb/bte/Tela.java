@@ -4,22 +4,32 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import javax.imageio.ImageIO;
 import javax.media.opengl.DebugGL;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.glu.GLU;
+import javax.swing.JOptionPane;
+
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Cor;
 import br.furb.bte.objetos.Moto;
 import br.furb.bte.objetos.Mundo;
+
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
+import com.sun.opengl.util.texture.TextureData;
 
 public class Tela extends GLCanvas implements GLEventAdapter {
 
@@ -86,6 +96,12 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     private final RenderLoop renderLoop;
 
+    private int idTexture[];
+	private int width, height;
+	private BufferedImage image;
+	private TextureData td;
+	private ByteBuffer buffer;
+    
     public Tela(GLCapabilities capabilities) {
 	super(capabilities);
 	setPreferredSize(new Dimension(largura, altura));
@@ -125,6 +141,30 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	camera = new Camera(this);
 
+	// Habilita o modelo de colorização de Gouraud
+			gl.glShadeModel(GL.GL_SMOOTH);
+
+			// Comandos de inicialização para textura
+			// loadImage("madeira.jpg");
+			loadImage("data/teste.jpg");
+
+			// Gera identificador de textura
+			idTexture = new int[10];
+			gl.glGenTextures(1, idTexture, 1);
+
+			// Especifica qual é a textura corrente pelo identificador
+			gl.glBindTexture(GL.GL_TEXTURE_2D, idTexture[0]);
+
+			// Envio da textura para OpenGL
+			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 3, width, height, 0, GL.GL_BGR,
+					GL.GL_UNSIGNED_BYTE, buffer);
+
+			// Define os filtros de magnificação e minificação
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+					GL.GL_LINEAR);
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+					GL.GL_LINEAR);
+	
 	addComponentListener(new ComponentAdapter() {
 
 	    @Override
@@ -140,6 +180,25 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	renderLoop.start();
     }
 
+    public void loadImage(String fileName) {
+		// Tenta carregar o arquivo
+		image = null;
+		try {
+			image = ImageIO.read(new File(fileName));
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Erro na leitura do arquivo "
+					+ fileName);
+		}
+
+		// Obtém largura e altura
+		width = image.getWidth();
+		height = image.getHeight();
+		// Gera uma nova TextureData...
+		td = new TextureData(0, 0, false, image);
+		// ...e obtém um ByteBuffer a partir dela
+		buffer = (ByteBuffer) td.getBuffer();
+	}
+    
     private void fireGameplayEvent(Consumer<GameplayListener> consumer) {
 	for (GameplayListener l : listeners) {
 	    consumer.accept(l);
