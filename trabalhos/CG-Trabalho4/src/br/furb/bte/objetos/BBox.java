@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.media.opengl.GL;
 import br.furb.bte.Parametros;
-import com.sun.opengl.util.GLUT;
 
 public class BBox {
 
@@ -192,9 +191,9 @@ public class BBox {
 	    {
 		gl.glVertex3d(getMaiorX(), getMaiorY(), getMaiorZ());
 		gl.glVertex3d(getMenorX(), getMenorY(), getMenorZ());
-		
-//		gl.glVertex3d(getMaiorZ(), getMenorY(), getMenorZ());
-//		gl.glVertex3d(getMenorX(), getMaiorY(), getMaiorZ());
+
+		//		gl.glVertex3d(getMaiorZ(), getMenorY(), getMenorZ());
+		//		gl.glVertex3d(getMenorX(), getMaiorY(), getMaiorZ());
 	    }
 	    gl.glEnd();
 	}

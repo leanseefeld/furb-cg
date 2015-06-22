@@ -9,11 +9,12 @@ import br.furb.bte.LeitorObjeto.Tuple3;
 public class Moto extends Poligono {
 
     private static OBJModel MODEL;
+    private static BBox B_BOX;
+
     private int angulo;
     private Rastro rastro;
     private final Cor corColisao = new Cor(0, 0, 1);
     private final Cor corNormal;
-    private final BBox bbox;
     private final Transformacao ajuste;
     private final String nome;
 
@@ -24,6 +25,7 @@ public class Moto extends Poligono {
     public static final int DIREITA = 0;
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
+    private static List<Ponto> PONTOS;
 
     public Moto(String nome, int x, int z, Cor cor, GL gl) {
 	this.nome = nome;
@@ -33,23 +35,28 @@ public class Moto extends Poligono {
 	this.ajuste = getTransformacaoDeAjuste();
 	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 5, 0))
 		.transformMatrix(new Transformacao().atribuirRotacaoY(Math.toRadians(90)));
-	getTransformacaoDeAjuste();
 	setPosicao(x, z);
 
-	getOrLoadModel(gl);
-	bbox = new BBox(tupla3ToPonto(MODEL.getVerts()));
-
-	//	bbox = new BBox(25, -25, 50, -50, 50, -50);
+	getOrLoadModelAndBBox(gl);
+	carregarPontos();
     }
 
-    private static OBJModel getOrLoadModel(GL gl) {
+    private static OBJModel getOrLoadModelAndBBox(GL gl) {
 	if (MODEL == null) {
 	    MODEL = new OBJModel("data/lightcycle-med", 30f, gl, true);
+	    PONTOS = tupla3ToPonto(MODEL.getVerts());
+	    B_BOX = new BBox(PONTOS);
+	    System.out.println(B_BOX);
 	}
 	return MODEL;
     }
+    
+    @Override
+    protected List<Ponto> criarPontos() {
+	return new ArrayList<>(PONTOS);
+    }
 
-    public List<Ponto> tupla3ToPonto(List<Tuple3> tuplas) {
+    public static List<Ponto> tupla3ToPonto(List<Tuple3> tuplas) {
 	List<Ponto> pontos = new ArrayList<Ponto>();
 	for (Tuple3 tuple3 : tuplas) {
 	    pontos.add(new Ponto(tuple3.getX(), tuple3.getY(), tuple3.getZ()));
@@ -78,12 +85,7 @@ public class Moto extends Poligono {
     private Transformacao getTransformacaoDeAjuste() {
 	Transformacao transTranslacao = new Transformacao();
 	transTranslacao.atribuirRotacaoX(Math.toRadians(90));
-	//	Transformacao transTranslacao2 = new Transformacao();
-	//	transTranslacao2 = transTranslacao2.transformMatrix(transTranslacao2.atribuirRotacaoX(Math.toRadians(90)));
-	//	this.transformacao = this.transformacao.transformMatrix(transTranslacao);
-	//	ajusteMoto = transTranslacao;
 	return transTranslacao;
-	//	this.addMovimentacao(transTranslacao);
     }
 
     public void setRastro(Rastro rastro) {
@@ -105,59 +107,12 @@ public class Moto extends Poligono {
 	    trans = trans.transformMatrix(ajuste);
 
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
-	    this.MODEL.draw(gl);
+	    MODEL.draw(gl);
 
-	    this.bbox.draw(gl);
+	    B_BOX.draw(gl);
 	}
 	gl.glPopMatrix();
 	return false;
-    }
-
-    @Override
-    protected List<Ponto> criarPontos() {
-	List<Ponto> pontos = new ArrayList<>();
-
-	//	for (Tuple3 tup : moto.getVerts()) {
-	//	    pontos.add(new Ponto(tup.getX(), tup.getY(), tup.getZ()));
-	//	}
-	//		}else{
-	//			// Cima
-	//			pontos.add(new Ponto(+17, +10, +4));
-	//			pontos.add(new Ponto(+17, +10, -4));
-	//			pontos.add(new Ponto(-19, +10, -6));
-	//			pontos.add(new Ponto(-19, +10, +6));
-	//	
-	//			// Baixo
-	//			pontos.add(new Ponto(-19, +0, +6));
-	//			pontos.add(new Ponto(-19, +0, -6));
-	//			pontos.add(new Ponto(+17, +0, -4));
-	//			pontos.add(new Ponto(+17, +0, +4));
-	//	
-	//			// Frente
-	//			pontos.add(new Ponto(-19, +10, -6));
-	//			pontos.add(new Ponto(-19, +0, -6));
-	//			pontos.add(new Ponto(-19, +0, +6));
-	//			pontos.add(new Ponto(-19, +10, +6));
-	//	
-	//			// Traz
-	//			pontos.add(new Ponto(+17, +10, +4));
-	//			pontos.add(new Ponto(+17, +0, +4));
-	//			pontos.add(new Ponto(+17, +0, -4));
-	//			pontos.add(new Ponto(+17, +10, -4));
-	//	
-	//			// Lateral Esquerda
-	//			pontos.add(new Ponto(+17, +10, +4));
-	//			pontos.add(new Ponto(-19, +10, +6));
-	//			pontos.add(new Ponto(-19, +0, +6));
-	//			pontos.add(new Ponto(+17, +0, +4));
-	//	
-	//			// Lateral Direita
-	//			pontos.add(new Ponto(+17, +0, -4));
-	//			pontos.add(new Ponto(-19, +0, -6));
-	//			pontos.add(new Ponto(-19, +10, -6));
-	//			pontos.add(new Ponto(+17, +10, -4));
-	//		}
-	return pontos;
     }
 
     public void mover() {
@@ -166,7 +121,7 @@ public class Moto extends Poligono {
 	Transformacao trans = new Transformacao();
 	trans.atribuirTranslacao(moverX, 0, moverZ);
 	this.addMovimentacao(trans);
-	this.rastro.arrastar(this.transformacao.transformPoint(this.bbox.getCentro()));
+	this.rastro.arrastar(this.transformacao.transformPoint(B_BOX.getCentro()));
     }
 
     public boolean estaColidindo(Poligono objeto) {
@@ -212,53 +167,7 @@ public class Moto extends Poligono {
 
     @Override
     public BBox getBBox() {
-	return this.bbox;
+	return B_BOX;
     }
-
-    @Override
-    public BBox getBBoxTransformada() {
-	return this.bbox.getTransformado(this.transformacao);
-    }
-    //    public boolean renderizar(GL gl) {
-    //	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
-    //	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
-    //
-    //	// gl.glColor3f(cor.R, cor.G, cor.B);
-    //
-    //	gl.glPushMatrix();
-    //	{
-    //	    gl.glMultMatrixd(transformacao.getMatriz(), 0);
-    //
-    //	    gl.glBegin(primitiva);
-    //	    {
-    //		if (teste) {
-    //		    System.out.println("Testando2 2 2 2 2");
-    //		}
-    //		for (Ponto ponto : getPontos()) {
-    //		    gl.glVertex3d(ponto.x, ponto.y, ponto.z);
-    //		}
-    //
-    //		//moto.draw(gl);
-    //	    }
-    //	    gl.glEnd();
-    //	}
-    //	gl.glPopMatrix();
-    //	// return super.renderizar(gl);
-    //	teste = !teste;
-    //	return true;
-    //    }
-
-    //    @Override
-    //    public BBox getBBoxTransformada() {
-    //	// TODO: Ver forma mais performática de fazer a colisão
-    //	List<Ponto> pontosTrans = new ArrayList<Ponto>();
-    //	for (Ponto ponto : getPontos()) {
-    //	    pontosTrans.add(this.transformacao.transformPoint(ponto));
-    //	}
-    //	BBox bbox = new BBox(pontosTrans);
-    //
-    //	// return this.bbox.transformar(this.transformacao);
-    //	return bbox;
-    //    }
 
 }
