@@ -8,12 +8,12 @@ import br.furb.bte.LeitorObjeto.Tuple3;
 
 public class Moto extends Poligono {
 
+    private static OBJModel MODEL;
     private int angulo;
     private Rastro rastro;
     private final Cor corColisao = new Cor(0, 0, 1);
     private final Cor corNormal;
     private final BBox bbox;
-    private final OBJModel moto;
     private final Transformacao ajuste;
     private final String nome;
 
@@ -31,14 +31,22 @@ public class Moto extends Poligono {
 	this.corNormal = cor;
 	this.rastro = new Rastro(cor, TAMANHO_RASTRO);
 	this.ajuste = getTransformacaoDeAjuste();
-	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 5, 0)).transformMatrix(new Transformacao().atribuirRotacaoY(Math.toRadians(90)));
+	this.transformacao = this.transformacao.transformMatrix(new Transformacao().atribuirTranslacao(0, 5, 0))
+		.transformMatrix(new Transformacao().atribuirRotacaoY(Math.toRadians(90)));
 	getTransformacaoDeAjuste();
 	setPosicao(x, z);
 
-	this.moto = new OBJModel("data/lightcycle-med", 30f, gl, true);
-	bbox = new BBox(tupla3ToPonto(moto.getVerts()));
+	getOrLoadModel(gl);
+	bbox = new BBox(tupla3ToPonto(MODEL.getVerts()));
 
 	//	bbox = new BBox(25, -25, 50, -50, 50, -50);
+    }
+
+    private static OBJModel getOrLoadModel(GL gl) {
+	if (MODEL == null) {
+	    MODEL = new OBJModel("data/lightcycle-med", 30f, gl, true);
+	}
+	return MODEL;
     }
 
     public List<Ponto> tupla3ToPonto(List<Tuple3> tuplas) {
@@ -70,8 +78,8 @@ public class Moto extends Poligono {
     private Transformacao getTransformacaoDeAjuste() {
 	Transformacao transTranslacao = new Transformacao();
 	transTranslacao.atribuirRotacaoX(Math.toRadians(90));
-//	Transformacao transTranslacao2 = new Transformacao();
-//	transTranslacao2 = transTranslacao2.transformMatrix(transTranslacao2.atribuirRotacaoX(Math.toRadians(90)));
+	//	Transformacao transTranslacao2 = new Transformacao();
+	//	transTranslacao2 = transTranslacao2.transformMatrix(transTranslacao2.atribuirRotacaoX(Math.toRadians(90)));
 	//	this.transformacao = this.transformacao.transformMatrix(transTranslacao);
 	//	ajusteMoto = transTranslacao;
 	return transTranslacao;
@@ -97,7 +105,7 @@ public class Moto extends Poligono {
 	    trans = trans.transformMatrix(ajuste);
 
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
-	    this.moto.draw(gl);
+	    this.MODEL.draw(gl);
 
 	    this.bbox.draw(gl);
 	}
