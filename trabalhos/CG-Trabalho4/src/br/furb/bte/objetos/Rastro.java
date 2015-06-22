@@ -1,11 +1,9 @@
 package br.furb.bte.objetos;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.media.opengl.GL;
-import javax.naming.OperationNotSupportedException;
 import br.furb.bte.Parametros;
 
 public class Rastro extends Poligono {
@@ -28,9 +26,11 @@ public class Rastro extends Poligono {
      * @param novaPosicao
      */
     public void arrastar(Ponto novaPosicao) {
-	rastro.add(novaPosicao);
-	if (rastro.size() > tamanhoRastro) {
-	    rastro.remove(0);
+	synchronized (rastro) {
+	    rastro.add(novaPosicao);
+	    if (rastro.size() > tamanhoRastro) {
+		rastro.remove(0);
+	    }
 	}
     }
 
@@ -40,14 +40,14 @@ public class Rastro extends Poligono {
 
 	gl.glPushMatrix();
 	{
-//	    gl.glMultMatrixd(transformacao.getMatriz(), 0);
-
 	    gl.glDisable(GL.GL_CULL_FACE);
 	    gl.glBegin(primitiva);
 	    {
-		for (Ponto ponto : rastro) {
-		    gl.glVertex3d(ponto.x, PONTO_MAIS_BAIXO, ponto.z);
-		    gl.glVertex3d(ponto.x, PONTO_MAIS_ALTO, ponto.z);
+		synchronized (rastro) {
+		    for (Ponto ponto : rastro) {
+			gl.glVertex3d(ponto.x, PONTO_MAIS_BAIXO, ponto.z);
+			gl.glVertex3d(ponto.x, PONTO_MAIS_ALTO, ponto.z);
+		    }
 		}
 	    }
 	    gl.glEnd();
@@ -65,7 +65,7 @@ public class Rastro extends Poligono {
 	gl.glPopMatrix();
 	return false;
     }
-    
+
     /**
      * Retorna a BBox de cada reta do rastro
      * 
@@ -94,12 +94,12 @@ public class Rastro extends Poligono {
 		i++;
 	    }
 	    i--;
-	    
+
 	    Ponto pontoATop = pontoA.clone();
 	    pontoATop.y = PONTO_MAIS_ALTO;
 	    Ponto pontoADown = pontoA.clone();
 	    pontoADown.y = PONTO_MAIS_BAIXO;
-	    
+
 	    Ponto pontoBTop = pontoB.clone();
 	    pontoBTop.y = PONTO_MAIS_ALTO;
 	    Ponto pontoBDown = pontoB.clone();
@@ -111,14 +111,14 @@ public class Rastro extends Poligono {
 	}
 	return bboxes;
     }
-    
+
     @Override
     public BBox getBBox() {
-        return null;
+	return null;
     }
-    
+
     @Override
     public BBox getBBoxTransformada() {
-        return null;
+	return null;
     }
 }
