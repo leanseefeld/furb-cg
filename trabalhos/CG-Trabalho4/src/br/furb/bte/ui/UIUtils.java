@@ -1,4 +1,4 @@
-package br.furb.bte;
+package br.furb.bte.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;

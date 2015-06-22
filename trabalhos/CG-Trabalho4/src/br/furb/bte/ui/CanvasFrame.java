@@ -1,17 +1,19 @@
-package br.furb.bte;
+package br.furb.bte.ui;
 
 import java.awt.BorderLayout;
 import javax.media.opengl.GLCapabilities;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+import br.furb.bte.Tela;
+import br.furb.bte.controle.Controlador;
 
-public class MainFrame extends JFrame {
+public class CanvasFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private Tela canvas;
 
-    public MainFrame() {
-	super("Tron");
+    public CanvasFrame(String title, Controlador controlador) {
+	super(title);
 	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	getContentPane().setLayout(new BorderLayout());
 
@@ -20,23 +22,17 @@ public class MainFrame extends JFrame {
 	glCaps.setBlueBits(8);
 	glCaps.setGreenBits(8);
 	glCaps.setAlphaBits(8);
-
-	canvas = new Tela();
+	glCaps.setSampleBuffers(true);
+	canvas = new Tela(glCaps);
 	add(canvas, BorderLayout.CENTER);
+	controlador.associarTela(canvas);
+	pack();
     }
 
     @Override
     public void setVisible(boolean b) {
-	pack();
 	super.setVisible(b);
 	canvas.requestFocus();
-    }
-
-    public static void main(String[] args) {
-	UIUtils.changeLookAndFeelIfPossible(UIUtils.SupportedLookAndFeel.SYSTEM_DEFAULT);
-	MainFrame frame = new MainFrame();
-	frame.setVisible(true);
-	UIUtils.centerOnScreen(frame);
     }
 
 }
