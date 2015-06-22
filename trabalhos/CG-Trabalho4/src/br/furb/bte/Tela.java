@@ -161,8 +161,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, posicaoLuz, 0);
 	gl.glEnable(GL.GL_LIGHT0);
 	gl.glEnable(GL.GL_LIGHTING);
-	// gl.glShadeModel(GL.GL_SMOOTH);
-	gl.glShadeModel(GL.GL_FLAT);
+	gl.glShadeModel(GL.GL_SMOOTH);
     }
 
     @Override
