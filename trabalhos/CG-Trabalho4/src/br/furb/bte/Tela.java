@@ -27,7 +27,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    while (true) {
 		try {
 		    if (animando || jogando || executandoPasso) {
-//			System.out.println("Tela.RenderLoop.run()");
+			//			System.out.println("Tela.RenderLoop.run()");
 			if (jogando) {
 			    executarComportamentos();
 			}
@@ -44,7 +44,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    }
 	}
     }
-
 
     private static final long serialVersionUID = 1L;
     private static final int NEAR = 1;
@@ -137,8 +136,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	gl.glEnable(GL.GL_LIGHTING);
 	// gl.glShadeModel(GL.GL_SMOOTH);
 	gl.glShadeModel(GL.GL_FLAT);
-	// gl.glEnable(GL.GL_COLOR_MATERIAL);
-	gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
     }
 
     @Override
@@ -165,7 +162,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	animando = camera.atualizar(glu);
 	animando |= mundo.renderizar(gl);
-//	drawCube(30, 100, 30);
+	//	drawCube(30, 100, 30);
 	desenhaSRU(gl);
 	// new GLUT().glutSolidCube(100);
 	// gl.glFlush();
@@ -220,8 +217,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	mundo.removerTodosFilhos();
 	arena = new Arena(TAMANHO_ARENA, TAMANHO_ARENA);
 	moto1 = new Moto("Player 1", arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0), gl);
-//	camera.seguirMoto(moto1);
-	arena.addFilho(moto1);  
+	//	camera.seguirMoto(moto1);
+	arena.addFilho(moto1);
 	arena.addFilho(moto1.getRastro());
 
 	moto2 = new Moto("Player 2", arena.getBBox().getMaiorX() - 50, 0, new Cor(0, 1, 0), gl);
@@ -354,7 +351,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     public void render() {
-//	System.out.println("Tela.render()");
+	//	System.out.println("Tela.render()");
 	// forÃ§a que sÃ³ execute quando o RenderLoop chegar no wait(), garantindo
 	// que
 	// o comportamento vai terminar de executar antes de renderizar
@@ -377,6 +374,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
      * Desenha os eixos do Sistema de ReferÃªncia Universal
      */
     public static void desenhaSRU(GL gl) {
+	gl.glEnable(GL.GL_COLOR_MATERIAL);
 	gl.glLineWidth(1.0f);
 
 	// eixo x
@@ -405,6 +403,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    gl.glVertex3f(0f, 0f, 200f);
 	}
 	gl.glEnd();
+	gl.glDisable(GL.GL_COLOR_MATERIAL);
     }
 
 }

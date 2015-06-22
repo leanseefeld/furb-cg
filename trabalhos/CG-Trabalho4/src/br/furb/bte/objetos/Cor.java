@@ -19,5 +19,9 @@ public class Cor {
 	this.g = g;
 	this.b = b;
     }
+    @Override
+    public String toString() {
+        return String.format("r=%f, g=%f, b=%f", r, g, b);
+    }
 
 }

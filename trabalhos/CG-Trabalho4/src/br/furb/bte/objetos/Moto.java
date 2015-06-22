@@ -99,7 +99,6 @@ public class Moto extends Poligono {
     @Override
     public boolean renderizar(GL gl) {
 	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
-	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
 	gl.glPushMatrix();
 	{
 	    Transformacao trans = new Transformacao();
@@ -112,6 +111,7 @@ public class Moto extends Poligono {
 	    B_BOX.draw(gl);
 	}
 	gl.glPopMatrix();
+	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
 	return false;
     }
 
