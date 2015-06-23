@@ -79,7 +79,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private GLAutoDrawable glDrawable;
     private boolean atualizarVisualizacao;
     private boolean perspectiveMode = true;
-    private final float[] posicaoLuz = { 50, 50, 100, 0 };
+    private final float[] posicaoLuz = { 50, 200, 50, 0 };
     // ========== OBJETOS GRÃ�FICOS ==========
     private Mundo mundo;
     private Moto moto1;
@@ -219,6 +219,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
 	gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, posicaoLuz, 0);
 	gl.glEnable(GL.GL_LIGHT0);
+	gl.glEnable(GL.GL_LIGHT1);
 	gl.glEnable(GL.GL_LIGHTING);
 	gl.glShadeModel(GL.GL_SMOOTH);
     }
@@ -564,7 +565,10 @@ public class Tela extends GLCanvas implements GLEventAdapter {
      * Desenha os eixos do Sistema de ReferÃªncia Universal
      */
     public static void desenhaSRU(GL gl) {
-	gl.glEnable(GL.GL_COLOR_MATERIAL);
+//	gl.glEnable(GL.GL_COLOR_MATERIAL);
+	
+	gl.glDisable(GL.GL_LIGHTING);
+	
 	gl.glLineWidth(1.0f);
 
 	// eixo x
@@ -593,7 +597,9 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    gl.glVertex3f(0f, 0f, 200f);
 	}
 	gl.glEnd();
-	gl.glDisable(GL.GL_COLOR_MATERIAL);
+	
+	gl.glEnable(GL.GL_LIGHTING);
+//	gl.glDisable(GL.GL_COLOR_MATERIAL);
     }
 
 }
