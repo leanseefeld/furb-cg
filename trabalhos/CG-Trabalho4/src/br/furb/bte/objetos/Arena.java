@@ -25,7 +25,7 @@ public class Arena extends Poligono {
 
     @Override
     protected List<Ponto> criarPontos() {
-	List<Ponto> pontos = new ArrayList<>(4);
+	List<Ponto> pontos = new ArrayList<Ponto>(4);
 	pontos.add(new Ponto(+largura, 0, -altura));
 	pontos.add(new Ponto(-largura, 0, -altura));
 	pontos.add(new Ponto(-largura, 0, +altura));
