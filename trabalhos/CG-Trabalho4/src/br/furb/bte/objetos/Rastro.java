@@ -21,6 +21,14 @@ public class Rastro extends Poligono {
     }
 
     /**
+     * Retorna os pontos dos rastro
+     * @return
+     */
+    public List<Ponto> getRastro() {
+        return rastro;
+    }
+    
+    /**
      * Aumenta o rastro para a uma novação posição
      * 
      * @param novaPosicao

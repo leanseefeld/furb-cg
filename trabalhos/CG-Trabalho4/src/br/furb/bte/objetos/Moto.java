@@ -17,15 +17,19 @@ public class Moto extends Poligono {
     private final Cor corNormal;
     private final Transformacao ajuste;
     private final String nome;
+    private static List<Ponto> PONTOS;
 
-    private static final int TAMANHO_RASTRO = 300;
-    private static final int VELOCIDADE = 5;
-
-    public static final int CIMA = -90;
+    public static final int TAMANHO_RASTRO = 300;
+    public static final int VELOCIDADE = 5;
+//    public static final int CIMA = -90;
+    public static final int CIMA = 270;
     public static final int DIREITA = 0;
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
-    private static List<Ponto> PONTOS;
+    
+    //TODO descobrir o tamanho da BBox da moto para ajustar esses valores
+    public static final int LARGURA = 10;
+    public static final int COMPRIMENTO = 20;
 
     public Moto(String nome, int x, int z, Cor cor, GL gl) {
 	this.nome = nome;
@@ -168,6 +172,10 @@ public class Moto extends Poligono {
     @Override
     public BBox getBBox() {
 	return B_BOX;
+    }
+
+    public boolean estaNaVertical() {
+	return getAngulo() == Moto.BAIXO || getAngulo() == Moto.CIMA;
     }
 
 }

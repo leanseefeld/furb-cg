@@ -2,6 +2,7 @@ package br.furb.bte.controle.ia;
 
 import java.util.Arrays;
 import java.util.Collection;
+import br.furb.bte.Mapa;
 import br.furb.bte.Tela;
 import br.furb.bte.comando.ProcessadorComando;
 import br.furb.bte.comando.ProcessadorPadrao;
@@ -9,6 +10,7 @@ import br.furb.bte.controle.Controlador;
 import br.furb.bte.controle.input.CenarioInput;
 import br.furb.bte.controle.input.GameplayInput;
 import br.furb.bte.controle.input.KeyboardInput;
+import br.furb.bte.controle.input.Moto1Input;
 import br.furb.bte.ia.MyTronBot;
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Moto;
@@ -22,7 +24,8 @@ public class ControladorIA extends Controlador {
     private ProcessadorComando<Moto> processadorMotos;
     private final CenarioInput cenarioInput;
     private final GameplayInput gameplayInput;
-    private final MotoIAInput motoInput;
+    private final MotoIAInput motoIAInput;
+    private final Moto1Input motoPlayerInput;
     private Direcao direcaoAtual;
 
     private final Collection<KeyboardInput<?>> allInputs;
@@ -31,9 +34,10 @@ public class ControladorIA extends Controlador {
 	criarProcessadores();
 	cenarioInput = new CenarioInput(processadorCenario);
 	gameplayInput = new GameplayInput(processadorGameplay);
-	motoInput = new MotoIAInput(null, processadorMotos);
+	motoIAInput = new MotoIAInput(null, processadorMotos);
+	motoPlayerInput = new Moto1Input(null, processadorMotos);
 
-	allInputs = Arrays.asList(cenarioInput, gameplayInput);
+	allInputs = Arrays.asList(cenarioInput, gameplayInput, motoPlayerInput);
     }
 
     private void criarProcessadores() {
@@ -48,8 +52,8 @@ public class ControladorIA extends Controlador {
 	    allInputs.forEach(i -> i.desassociarTela());
 	}
 	this.tela = tela;
-//	processadorCenario.setTela(tela);
-//	processadorGameplay.setTela(tela);
+	//	processadorCenario.setTela(tela);
+	//	processadorGameplay.setTela(tela);
 	if (tela != null) {
 	    allInputs.forEach(i -> i.associarTela(tela));
 	    tela.addGameplayListener(this);
@@ -60,20 +64,25 @@ public class ControladorIA extends Controlador {
     public void onReset() {
 	if (tela != null) {
 	    Arena arena = tela.getArena();
-	    motoInput.associarMoto(arena.getMoto((short) 2));
+	    motoPlayerInput.associarMoto(arena.getMoto((short) 1));
+	    motoIAInput.associarMoto(arena.getMoto((short) 2));
+	    this.direcaoAtual = Direcao.Norte;
 	}
     }
 
     @Override
     public void beforePlay() {
 	if (tela != null) {
-	    String mapa = tela.getMapa();
-	    Direcao move = toDirecao(MyTronBot.processMove(mapa));
+	    Mapa mapa = tela.getMapa();
+	    int[][] matriz = mapa.getMatriz();
+	    String moveString = MyTronBot.processMove(matriz);
+	    Direcao move = toDirecao(moveString);
 
+	    System.out.println(moveString);
 	    Lado lado = movimentoParaGirarPara(move);
-	    if(lado != null)
-	    {
-		motoInput.girar(lado);
+	    if (lado != null) {
+		System.out.println("IA girou para " + lado.name());
+		motoIAInput.girar(lado);
 		this.direcaoAtual = move;
 	    }
 
@@ -121,8 +130,9 @@ public class ControladorIA extends Controlador {
 		}
 		break;
 	}
-	System.out.println("Direção inválida. Impossível girar de " + this.direcaoAtual.name() + " para "
-		+ direcaoDestino.name());
+	if (this.direcaoAtual != direcaoDestino)
+	    System.out.println("Direção inválida. Impossível girar de " + this.direcaoAtual.name() + " para "
+		    + direcaoDestino.name());
 	return null;
     }
 

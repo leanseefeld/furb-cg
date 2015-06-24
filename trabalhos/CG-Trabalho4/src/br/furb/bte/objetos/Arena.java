@@ -10,15 +10,15 @@ import javax.media.opengl.GL;
 public class Arena extends Poligono {
 
     private short idProxMoto = 1;
-    private int largura;
-    private int altura;
     private final Map<Short, Moto> motos;
+    public static final int LARGURA = 1000;
+    public static final int COMPRIMENTO = 1000;
 
-    public Arena(int largura, int altura) {
+    //    public static final int TAMANHO_ARENA = 1000;
+
+    public Arena() {
 	this.primitiva = GL.GL_QUADS;
 	this.cor = new Cor(0.1f, 0.5f, 0.5f);
-	this.largura = largura;
-	this.altura = altura;
 	carregarPontos();
 	motos = new HashMap<>(3);
     }
@@ -26,10 +26,10 @@ public class Arena extends Poligono {
     @Override
     protected List<Ponto> criarPontos() {
 	List<Ponto> pontos = new ArrayList<Ponto>(4);
-	pontos.add(new Ponto(+largura, 0, -altura));
-	pontos.add(new Ponto(-largura, 0, -altura));
-	pontos.add(new Ponto(-largura, 0, +altura));
-	pontos.add(new Ponto(+largura, 0, +altura));
+	pontos.add(new Ponto(+LARGURA / 2, 0, -COMPRIMENTO / 2));
+	pontos.add(new Ponto(-LARGURA / 2, 0, -COMPRIMENTO / 2));
+	pontos.add(new Ponto(-LARGURA / 2, 0, +COMPRIMENTO / 2));
+	pontos.add(new Ponto(+LARGURA / 2, 0, +COMPRIMENTO / 2));
 	return pontos;
     }
 

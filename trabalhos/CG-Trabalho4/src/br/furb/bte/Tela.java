@@ -24,6 +24,7 @@ import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Cor;
 import br.furb.bte.objetos.Moto;
 import br.furb.bte.objetos.Mundo;
+import br.furb.bte.objetos.Rastro;
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
 import com.sun.opengl.util.texture.TextureData;
@@ -66,7 +67,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private static final int FAR = 2000;
     private static final TextRenderer TEXT_RENDERER = new TextRenderer(new Font("SansSerif", Font.BOLD, 18), true,
 	    false);
-    private static final int TAMANHO_ARENA = 500;
 
     // ========== RECURSOS DO CANVAS ==========
     private int largura = 800;
@@ -477,7 +477,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	animando = false;
 
 	mundo.removerTodosFilhos();
-	arena = new Arena(TAMANHO_ARENA, TAMANHO_ARENA);
+	arena = new Arena();
 	moto1 = new Moto("Player 1", arena.getBBox().getMenorX() + 50, 0, new Cor(1, 0, 0), gl);
 	camera.seguirMoto(moto1);
 	arena.addMoto(moto1);
@@ -619,12 +619,10 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	//		gl.glDisable(GL.GL_COLOR_MATERIAL);
     }
 
-    /**
-     * Retorna o mapa em formato string com o tamanho do mapa, todos os obstáculos e a posição das motos
-     * @return
-     */
-    public String getMapa() {
-	//TODO Implementar
-	return null;
+    public Mapa getMapa() {
+	Mapa mapa = new Mapa(moto1, moto2);
+	mapa.contruirMapa();
+	return mapa;
     }
+
 }

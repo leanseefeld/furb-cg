@@ -28,7 +28,7 @@ public class CanvasFrame extends JFrame {
 	controlador.associarTela(canvas);
 	pack();
     }
-
+    
     @Override
     public void setVisible(boolean b) {
 	super.setVisible(b);
