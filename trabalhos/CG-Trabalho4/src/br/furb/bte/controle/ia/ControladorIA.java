@@ -30,6 +30,8 @@ public class ControladorIA extends Controlador {
 
     private final Collection<KeyboardInput<?>> allInputs;
 
+    private Mapa mapa;
+
     public ControladorIA() {
 	criarProcessadores();
 	cenarioInput = new CenarioInput(processadorCenario);
@@ -66,27 +68,44 @@ public class ControladorIA extends Controlador {
 	    Arena arena = tela.getArena();
 	    motoPlayerInput.associarMoto(arena.getMoto((short) 1));
 	    motoIAInput.associarMoto(arena.getMoto((short) 2));
-	    this.direcaoAtual = Direcao.Norte;
+	    this.direcaoAtual = Direcao.Oeste;
 	}
     }
 
     @Override
     public void beforePlay() {
 	if (tela != null) {
-	    Mapa mapa = tela.getMapa();
+	    mapa = tela.getMapa();
 	    int[][] matriz = mapa.getMatriz();
 	    String moveString = MyTronBot.processMove(matriz);
-	    Direcao move = toDirecao(moveString);
+	    Direcao direcaoDestino = toDirecao(moveString);
 
 	    System.out.println(moveString);
-	    Lado lado = movimentoParaGirarPara(move);
+	    Lado lado = movimentoParaGirarPara(direcaoDestino);
 	    if (lado != null) {
-		System.out.println("IA girou para " + lado.name());
+		
+		MyTronBot.imprimirMapa();
+		System.out.println("De " + this.direcaoAtual.name() + " para " + direcaoDestino.name());
+		System.out.println("Girou para " + lado.name());
+
 		motoIAInput.girar(lado);
-		this.direcaoAtual = move;
+		this.direcaoAtual = direcaoDestino;
 	    }
 
 	}
+    }
+    
+    @Override
+    public void onFinish() {
+	System.out.println("################################ FIM DE JOGO ####################################");
+	System.out.println("Dados do jogo:");
+	System.out.println("Direção atual: " + this.direcaoAtual.name());
+	System.out.println("Mapa gerado pela IA - Map");
+	MyTronBot.imprimirMapa();
+	System.out.println("Mapa gerado pela IA - GameState");
+	MyTronBot.imprimirMapaGameState();
+	System.out.println("Mapa gerado baseado na arena");
+	System.out.println(mapa.toString());
     }
 
     /**
@@ -95,45 +114,52 @@ public class ControladorIA extends Controlador {
      * @param direcaoDestino
      * @return
      */
+    @SuppressWarnings("incomplete-switch")
     private Lado movimentoParaGirarPara(Direcao direcaoDestino) {
+	Lado ladoGirar = null;
 	switch (this.direcaoAtual) {
 	    case Norte:
 		switch (direcaoDestino) {
 		    case Leste:
-			return Lado.Direita;
+			ladoGirar = Lado.Direita;
+			break;
 		    case Oeste:
-			return Lado.Esquerda;
+			ladoGirar = Lado.Esquerda;
+			break;
 		}
 		break;
 	    case Sul:
 		switch (direcaoDestino) {
 		    case Leste:
-			return Lado.Esquerda;
+			ladoGirar = Lado.Esquerda;
+			break;
 		    case Oeste:
-			return Lado.Direita;
+			ladoGirar = Lado.Direita;
+			break;
 		}
 		break;
 	    case Leste:
 		switch (direcaoDestino) {
 		    case Norte:
-			return Lado.Esquerda;
-		    case Oeste:
-			return Lado.Direita;
+			ladoGirar = Lado.Esquerda;
+			break;
+		    case Sul:
+			ladoGirar = Lado.Direita;
+			break;
 		}
 		break;
 	    case Oeste:
 		switch (direcaoDestino) {
 		    case Norte:
-			return Lado.Direita;
-		    case Oeste:
-			return Lado.Esquerda;
+			ladoGirar = Lado.Direita;
+			break;
+		    case Sul:
+			ladoGirar = Lado.Esquerda;
+			break;
 		}
 		break;
 	}
-	if (this.direcaoAtual != direcaoDestino)
-	    System.out.println("Direção inválida. Impossível girar de " + this.direcaoAtual.name() + " para "
-		    + direcaoDestino.name());
-	return null;
+	return ladoGirar;
     }
 
     private Direcao toDirecao(String processMove) {
@@ -151,4 +177,5 @@ public class ControladorIA extends Controlador {
 	System.out.println("Direção inválida: " + processMove);
 	return null;
     }
+
 }

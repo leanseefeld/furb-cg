@@ -14,7 +14,7 @@ public class Mapa {
 
     private final Moto moto1;
     private final Moto moto2;
-    private final int unidadeMedida = Moto.VELOCIDADE * 5;
+    private final int unidadeMedida = Moto.VELOCIDADE * 8;
     private final int tamanhoXMapa = Arena.LARGURA / unidadeMedida;
     private final int tamanhoZMapa = Arena.COMPRIMENTO / unidadeMedida;
     /**
@@ -42,6 +42,14 @@ public class Mapa {
 
 //	System.out.println(this.toString());
 
+	int[][] mapaOposto = new int[mapa.length][mapa[0].length];
+	for (int i = 0; i < mapa.length; i++) {
+	    for (int j = 0; j < mapa[i].length; j++) {
+		mapaOposto[i][j] = mapa[j][i];
+	    }
+	}
+	this.mapa = mapaOposto;
+	
 	return this.mapa;
     }
 

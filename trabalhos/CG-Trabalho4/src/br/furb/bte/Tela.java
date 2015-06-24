@@ -47,7 +47,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 			    executarComportamentos();
 			}
 			glDrawable.display();
-			Thread.sleep(30);
+//			Thread.sleep(30);
 		    } else {
 			synchronized (this) {
 			    wait();
@@ -525,6 +525,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    } else {
 		alterarEstadoJogo(EstadoJogo.VITORIOSO);
 	    }
+	    
+	    fireGameplayEvent(l -> l.onFinish());
 	}
     }
 

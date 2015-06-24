@@ -39,4 +39,7 @@ public abstract class Controlador implements GameplayListener {
     public void onReset() {
     }
 
+    @Override
+    public void onFinish() {
+    }
 }

@@ -18,5 +18,9 @@ public interface GameplayListener {
     void onPause();
 
     void onResume();
-
+    
+    /**
+     * Executa no fim da partida. Ou seja, quando algum dos jogadores perdem ou há empate
+     */
+    void onFinish();
 }
