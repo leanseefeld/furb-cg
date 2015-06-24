@@ -41,7 +41,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    while (true) {
 		try {
 		    if (animando || jogando || executandoPasso) {
-			//			System.out.println("Tela.RenderLoop.run()");
 			if (jogando) {
 			    fireGameplayEvent(l -> l.beforePlay());
 			    executarComportamentos();
