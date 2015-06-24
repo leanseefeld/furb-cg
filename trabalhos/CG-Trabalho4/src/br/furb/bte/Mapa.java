@@ -40,7 +40,7 @@ public class Mapa {
 	inserirMoto(moto1, MOTO1);
 	inserirMoto(moto2, MOTO2);
 
-	System.out.println(this.toString());
+//	System.out.println(this.toString());
 
 	return this.mapa;
     }
