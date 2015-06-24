@@ -61,8 +61,11 @@ public class Mapa {
 
     private void inserirMoto(Moto moto, int valorMoto) {
 	Ponto pontoMoto1 = moto.getBBoxTransformada().getCentro();
-	int largura = (Moto.LARGURA / unidadeMedida / 2);
-	int comprimento = (int) (Moto.COMPRIMENTO / unidadeMedida / 2);
+// Comentado pois se a moto é muito grande, o algoritmo de IA vai considerar a própria moto como um obstáculo
+//	int largura = (Moto.LARGURA / unidadeMedida / 2);
+//	int comprimento = (int) (Moto.COMPRIMENTO / unidadeMedida / 2);
+	int largura = 0;
+	int comprimento = 0;
 
 	for (int i = -largura; i <= largura; i++) {
 	    for (int j = -comprimento; j <= comprimento; j++) {
