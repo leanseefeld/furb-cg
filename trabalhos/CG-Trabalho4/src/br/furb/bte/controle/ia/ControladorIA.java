@@ -9,7 +9,6 @@ import br.furb.bte.controle.Controlador;
 import br.furb.bte.controle.input.CenarioInput;
 import br.furb.bte.controle.input.GameplayInput;
 import br.furb.bte.controle.input.KeyboardInput;
-import br.furb.bte.controle.input.Moto2Input;
 import br.furb.bte.ia.MyTronBot;
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Moto;
