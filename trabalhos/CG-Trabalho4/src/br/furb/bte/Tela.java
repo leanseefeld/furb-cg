@@ -31,6 +31,8 @@ import com.sun.opengl.util.texture.TextureData;
 
 public class Tela extends GLCanvas implements GLEventAdapter {
 
+    public int contadorTemporario;
+
     private class RenderLoop extends Thread {
 
 	public RenderLoop() {
@@ -43,11 +45,16 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		try {
 		    if (animando || jogando || executandoPasso) {
 			if (jogando) {
-			    fireGameplayEvent(l -> l.beforePlay());
+			    if (contadorTemporario-- <= 0) {
+				contadorTemporario = Moto.VELOCIDADE;
+				//TODO: Isso deverá ser alterado para executar em outra thread
+				fireGameplayEvent(l -> l.beforePlay());
+			    } else {
+				Thread.sleep(30);
+			    }
 			    executarComportamentos();
 			}
 			glDrawable.display();
-//			Thread.sleep(30);
 		    } else {
 			synchronized (this) {
 			    wait();
@@ -525,7 +532,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	    } else {
 		alterarEstadoJogo(EstadoJogo.VITORIOSO);
 	    }
-	    
+
 	    fireGameplayEvent(l -> l.onFinish());
 	}
     }

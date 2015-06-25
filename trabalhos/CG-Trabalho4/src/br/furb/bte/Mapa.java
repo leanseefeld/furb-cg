@@ -11,12 +11,12 @@ public class Mapa {
     public static final int MOTO1 = 1;
     public static final int MOTO2 = 2;
     public static final int VAZIO = 0;
+    public static final int ESCALA = Moto.VELOCIDADE * 8;
 
     private final Moto moto1;
     private final Moto moto2;
-    private final int unidadeMedida = Moto.VELOCIDADE * 8;
-    private final int tamanhoXMapa = Arena.LARGURA / unidadeMedida;
-    private final int tamanhoZMapa = Arena.COMPRIMENTO / unidadeMedida;
+    private final int tamanhoXMapa = Arena.LARGURA / ESCALA;
+    private final int tamanhoZMapa = Arena.COMPRIMENTO / ESCALA;
     /**
      * Esse ajuste é necessário pois a arena não inicia na posição 0, 0 do mapa
      */
@@ -77,8 +77,8 @@ public class Mapa {
 
 	for (int i = -largura; i <= largura; i++) {
 	    for (int j = -comprimento; j <= comprimento; j++) {
-		int x = (pontoMoto1.x + ajusteCoordenadasX) / unidadeMedida;
-		int z = (pontoMoto1.z + ajusteCoordenadasZ) / unidadeMedida;
+		int x = (pontoMoto1.x + ajusteCoordenadasX) / ESCALA;
+		int z = (pontoMoto1.z + ajusteCoordenadasZ) / ESCALA;
 		//TODO Verificar se não é o contrário
 		if (moto.estaNaVertical())
 		    mapa[validaX(x + i)][validaZ(z + j)] = valorMoto;
@@ -107,8 +107,8 @@ public class Mapa {
 
     private void inserirRastros(Rastro rastro) {
 	for (Ponto ponto : rastro.getRastro()) {
-	    final int x = validaX((ponto.x + ajusteCoordenadasX) / unidadeMedida);
-	    final int z = validaZ((ponto.z + ajusteCoordenadasZ) / unidadeMedida);
+	    final int x = validaX((ponto.x + ajusteCoordenadasX) / ESCALA);
+	    final int z = validaZ((ponto.z + ajusteCoordenadasZ) / ESCALA);
 	    mapa[x][z] = OBSTACULO;
 	}
     }

@@ -68,7 +68,7 @@ public class ControladorIA extends Controlador {
 	    Arena arena = tela.getArena();
 	    motoPlayerInput.associarMoto(arena.getMoto((short) 1));
 	    motoIAInput.associarMoto(arena.getMoto((short) 2));
-	    this.direcaoAtual = Direcao.Oeste;
+	    this.direcaoAtual = Direcao.Norte;
 	}
     }
 
