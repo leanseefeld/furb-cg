@@ -1,5 +1,6 @@
 package br.furb.bte;
 
+import java.util.List;
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Moto;
 import br.furb.bte.objetos.Ponto;
@@ -40,8 +41,6 @@ public class Mapa {
 	inserirMoto(moto1, MOTO1);
 	inserirMoto(moto2, MOTO2);
 
-//	System.out.println(this.toString());
-
 	int[][] mapaOposto = new int[mapa.length][mapa[0].length];
 	for (int i = 0; i < mapa.length; i++) {
 	    for (int j = 0; j < mapa[i].length; j++) {
@@ -49,7 +48,7 @@ public class Mapa {
 	    }
 	}
 	this.mapa = mapaOposto;
-	
+
 	return this.mapa;
     }
 
@@ -69,9 +68,9 @@ public class Mapa {
 
     private void inserirMoto(Moto moto, int valorMoto) {
 	Ponto pontoMoto1 = moto.getBBoxTransformada().getCentro();
-// Comentado pois se a moto é muito grande, o algoritmo de IA vai considerar a própria moto como um obstáculo
-//	int largura = (Moto.LARGURA / unidadeMedida / 2);
-//	int comprimento = (int) (Moto.COMPRIMENTO / unidadeMedida / 2);
+	// Comentado pois se a moto é muito grande, o algoritmo de IA vai considerar a própria moto como um obstáculo
+	//	int largura = (Moto.LARGURA / unidadeMedida / 2);
+	//	int comprimento = (int) (Moto.COMPRIMENTO / unidadeMedida / 2);
 	int largura = 0;
 	int comprimento = 0;
 
@@ -106,10 +105,13 @@ public class Mapa {
     }
 
     private void inserirRastros(Rastro rastro) {
-	for (Ponto ponto : rastro.getRastro()) {
-	    final int x = validaX((ponto.x + ajusteCoordenadasX) / ESCALA);
-	    final int z = validaZ((ponto.z + ajusteCoordenadasZ) / ESCALA);
-	    mapa[x][z] = OBSTACULO;
+	List<Ponto> pontos = rastro.getRastro();
+	synchronized (pontos) {
+	    for (Ponto ponto : pontos) {
+		final int x = validaX((ponto.x + ajusteCoordenadasX) / ESCALA);
+		final int z = validaZ((ponto.z + ajusteCoordenadasZ) / ESCALA);
+		mapa[x][z] = OBSTACULO;
+	    }
 	}
     }
 

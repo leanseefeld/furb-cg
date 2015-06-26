@@ -3,6 +3,7 @@ package br.furb.bte.controle.ia;
 import java.util.Arrays;
 import java.util.Collection;
 import br.furb.bte.Mapa;
+import br.furb.bte.Parametros;
 import br.furb.bte.Tela;
 import br.furb.bte.comando.ProcessadorComando;
 import br.furb.bte.comando.ProcessadorPadrao;
@@ -58,8 +59,8 @@ public class ControladorIA extends Controlador {
 	    allInputs.forEach(i -> i.desassociarTela());
 	}
 	this.tela = tela;
-	//	processadorCenario.setTela(tela);
-	//	processadorGameplay.setTela(tela);
+	// processadorCenario.setTela(tela);
+	// processadorGameplay.setTela(tela);
 	if (tela != null) {
 	    allInputs.forEach(i -> i.associarTela(tela));
 	    tela.addGameplayListener(this);
@@ -79,7 +80,6 @@ public class ControladorIA extends Controlador {
     @Override
     public void beforePlay() {
 	if (tela != null) {
-//	    System.out.println("ControladorIA.beforePlay()");
 	    botLoop.setFreeToPlay();
 	}
     }
@@ -97,6 +97,9 @@ public class ControladorIA extends Controlador {
 
     @Override
     public void onFinish() {
+	if (!Parametros.TRACE_IA) {
+	    return;
+	}
 	System.out.println("################################ FIM DE JOGO ####################################");
 	System.out.println("Dados do jogo:");
 	System.out.println("Direção atual: " + this.direcaoAtual.getNameInPT());
@@ -178,18 +181,21 @@ public class ControladorIA extends Controlador {
 	    while (true) {
 		if (play) {
 		    play = false;
-		    System.out.println("ControladorIA.BotLoop.run(): playing");
 		    mapa = tela.getMapa();
 		    int[][] matriz = mapa.getMatriz();
 		    Direction direcaoDestino = deParaDirecao(MyTronBot.processMove(matriz));
 
-		    System.out.println(direcaoDestino.getNameInPT());
+		    if (Parametros.TRACE_IA) {
+			System.out.println(direcaoDestino.getNameInPT());
+		    }
 		    Lado lado = movimentoParaGirarPara(direcaoDestino);
 		    if (lado != null) {
 
-			//		MyTronBot.imprimirMapa();
-//			System.out.println("De " + direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
-//			System.out.println("Girou para " + lado.name());
+			if (Parametros.TRACE_IA) {
+			    System.out.println("De " + direcaoAtual.getNameInPT() + " para "
+				    + direcaoDestino.getNameInPT());
+			    System.out.println("Girou para " + lado.name());
+			}
 
 			motoIAInput.girar(lado);
 			direcaoAtual = direcaoDestino;

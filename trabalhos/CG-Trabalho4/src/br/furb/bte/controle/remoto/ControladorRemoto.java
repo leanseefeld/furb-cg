@@ -87,7 +87,6 @@ public class ControladorRemoto extends Controlador {
 
 	private void processCommand(String receivedCommand) throws IOException {
 	    System.out.println("ControladorRemoto.RemoteListener.processCommand: " + receivedCommand);
-	    // TODO: usar o processadorMotoRemota
 	    String[] splitCommand = receivedCommand.split("\\s+");
 	    TipoComando tipoComando = TipoComando.valueOf(splitCommand[0]);
 	    try {
