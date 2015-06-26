@@ -1,5 +1,9 @@
 package br.furb.bte;
 
 public interface Parametros {
-    public static boolean DESENHAR_BBOX = true;
+
+    static boolean DESENHAR_BBOX = false;
+    static int FPS = 30;
+    static long RENDER_INTERVAL = 1000 / FPS;
+    
 }
