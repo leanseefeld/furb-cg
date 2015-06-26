@@ -11,6 +11,7 @@ import br.furb.bte.controle.input.CenarioInput;
 import br.furb.bte.controle.input.GameplayInput;
 import br.furb.bte.controle.input.KeyboardInput;
 import br.furb.bte.controle.input.Moto1Input;
+import br.furb.bte.ia.Direction;
 import br.furb.bte.ia.MyTronBot;
 import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Moto;
@@ -26,7 +27,7 @@ public class ControladorIA extends Controlador {
     private final GameplayInput gameplayInput;
     private final MotoIAInput motoIAInput;
     private final Moto1Input motoPlayerInput;
-    private Direcao direcaoAtual;
+    private Direction direcaoAtual;
 
     private final Collection<KeyboardInput<?>> allInputs;
 
@@ -68,7 +69,7 @@ public class ControladorIA extends Controlador {
 	    Arena arena = tela.getArena();
 	    motoPlayerInput.associarMoto(arena.getMoto((short) 1));
 	    motoIAInput.associarMoto(arena.getMoto((short) 2));
-	    this.direcaoAtual = Direcao.Norte;
+	    this.direcaoAtual = Direction.North;
 	}
     }
 
@@ -77,15 +78,14 @@ public class ControladorIA extends Controlador {
 	if (tela != null) {
 	    mapa = tela.getMapa();
 	    int[][] matriz = mapa.getMatriz();
-	    String moveString = MyTronBot.processMove(matriz);
-	    Direcao direcaoDestino = toDirecao(moveString);
+	    Direction direcaoDestino = MyTronBot.processMove(matriz);
 
-	    System.out.println(moveString);
+	    System.out.println(direcaoDestino.getNameInPT());
 	    Lado lado = movimentoParaGirarPara(direcaoDestino);
 	    if (lado != null) {
 		
 		MyTronBot.imprimirMapa();
-		System.out.println("De " + this.direcaoAtual.name() + " para " + direcaoDestino.name());
+		System.out.println("De " + this.direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
 		System.out.println("Girou para " + lado.name());
 
 		motoIAInput.girar(lado);
@@ -99,7 +99,7 @@ public class ControladorIA extends Controlador {
     public void onFinish() {
 	System.out.println("################################ FIM DE JOGO ####################################");
 	System.out.println("Dados do jogo:");
-	System.out.println("Direção atual: " + this.direcaoAtual.name());
+	System.out.println("Direção atual: " + this.direcaoAtual.getNameInPT());
 	System.out.println("Mapa gerado pela IA - Map");
 	MyTronBot.imprimirMapa();
 	System.out.println("Mapa gerado pela IA - GameState");
@@ -115,45 +115,45 @@ public class ControladorIA extends Controlador {
      * @return
      */
     @SuppressWarnings("incomplete-switch")
-    private Lado movimentoParaGirarPara(Direcao direcaoDestino) {
+    private Lado movimentoParaGirarPara(Direction direcaoDestino) {
 	Lado ladoGirar = null;
 	switch (this.direcaoAtual) {
-	    case Norte:
+	    case North:
 		switch (direcaoDestino) {
-		    case Leste:
+		    case East:
 			ladoGirar = Lado.Direita;
 			break;
-		    case Oeste:
+		    case West:
 			ladoGirar = Lado.Esquerda;
 			break;
 		}
 		break;
-	    case Sul:
+	    case South:
 		switch (direcaoDestino) {
-		    case Leste:
+		    case East:
 			ladoGirar = Lado.Esquerda;
 			break;
-		    case Oeste:
+		    case West:
 			ladoGirar = Lado.Direita;
 			break;
 		}
 		break;
-	    case Leste:
+	    case East:
 		switch (direcaoDestino) {
-		    case Norte:
+		    case North:
 			ladoGirar = Lado.Esquerda;
 			break;
-		    case Sul:
+		    case South:
 			ladoGirar = Lado.Direita;
 			break;
 		}
 		break;
-	    case Oeste:
+	    case West:
 		switch (direcaoDestino) {
-		    case Norte:
+		    case North:
 			ladoGirar = Lado.Direita;
 			break;
-		    case Sul:
+		    case South:
 			ladoGirar = Lado.Esquerda;
 			break;
 		}
@@ -161,21 +161,4 @@ public class ControladorIA extends Controlador {
 	}
 	return ladoGirar;
     }
-
-    private Direcao toDirecao(String processMove) {
-	char move = processMove.toUpperCase().charAt(0);
-	switch (move) {
-	    case 'N':
-		return Direcao.Norte;
-	    case 'S':
-		return Direcao.Sul;
-	    case 'E':
-		return Direcao.Leste;
-	    case 'W':
-		return Direcao.Oeste;
-	}
-	System.out.println("Direção inválida: " + processMove);
-	return null;
-    }
-
 }
