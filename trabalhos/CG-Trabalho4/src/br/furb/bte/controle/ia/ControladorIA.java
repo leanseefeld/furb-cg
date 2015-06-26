@@ -2,6 +2,7 @@ package br.furb.bte.controle.ia;
 
 import java.util.Arrays;
 import java.util.Collection;
+import javax.annotation.processing.Processor;
 import br.furb.bte.Mapa;
 import br.furb.bte.Tela;
 import br.furb.bte.comando.ProcessadorComando;
@@ -78,13 +79,13 @@ public class ControladorIA extends Controlador {
 	if (tela != null) {
 	    mapa = tela.getMapa();
 	    int[][] matriz = mapa.getMatriz();
-	    Direction direcaoDestino = MyTronBot.processMove(matriz);
+	    Direction direcaoDestino = deParaDirecao(MyTronBot.processMove(matriz));
 
 	    System.out.println(direcaoDestino.getNameInPT());
 	    Lado lado = movimentoParaGirarPara(direcaoDestino);
 	    if (lado != null) {
-		
-		MyTronBot.imprimirMapa();
+
+		//		MyTronBot.imprimirMapa();
 		System.out.println("De " + this.direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
 		System.out.println("Girou para " + lado.name());
 
@@ -94,7 +95,18 @@ public class ControladorIA extends Controlador {
 
 	}
     }
-    
+
+    private Direction deParaDirecao(Direction processMove) {
+	switch (processMove) {
+	    case West:
+		return Direction.East;
+	    case East:
+		return Direction.West;
+	    default:
+		return processMove;
+	}
+    }
+
     @Override
     public void onFinish() {
 	System.out.println("################################ FIM DE JOGO ####################################");
@@ -103,8 +115,6 @@ public class ControladorIA extends Controlador {
 	System.out.println("Mapa gerado pela IA - Map");
 	MyTronBot.imprimirMapa();
 	System.out.println("Mapa gerado pela IA - GameState");
-	MyTronBot.imprimirMapaGameState();
-	System.out.println("Mapa gerado baseado na arena");
 	System.out.println(mapa.toString());
     }
 
