@@ -86,7 +86,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private final float[] posicaoLuz = { 25, 100, 25, 0.1f };
     private final float[] direcaoLuz = { 0, 0, 0 };
     private final float[] luzAmbiente = { 0.2f, 0.2f, 0.2f, 0.2f };
-    // ========== OBJETOS GRÃ�FICOS ==========
+    // ========== OBJETOS GRÁFICOS ==========
     private Mundo mundo;
     private Moto moto1;
     private Moto moto2;
@@ -94,7 +94,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private Arena arena;
     private Camera camera;
 
-    // ========== CONTROLES DE EXECUÃ‡ÃƒO ==========
+    // ========== CONTROLES DE EXECUÇÃO ==========
     private EstadoJogo estadoJogo;
     private boolean jogando;
     private boolean animando = true;
@@ -261,18 +261,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	TEXT_RENDERER.endRendering();
     }
 
-    private void drawCube(float xS, float yS, float zS) {
-	float[] red = { 1f, 0f, 0f, 1f };
-	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, red, 0);
-
-	gl.glPushMatrix();
-	{
-	    gl.glScalef(xS, yS, zS);
-	    new GLUT().glutSolidCube(1.0f);
-	}
-	gl.glPopMatrix();
-    }
-
     private void aplicaTextura() {
 	// Habilita o modelo de colorização de Gouraud
 	gl.glShadeModel(GL.GL_SMOOTH);
@@ -294,60 +282,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	// Define os filtros de magnificação e minificação
 	gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 	gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-    }
-
-    private void testeCubo() {
-	gl.glDisable(GL.GL_CULL_FACE);
-	gl.glEnable(GL.GL_TEXTURE_2D);
-	{
-	    gl.glPushMatrix();
-	    {
-		gl.glBegin(GL.GL_QUADS);
-		{
-		    // Especifica a coordenada de textura para cada vértice
-		    // Face frontal
-		    gl.glNormal3f(0.0f, 0.0f, -1.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    gl.glTexCoord2f(1.0f, 0.0f);
-		    gl.glTexCoord2f(0.0f, 0.0f);
-		    // Face posterior
-		    gl.glNormal3f(0.0f, 0.0f, 1.0f);
-		    gl.glTexCoord2f(1.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 0.0f);
-		    // Face superior
-		    gl.glNormal3f(0.0f, 1.0f, 0.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    // Face inferior
-		    gl.glNormal3f(0.0f, -1.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 0.0f);
-		    // Face lateral direita
-		    gl.glNormal3f(1.0f, 0.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 0.0f);
-		    // Face lateral esquerda
-		    gl.glNormal3f(-1.0f, 0.0f, 0.0f);
-		    gl.glTexCoord2f(0.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 0.0f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glEnd();
-		}
-		gl.glPopMatrix();
-	    }
-	    gl.glDisable(GL.GL_TEXTURE_2D);
-	}
-
     }
 
     private void drawWalls() {
@@ -524,24 +458,24 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		    gl.glVertex3f(-550f, 0f, -500);
 		    //face de baixo
 		    gl.glNormal3f(0.0f, 1.0f, 0.0f);
-		    gl.glTexCoord2f(0.0f, 1.0f);
-		    gl.glVertex3f(-500, 0f, +500);
 		    gl.glTexCoord2f(0.0f, 0.0f);
 		    gl.glVertex3f(-550f, 0f, -500);
 		    gl.glTexCoord2f(1.0f, 0.0f);
 		    gl.glVertex3f(-550f, 0f, +500);
 		    gl.glTexCoord2f(1.0f, 1.0f);
 		    gl.glVertex3f(-500, 0f, -500);
+		    gl.glTexCoord2f(0.0f, 1.0f);
+		    gl.glVertex3f(-500, 0f, +500);
 		    // face de cima
 		    gl.glNormal3f(0.0f, 1.0f, 0.0f);
 		    gl.glTexCoord2f(0.0f, 1.0f);
+		    gl.glVertex3f(-500, 50f, +500);
+		    gl.glTexCoord2f(1.0f, 1.0f);
 		    gl.glVertex3f(-500, 50f, -500);
 		    gl.glTexCoord2f(0.0f, 0.0f);
-		    gl.glVertex3f(-500, 50f, -550f);
+		    gl.glVertex3f(-550, 50f, -500f);
 		    gl.glTexCoord2f(1.0f, 0.0f);
-		    gl.glVertex3f(+500, 50f, -550f);
-		    gl.glTexCoord2f(1.0f, 1.0f);
-		    gl.glVertex3f(+500, 50f, -500);
+		    gl.glVertex3f(-550, 50f, +500f);
 		    // face lateral esquerda
 		    gl.glNormal3f(-1.0f, 0.0f, 0.0f);
 		    gl.glTexCoord2f(0.0f, 0.0f);
@@ -710,6 +644,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	teveColisao2 = verificaColisaoMoto(inimigo);
 	if (teveColisao1 || teveColisao2) {
 	    alterarExecucao(false);
+	    camera.seguirMoto(teveColisao1 ? motoJogadorReal : inimigo);
 	    if (teveColisao1 && teveColisao2) {
 		alterarEstadoJogo(EstadoJogo.EMPATADO);
 	    } else if (teveColisao1) {
@@ -749,12 +684,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     public void render() {
-	// System.out.println("Tela.render()");
-	// forÃ§a que sÃ³ execute quando o RenderLoop chegar no wait(),
-	// garantindo
-	// que
-	// o comportamento vai terminar de executar antes de renderizar
-	// novamente
+	// força que só execute quando o RenderLoop chegar no wait(), garantindo que o 
+	// comportamento vai terminar de executar antes de renderizar novamente
 	synchronized (renderLoop) {
 	    glDrawable.display();
 	    renderLoop.notify();
