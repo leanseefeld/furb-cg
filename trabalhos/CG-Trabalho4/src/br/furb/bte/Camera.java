@@ -186,10 +186,6 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    //	    offsetY /= scaleY;
 
 	    incAnguloY += offsetX * 50;
-//	    if(incAnguloY >= 360){
-//		incAnguloY = -(incAnguloY % 360);
-//	    }
-	    System.out.println(incAnguloY);
 	    //	    atualizaPosicaoCamera();
 
 	    tela.render();
