@@ -1,0 +1,1 @@
+java -cp ".;gluegen-rt.jar;jogl.jar" -Dfile.encoding=UTF-8 br.furb.bte.ui.Launcher
