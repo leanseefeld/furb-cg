@@ -29,8 +29,6 @@ import com.sun.opengl.util.texture.TextureData;
 
 public class Tela extends GLCanvas implements GLEventAdapter {
 
-    public int contadorTemporario;
-
     private class RenderLoop extends Thread {
 
 	public RenderLoop() {
@@ -43,12 +41,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		try {
 		    if (animando || jogando || executandoPasso) {
 			if (jogando) {
-			    if (contadorTemporario-- <= 0) {
-				contadorTemporario = Moto.VELOCIDADE;
-				fireGameplayEvent(l -> l.beforePlay());
-			    } else {
-				Thread.sleep(Parametros.RENDER_INTERVAL);
-			    }
+			    fireGameplayEvent(l -> l.beforePlay());
+			    Thread.sleep(Parametros.RENDER_INTERVAL);
 			    executarComportamentos();
 			}
 			glDrawable.display();
@@ -280,8 +274,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	aplicaTextura();
 	gl.glEnable(GL.GL_TEXTURE_2D);
 	{
-	    //float[] cor = { 0, 1, 0, 1f };
-	    //gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor, 0);
+	    // float[] cor = { 0, 1, 0, 1f };
+	    // gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor, 0);
 
 	    // Desenha um cubo no qual a textura é aplicada
 	    // gl.glEnable(GL.GL_TEXTURE_2D); // Primeiro habilita uso de
@@ -312,7 +306,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		    gl.glVertex3f(+500, 50f, +550f);
 		    gl.glTexCoord2f(0.0f, 0.0f);
 		    gl.glVertex3f(+500, 0f, +550f);
-		    //face de Baixo
+		    // face de Baixo
 		    gl.glNormal3f(0.0f, -1.0f, 0.0f);
 		    gl.glTexCoord2f(1.0f, 1.0f);
 		    gl.glVertex3f(-500, 0f, +500);
@@ -379,7 +373,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		    gl.glVertex3f(+500, 50f, -550f);
 		    gl.glTexCoord2f(0.0f, 0.0f);
 		    gl.glVertex3f(+500, 0f, -550f);
-		    //face de baixo
+		    // face de baixo
 		    gl.glNormal3f(0.0f, 1.0f, 0.0f);
 		    gl.glTexCoord2f(0.0f, 1.0f);
 		    gl.glVertex3f(-500, 0f, -500);
@@ -446,7 +440,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		    gl.glVertex3f(-550f, 50f, -500);
 		    gl.glTexCoord2f(0.0f, 0.0f);
 		    gl.glVertex3f(-550f, 0f, -500);
-		    //face de baixo
+		    // face de baixo
 		    gl.glNormal3f(0.0f, 1.0f, 0.0f);
 		    gl.glTexCoord2f(0.0f, 0.0f);
 		    gl.glVertex3f(-550f, 0f, -500);
@@ -513,7 +507,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		    gl.glVertex3f(+550f, 50f, -500);
 		    gl.glTexCoord2f(0.0f, 0.0f);
 		    gl.glVertex3f(+550f, 0f, -500);
-		    //face de baixo
+		    // face de baixo
 		    gl.glNormal3f(0.0f, 1.0f, 0.0f);
 		    gl.glTexCoord2f(0.0f, 1.0f);
 		    gl.glVertex3f(+500, 0f, +500);
@@ -674,7 +668,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     }
 
     public void render() {
-	// força que só execute quando o RenderLoop chegar no wait(), garantindo que o 
+	// força que só execute quando o RenderLoop chegar no wait(), garantindo
+	// que o
 	// comportamento vai terminar de executar antes de renderizar novamente
 	synchronized (renderLoop) {
 	    glDrawable.display();

@@ -79,7 +79,7 @@ public class ControladorIA extends Controlador {
     @Override
     public void beforePlay() {
 	if (tela != null) {
-	    System.out.println("ControladorIA.beforePlay()");
+//	    System.out.println("ControladorIA.beforePlay()");
 	    botLoop.setFreeToPlay();
 	}
     }
@@ -188,8 +188,8 @@ public class ControladorIA extends Controlador {
 		    if (lado != null) {
 
 			//		MyTronBot.imprimirMapa();
-			System.out.println("De " + direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
-			System.out.println("Girou para " + lado.name());
+//			System.out.println("De " + direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
+//			System.out.println("Girou para " + lado.name());
 
 			motoIAInput.girar(lado);
 			direcaoAtual = direcaoDestino;

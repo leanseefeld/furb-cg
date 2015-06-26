@@ -67,7 +67,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	final Ponto pontoObservado = objObservado.getBBoxTransformada().getCentro();
 	float anguloCameraYProximo = rotationLocked ? moto.getAngulo() + 180 : incAnguloY;
 
-	float diferencaAngulo = anguloCameraYProximo - anguloCameraY;
+	float diferencaAngulo = (anguloCameraYProximo - anguloCameraY) % 360;
 	if (diferencaAngulo != 0) {
 	    if (diferencaAngulo < -VELOCIDADE_ROTACAO) {
 		anguloCameraY -= VELOCIDADE_ROTACAO;
@@ -186,6 +186,10 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    //	    offsetY /= scaleY;
 
 	    incAnguloY += offsetX * 50;
+//	    if(incAnguloY >= 360){
+//		incAnguloY = -(incAnguloY % 360);
+//	    }
+	    System.out.println(incAnguloY);
 	    //	    atualizaPosicaoCamera();
 
 	    tela.render();
