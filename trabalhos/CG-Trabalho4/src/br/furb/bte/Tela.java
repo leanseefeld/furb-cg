@@ -223,24 +223,15 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	}
 	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 	gl.glLoadIdentity();
-	// transformacaoMundo =
-	// camera.absorverTransformacao(transformacaoMundo);
-	// gl.glPushMatrix();
-	// {
-	// gl.glMultMatrixd(transformacaoMundo.getMatriz(), 0);
 
 	animando = camera.atualizar(glu);
 	animando |= mundo.renderizar(gl);
-	// drawCube(30, 100, 30);
 	if (Parametros.DESENHAR_SRU) {
 	    desenhaSRU(gl);
 	}
-	// new GLUT().glutSolidCube(100);
-	// gl.glFlush();
-	// }
-	// gl.glPopMatrix();
-	//
-	drawWalls();
+	if (Parametros.DESENHAR_MUROS) {
+	    drawWalls();
+	}
 
 	TEXT_RENDERER.beginRendering(largura, altura);
 	{
