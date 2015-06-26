@@ -2,7 +2,6 @@ package br.furb.bte.controle.ia;
 
 import java.util.Arrays;
 import java.util.Collection;
-import javax.annotation.processing.Processor;
 import br.furb.bte.Mapa;
 import br.furb.bte.Tela;
 import br.furb.bte.comando.ProcessadorComando;
@@ -32,6 +31,7 @@ public class ControladorIA extends Controlador {
 
     private final Collection<KeyboardInput<?>> allInputs;
 
+    private final BotLoop botLoop;
     private Mapa mapa;
 
     public ControladorIA() {
@@ -42,6 +42,8 @@ public class ControladorIA extends Controlador {
 	motoPlayerInput = new Moto1Input(null, processadorMotos);
 
 	allInputs = Arrays.asList(cenarioInput, gameplayInput, motoPlayerInput);
+	botLoop = new BotLoop();
+	botLoop.start();
     }
 
     private void criarProcessadores() {
@@ -77,22 +79,8 @@ public class ControladorIA extends Controlador {
     @Override
     public void beforePlay() {
 	if (tela != null) {
-	    mapa = tela.getMapa();
-	    int[][] matriz = mapa.getMatriz();
-	    Direction direcaoDestino = deParaDirecao(MyTronBot.processMove(matriz));
-
-	    System.out.println(direcaoDestino.getNameInPT());
-	    Lado lado = movimentoParaGirarPara(direcaoDestino);
-	    if (lado != null) {
-
-		//		MyTronBot.imprimirMapa();
-		System.out.println("De " + this.direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
-		System.out.println("Girou para " + lado.name());
-
-		motoIAInput.girar(lado);
-		this.direcaoAtual = direcaoDestino;
-	    }
-
+	    System.out.println("ControladorIA.beforePlay()");
+	    botLoop.setFreeToPlay();
 	}
     }
 
@@ -171,4 +159,51 @@ public class ControladorIA extends Controlador {
 	}
 	return ladoGirar;
     }
+
+    private class BotLoop extends Thread {
+
+	private volatile boolean play;
+
+	public BotLoop() {
+	    super("BotLoop");
+	}
+
+	public synchronized void setFreeToPlay() {
+	    play = true;
+	    notify();
+	}
+
+	@Override
+	public void run() {
+	    while (true) {
+		if (play) {
+		    play = false;
+		    System.out.println("ControladorIA.BotLoop.run(): playing");
+		    mapa = tela.getMapa();
+		    int[][] matriz = mapa.getMatriz();
+		    Direction direcaoDestino = deParaDirecao(MyTronBot.processMove(matriz));
+
+		    System.out.println(direcaoDestino.getNameInPT());
+		    Lado lado = movimentoParaGirarPara(direcaoDestino);
+		    if (lado != null) {
+
+			//		MyTronBot.imprimirMapa();
+			System.out.println("De " + direcaoAtual.getNameInPT() + " para " + direcaoDestino.getNameInPT());
+			System.out.println("Girou para " + lado.name());
+
+			motoIAInput.girar(lado);
+			direcaoAtual = direcaoDestino;
+		    }
+		}
+		synchronized (this) {
+		    try {
+			wait();
+		    } catch (InterruptedException e) {
+			e.printStackTrace();
+		    }
+		}
+	    }
+	}
+    }
+
 }

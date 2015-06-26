@@ -45,8 +45,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 			if (jogando) {
 			    if (contadorTemporario-- <= 0) {
 				contadorTemporario = Moto.VELOCIDADE;
-				// TODO: Isso deverá ser alterado para executar
-				// em outra thread
 				fireGameplayEvent(l -> l.beforePlay());
 			    } else {
 				Thread.sleep(Parametros.RENDER_INTERVAL);
