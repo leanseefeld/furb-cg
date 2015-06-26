@@ -29,6 +29,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
     private int distancia = 0;
     private Moto moto;
     private double[] antigaConfig;
+    private boolean rotationLocked = false;
 
     public Camera(Tela tela) {
 	this.tela = tela;
@@ -39,7 +40,6 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	} catch (AWTException e) {
 	    e.printStackTrace();
 	}
-	//	incAnguloY = 45;
 
 	tela.addMouseWheelListener(this);
 	tela.addMouseMotionListener(this);
@@ -52,11 +52,11 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
     }
 
     /**
-     * Atualiza as configuraÃ§Ãµes da cÃ¢mera no GLU.
+     * Atualiza as configurações da câmera no GLU.
      * 
      * @param glu
-     *            GLU a ser configurado de acordo com as configuraÃ§Ãµes desta cÃ¢mera.
-     * @return se a cÃ¢mera pode precisar ser ajustada no prÃ³ximo quadro (como quando estÃ¡ sendo
+     *            GLU a ser configurado de acordo com as configurações desta câmera.
+     * @return se a câmera pode precisar ser ajustada no próximo quadro (como quando está sendo
      *         animada).
      */
     public boolean atualizar(GLU glu) {
@@ -65,7 +65,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    return false;
 	}
 	final Ponto pontoObservado = objObservado.getBBoxTransformada().getCentro();
-	float anguloCameraYProximo = moto == null ? incAnguloY : moto.getAngulo() + 180;
+	float anguloCameraYProximo = rotationLocked ? moto.getAngulo() + 180 : incAnguloY;
 
 	float diferencaAngulo = anguloCameraYProximo - anguloCameraY;
 	if (diferencaAngulo != 0) {
@@ -78,15 +78,15 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	    }
 	}
 
-	//Calcula a rotaÃ§Ã£o e aproximaÃ§Ã£o em X
+	//Calcula a rotação e aproximação em X
 	double novoX = (distancia + DISTANCIA) * Math.cos(Math.toRadians(anguloCameraY));
 	novoX += pontoObservado.x;
 
-	//Calcula a rotaÃ§Ã£o e aproximaÃ§Ã£o em Z
+	//Calcula a rotação e aproximação em Z
 	double novoZ = (distancia + DISTANCIA) * Math.sin(Math.toRadians(anguloCameraY));
 	novoZ += pontoObservado.z;
 
-	//Calcula a altura e aproximaÃ§Ã£o em Y
+	//Calcula a altura e aproximação em Y
 	double catetoOposto = ALTURA - pontoObservado.y;
 	double catetoAdjascente = ((DISTANCIA - pontoObservado.x) + (DISTANCIA - pontoObservado.z)) / 2;
 	double tangente = catetoOposto / catetoAdjascente;
@@ -171,7 +171,7 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 
     @Override
     public void mouseMoved(MouseEvent newMouse) {
-	if (moto == null && !newMouse.isControlDown()) {
+	if (!rotationLocked && !newMouse.isControlDown()) {
 	    if (teleportMouse(newMouse)) {
 		return;
 	    }
@@ -192,6 +192,14 @@ public class Camera implements MouseMotionListener, MouseListener, MouseWheelLis
 	}
 	oldMouse.x = newMouse.getX();
 	oldMouse.y = newMouse.getY();
+    }
+
+    public boolean isRotationLocked() {
+	return rotationLocked;
+    }
+
+    public void setRotationLocked(boolean rotationLocked) {
+	this.rotationLocked = rotationLocked;
     }
 
 }

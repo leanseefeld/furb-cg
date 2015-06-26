@@ -24,7 +24,6 @@ import br.furb.bte.objetos.Arena;
 import br.furb.bte.objetos.Cor;
 import br.furb.bte.objetos.Moto;
 import br.furb.bte.objetos.Mundo;
-import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.j2d.TextRenderer;
 import com.sun.opengl.util.texture.TextureData;
 
@@ -585,7 +584,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 
     public void alterarExecucao(boolean executar) {
 	this.jogando = executar;
-	camera.seguirMoto(executar ? motoJogador.orElse(moto1) : null);
+	camera.setRotationLocked(executar);
 
 	if (executar) {
 	    fireGameplayEvent(l -> l.onResume());
