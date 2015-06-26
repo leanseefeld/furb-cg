@@ -232,7 +232,9 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	animando = camera.atualizar(glu);
 	animando |= mundo.renderizar(gl);
 	// drawCube(30, 100, 30);
-	desenhaSRU(gl);
+	if (Parametros.DESENHAR_SRU) {
+	    desenhaSRU(gl);
+	}
 	// new GLUT().glutSolidCube(100);
 	// gl.glFlush();
 	// }
