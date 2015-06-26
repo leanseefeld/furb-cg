@@ -111,9 +111,9 @@ public class Launcher extends JFrame {
 		TitledBorder.CENTER, TitledBorder.TOP, FONT_HIGH, Color.LIGHT_GRAY));
 	panelCenter.setBackground(Color.DARK_GRAY);
 	GridBagLayout gbl_panelCenter = new GridBagLayout();
-	gbl_panelCenter.columnWidths = new int[] { 0, 0, 0, 0, 0 };
+	gbl_panelCenter.columnWidths = new int[] { 0, 60, 60, 60, 0, 0 };
 	gbl_panelCenter.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
-	gbl_panelCenter.columnWeights = new double[] { 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+	gbl_panelCenter.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
 	gbl_panelCenter.rowWeights = new double[] { 1.0, 1.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 	panelCenter.setLayout(gbl_panelCenter);
 	{
@@ -156,7 +156,7 @@ public class Launcher extends JFrame {
 	    btnComandos = new JButton("Comandos");
 	    btnComandos.setBackground(Color.GRAY);
 	    GridBagConstraints gbc_btnComandos = new GridBagConstraints();
-	    gbc_btnComandos.gridwidth = 2;
+	    gbc_btnComandos.gridwidth = 3;
 	    gbc_btnComandos.insets = new Insets(0, 0, 0, 5);
 	    gbc_btnComandos.gridx = 1;
 	    gbc_btnComandos.gridy = 4;
