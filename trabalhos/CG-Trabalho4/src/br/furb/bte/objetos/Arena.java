@@ -21,6 +21,7 @@ public class Arena extends Poligono {
 	this.cor = new Cor(0.1f, 0.5f, 0.5f);
 	carregarPontos();
 	motos = new HashMap<>(3);
+	this.addFilho(new Paredes());
     }
 
     @Override

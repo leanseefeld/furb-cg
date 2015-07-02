@@ -194,9 +194,9 @@ public class ControladorRemoto extends Controlador {
 	}
 
 	processadorCenario = new ProcessadorPadrao<>();
-	processadorGameplay = new ProcessadorRemoto<>(new ReplyAction<Tela>()::action);
-	processadorMotoLocal = new ProcessadorRemoto<>(new ReplyAction<Moto>()::action);
-	processadorMotoRemota = new ProcessadorRemoto<>(new ReplyAction<Moto>()::action);
+	processadorGameplay = new ProcessadorRemoto<Tela>(new ReplyAction<Tela>()::action);
+	processadorMotoLocal = new ProcessadorRemoto<Moto>(new ReplyAction<Moto>()::action);
+	processadorMotoRemota = new ProcessadorRemoto<Moto>(new ReplyAction<Moto>()::action);
     }
 
     protected void reply(TipoComando comando) throws IOException {
