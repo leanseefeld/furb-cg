@@ -67,9 +67,9 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     private GLAutoDrawable glDrawable;
     private boolean atualizarVisualizacao;
     private boolean perspectiveMode = true;
-    private final float[] posicaoLuz = { 25, 100, 25, 0.1f };
-    private final float[] direcaoLuz = { 0, 0, 0 };
-    private final float[] luzAmbiente = { 0.2f, 0.2f, 0.2f, 0.2f };
+    private final float[] posicaoLuz = { 0, 100, 0, 0,1f };
+    private final float[] direcaoLuz = { 0, -1, 0 };
+    private final float[] luzAmbiente = { 0.2f, 0.2f, 0.2f, 0f };
 
     // ========== OBJETOS GRÁFICOS ==========
     private Mundo mundo;
@@ -107,6 +107,8 @@ public class Tela extends GLCanvas implements GLEventAdapter {
     public void init(GLAutoDrawable drawable) {
 	glDrawable = drawable;
 	gl = drawable.getGL();
+	glu = new GLU();
+
 	gl.glEnable(GL.GL_DEPTH_TEST);
 	gl.glEnable(GL.GL_CULL_FACE);
 
@@ -118,12 +120,17 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	gl.glHint(GL.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
 	gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
 
-	glu = new GLU();
+	gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, posicaoLuz, 0);
+	gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, direcaoLuz, 0);
+	gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, luzAmbiente, 0);
+	gl.glEnable(GL.GL_LIGHT0);
+	gl.glEnable(GL.GL_LIGHTING);
+	gl.glShadeModel(GL.GL_SMOOTH);
+
 	glDrawable.setGL(new DebugGL(gl));
 	gl.glClearColor(0f, 0f, 0f, 1.0f);
 
 	mundo = new Mundo();
-
 	camera = new Camera(this);
 
 	addComponentListener(new ComponentAdapter() {
@@ -158,15 +165,6 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 	}
 	gl.glMatrixMode(GL.GL_MODELVIEW);
 	gl.glLoadIdentity();
-
-	gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, posicaoLuz, 0);
-	gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, direcaoLuz, 0);
-	// gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_EXPONENT, new float[] { 0 },
-	// 0);
-	gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, luzAmbiente, 0);
-	gl.glEnable(GL.GL_LIGHT0);
-	gl.glEnable(GL.GL_LIGHTING);
-	gl.glShadeModel(GL.GL_SMOOTH);
     }
 
     @Override
@@ -310,7 +308,7 @@ public class Tela extends GLCanvas implements GLEventAdapter {
 		|| moto.estaColidindo(getInimigo(moto)) //
 		|| !moto.estaSobre(arena);
 
-	moto.setColidido(colidido);
+	moto.setColidindo(colidido);
 	return colidido;
     }
 

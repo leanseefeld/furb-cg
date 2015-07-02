@@ -10,24 +10,27 @@ public class Rastro extends Poligono {
 
     private static final int PONTO_MAIS_ALTO = 10;
     private static final int PONTO_MAIS_BAIXO = 0;
-    private List<Ponto> rastro;
-    private int tamanhoRastro;
+    private final List<Ponto> rastro;
+    private final int tamanhoRastro;
+    private final Cor corOriginal;
 
     public Rastro(Cor cor, int tamanhoRastro) {
-	this.cor = cor;
 	this.primitiva = GL.GL_QUAD_STRIP;
 	this.tamanhoRastro = tamanhoRastro;
 	this.rastro = new ArrayList<Ponto>();
+	this.cor = new Cor(cor.r - 0.2, cor.g - 0.2, cor.b - 0.2);
+	this.corOriginal = cor;
     }
 
     /**
      * Retorna os pontos dos rastro
+     * 
      * @return
      */
     public List<Ponto> getRastro() {
-        return rastro;
+	return rastro;
     }
-    
+
     /**
      * Aumenta o rastro para a uma novação posição
      * 
@@ -44,7 +47,8 @@ public class Rastro extends Poligono {
 
     @Override
     public boolean renderizar(GL gl) {
-	gl.glColor3d(cor.r - 0.2, cor.g - 0.2, cor.b - 0.2);
+	float[] corVector = { cor.r, cor.g, cor.b, 1f };
+	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, corVector, 0);
 
 	gl.glPushMatrix();
 	{
@@ -120,13 +124,24 @@ public class Rastro extends Poligono {
 	return bboxes;
     }
 
+    /**
+     * Não utilizar <br>
+     * Chamar o método {@link #getBBoxes()}
+     */
     @Override
     public BBox getBBox() {
 	return null;
     }
 
+    /**
+     * Não utilizar
+     */
     @Override
     public BBox getBBoxTransformada() {
 	return null;
+    }
+
+    public void setIsColidindo(boolean isColidindo) {
+	this.cor = isColidindo ? Moto.COR_COLISAO : this.corOriginal;
     }
 }

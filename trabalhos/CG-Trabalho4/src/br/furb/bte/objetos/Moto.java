@@ -13,7 +13,7 @@ public class Moto extends Poligono {
 
     private int angulo;
     private Rastro rastro;
-    private final Cor corColisao = new Cor(0, 0, 1);
+    public final static Cor COR_COLISAO = new Cor(0, 0, 1);
     private final Cor corNormal;
     private final Transformacao ajuste;
     private final String nome;
@@ -21,12 +21,12 @@ public class Moto extends Poligono {
 
     public static final int TAMANHO_RASTRO = 300;
     public static final int VELOCIDADE = 5;
-//    public static final int CIMA = -90;
+    //    public static final int CIMA = -90;
     public static final int CIMA = 270;
     public static final int DIREITA = 0;
     public static final int BAIXO = 90;
     public static final int ESQUERDA = 180;
-    
+
     //TODO descobrir o tamanho da BBox da moto para ajustar esses valores
     public static final int LARGURA = 10;
     public static final int COMPRIMENTO = 20;
@@ -54,7 +54,7 @@ public class Moto extends Poligono {
 	}
 	return MODEL;
     }
-    
+
     @Override
     protected List<Ponto> criarPontos() {
 	return new ArrayList<>(PONTOS);
@@ -76,8 +76,9 @@ public class Moto extends Poligono {
 	return angulo;
     }
 
-    public void setColidido(boolean isColidido) {
-	this.cor = isColidido ? this.corColisao : this.corNormal;
+    public void setColidindo(boolean isColidindo) {
+	this.cor = isColidindo ? Moto.COR_COLISAO : this.corNormal;
+	rastro.setIsColidindo(isColidindo);
     }
 
     private void setPosicao(int x, int z) {
@@ -102,7 +103,6 @@ public class Moto extends Poligono {
 
     @Override
     public boolean renderizar(GL gl) {
-	float[] cor2 = { cor.r, cor.g, cor.b, 1f };
 	gl.glPushMatrix();
 	{
 	    Transformacao trans = new Transformacao();
@@ -111,11 +111,10 @@ public class Moto extends Poligono {
 
 	    gl.glMultMatrixd(trans.getMatriz(), 0);
 	    MODEL.draw(gl);
-
 	    B_BOX.draw(gl);
 	}
 	gl.glPopMatrix();
-	gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE, cor2, 0);
+	
 	return false;
     }
 
@@ -150,7 +149,7 @@ public class Moto extends Poligono {
 	}
 
 	if (existeColisao)
-	    this.cor = this.corColisao;
+	    this.cor = Moto.COR_COLISAO;
 	else
 	    this.cor = this.corNormal;
 	return existeColisao;
